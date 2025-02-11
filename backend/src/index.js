@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const dotenv = require('dotenv');
-dotenv.config({ path: '../.env' });
+// const dotenv = require('dotenv');
+// dotenv.config({ path: '../.env' });
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@database.gegel.mongodb.net/?retryWrites=true&w=majority&appName=database`;
 
@@ -22,11 +22,11 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
-    // const database = client.db('expense_tracker');
-    // const users = database.collection('users');
+    const database = client.db('expense_tracker');
+    const users = database.collection('users');
     // const query = { name: 'Evan Argenal' };
-    // const name = await users.findOne(query);
-    // console.log(name);
+    const name = await users.find().toArray();
+    console.log(name);
     await client.db('admin').command({ ping: 1 });
     console.log(
       'Pinged your deployment. You successfully connected to MongoDB!'
@@ -40,6 +40,11 @@ run().catch(console.dir);
 
 app.get('/', (req, res) => {
   res.send('Hello from our server!');
+});
+
+// Route to get all users
+app.get('/users', (req, res) => {
+  res.json(users);
 });
 
 app.listen(8080, () => {
