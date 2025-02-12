@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 
-import axios from 'axios';
+// import axios from 'axios';
 
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
@@ -18,26 +18,27 @@ import Header from './components/header/index';
 // };
 
 function App() {
-  const [userName, setUserName] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
+  // const [userName, setUserName] = useState('');
+  // const [isVisible, setIsVisible] = useState(false);
 
-  const getUsers = () => {
-    axios.get('/api/users').then((response) => {
-      setIsVisible(!isVisible);
-      setUserName(response.data[0].name);
-    });
-  };
+  // const getUsers = () => {
+  //   axios.get('/api/users').then((response) => {
+  //     setIsVisible(!isVisible);
+  //     setUserName(response.data[0].name);
+  //   });
+  // };
 
   return (
     <div className="App">
       <div className="App-header">
-        <Header userName={userName} isVisible={isVisible} />
+        <Header />
       </div>
       <div className="App-body">
         <img src={logo} className="App-logo" alt="logo" />
-        <Button variant="primary" size="lg" onClick={getUsers}>
+        {/* <Button variant="primary" size="lg" onClick={getUsers}>
           Display your name
-        </Button>
+        </Button> */}
+        <p>Log in to see your name!</p>
       </div>
     </div>
   );
