@@ -5,15 +5,15 @@ import './style.css';
 import LoginModal from './loginModal';
 
 function Header() {
-  const [dataFromChild, setDataFromChild] = useState('');
+  const [nameFromLogin, setNameFromLogin] = useState('');
 
-  function handleDataFromChild(data) {
-    setDataFromChild(data);
+  function handleDataFromChild(name) {
+    setNameFromLogin(name);
   }
 
   return (
     <div className="headerContainer">
-      {dataFromChild && <p>Welcome back, {dataFromChild}!</p>}
+      {nameFromLogin && <p>Welcome back, {nameFromLogin}!</p>}
       <LoginModal sendDataToParent={handleDataFromChild} />
     </div>
   );
