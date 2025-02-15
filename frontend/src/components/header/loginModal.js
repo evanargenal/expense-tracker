@@ -15,23 +15,21 @@ function LoginModal({ sendDataToParent }) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-  });
 
   const toggleLoginPage = (event) => {
     handleClear();
     setIsLoginPage(!isLoginPage);
   };
-  const handleClose = () => setShowLoginModal(false);
-  const handleShow = () => {
-    setShowLoginModal(true);
+  const handleClose = () => {
+    setShowLoginModal(false);
+    handleClear();
     setIsLoginPage(true);
   };
+  const handleShow = () => {
+    setIsLoginPage(true);
+    setShowLoginModal(true);
+  };
   const handleClear = () => {
-    setFormData({ fullName: '', email: '', password: '' });
     setFullName('');
     setEmail('');
     setPassword('');
@@ -40,46 +38,55 @@ function LoginModal({ sendDataToParent }) {
   const handleFullNameChange = (event) => {
     setFullName(event.target.value);
   };
-
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
-
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const handleLogin = (formData) => {
-    setFormData({ email: email, password: password });
+  const handleLogin = (email, password) => {
+    setEmail(email);
+    setPassword(password);
+    console.log('Logging in with this form data: ', email, password);
     axios
-      .get(`/api/users/${formData.email}`)
+      .post('/api/auth/login', {
+        email: email,
+        password: password,
+      })
       .then((response) => {
-        // console.log(formData);
-        // console.log(response.data);
-        if (response.data === null) {
-          console.log('User not found');
-          return;
-        }
-        if (response.data.password === formData.password) {
-          console.log('Login successful');
-          // console.log('Name:', response.data.name);
-          sendDataToParent(response.data.name);
-          handleClose();
-        } else {
-          console.log('Login failed');
-        }
+        console.log('User logged in successfully');
+        // Store JWT token
+        localStorage.setItem('token', response.data.token);
+        sendDataToParent(response.data);
+        handleClose();
       })
       .catch((error) => {
         console.error('Error fetching user:', error);
       });
   };
 
-  const handleSignUp = (formData) => {
-    setFormData({ fullName: fullName, email: email, password: password });
-    console.log(
-      'signing up with this form data (May not be fully up to date)',
-      formData
-    );
+  const handleSignUp = (fullName, email, password) => {
+    setFullName(fullName);
+    setEmail(email);
+    setPassword(password);
+    console.log('Signing up with this form data: ', fullName, email, password);
+    axios
+      .post('/api/auth/register', {
+        fullName: fullName,
+        email: email,
+        password: password,
+        isAdmin: false,
+      })
+      .then((response) => {
+        console.log('User registered successfully');
+        localStorage.setItem('token', response.data.token);
+        sendDataToParent(response.data);
+        handleClose();
+      })
+      .catch((error) => {
+        console.error('Error fetching user:', error);
+      });
   };
 
   return (
@@ -148,7 +155,7 @@ function LoginModal({ sendDataToParent }) {
               variant="primary"
               size="lg"
               type="submit"
-              onClick={() => handleLogin(formData)}
+              onClick={() => handleLogin(email, password)}
             >
               Log In
             </Button>
@@ -157,7 +164,7 @@ function LoginModal({ sendDataToParent }) {
               variant="primary"
               size="lg"
               type="submit"
-              onClick={() => handleSignUp(formData)}
+              onClick={() => handleSignUp(fullName, email, password)}
             >
               Sign Up
             </Button>
