@@ -9,17 +9,13 @@ import Modal from 'react-bootstrap/Modal';
 
 import './style.css';
 
-function LoginModal({ sendDataToParent }) {
+function LoginModal({ setUser }) {
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
   const [formFullName, setFormFullName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formPassword, setFormPassword] = useState('');
-
-  // TODO: Add validation for email and password
 
   const toggleLoginPage = (event) => {
     handleClearForm();
@@ -51,7 +47,6 @@ function LoginModal({ sendDataToParent }) {
   };
 
   const handleLogin = (formEmail, formPassword) => {
-    setEmail(formEmail);
     axios
       .post('/api/auth/login', {
         email: formEmail,
@@ -59,8 +54,7 @@ function LoginModal({ sendDataToParent }) {
       })
       .then((response) => {
         console.log('User logged in successfully');
-        localStorage.setItem('token', response.data.token);
-        sendDataToParent(response.data);
+        setUser(response.data);
         setIsLoggedIn(true);
         handleClose();
       })
@@ -70,20 +64,16 @@ function LoginModal({ sendDataToParent }) {
   };
 
   const handleSignUp = (formFullName, formEmail, formPassword) => {
-    // setFullName(formFullName);
-    setEmail(formEmail);
     axios
       .post('/api/auth/register', {
         fullName: formFullName,
         email: formEmail,
         password: formPassword,
-        isLoggedIn: true,
         isAdmin: false,
       })
       .then((response) => {
         console.log('User registered successfully');
-        localStorage.setItem('token', response.data.token);
-        sendDataToParent(response.data);
+        setUser(response.data);
         setIsLoggedIn(true);
         handleClose();
       })
@@ -94,18 +84,15 @@ function LoginModal({ sendDataToParent }) {
 
   const handleLogout = () => {
     axios
-      .post('/api/auth/logout', {
-        email: email,
-      })
+      .post('/api/auth/logout')
       .then((response) => {
         console.log('User logged out successfully');
-        localStorage.removeItem('token');
+        setUser({});
         setIsLoggedIn(false);
         handleClose();
-        sendDataToParent(response.data);
       })
       .catch((error) => {
-        console.error('Error logging out user:', error);
+        console.error('Error signing up user:', error);
       });
   };
 

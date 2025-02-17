@@ -1,8 +1,10 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const server = express();
 const connectDB = require('./db');
+
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 
@@ -10,6 +12,7 @@ server.use(cors());
 
 // Middleware
 server.use(express.json()); // To parse JSON request body
+server.use(cookieParser()); // To parse cookies
 
 // Mount routes
 server.use('/api/users', userRoutes);

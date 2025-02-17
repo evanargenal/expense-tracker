@@ -14,13 +14,10 @@ function verifyAccessToken(token) {
 }
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-
-  if (typeof authHeader !== 'undefined') {
-    const token = authHeader && authHeader.split(' ')[1];
-    console.log(token);
+  const token = req.cookies.token;
+  if (typeof token !== 'undefined') {
     if (!token) {
-      return res.sendStatus(401);
+      return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const result = verifyAccessToken(token);
@@ -32,8 +29,7 @@ function authenticateToken(req, res, next) {
     req.user = result.data;
     next();
   } else {
-    //If header is undefined return Forbidden (403)
-    res.sendStatus(403);
+    return res.status(403).json({ message: 'Forbidden' }); // token is undefined
   }
 }
 

@@ -1,29 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './style.css';
 import LoginModal from './loginModal';
 
-function Header({ sendUserDataToParent }) {
-  const [nameFromLogin, setNameFromLogin] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+function Header({ updateApp }) {
+  const [user, setUser] = useState({});
 
-  function handleDataFromChild(response) {
-    setIsLoggedIn(response.isLoggedIn);
-    sendUserDataToParent(response);
-    setNameFromLogin(response.name);
-    setIsAdmin(response.isAdmin);
-  }
+  useEffect(() => {
+    updateApp(user);
+  }, [user, updateApp]);
 
   return (
     <div className="headerContainer">
-      {isLoggedIn && (
+      {user.fullName && (
         <p>
-          Logged in as: {nameFromLogin}! {isAdmin && '(You are an admin!)'}
+          Logged in as: {user.fullName}! {user.isAdmin && '(You are an admin!)'}
         </p>
       )}
-      <LoginModal sendDataToParent={handleDataFromChild} />
+      <LoginModal setUser={setUser} />
     </div>
   );
 }
