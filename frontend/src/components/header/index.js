@@ -6,9 +6,11 @@ import LoginModal from './loginModal';
 
 function Header({ sendUserDataToParent }) {
   const [nameFromLogin, setNameFromLogin] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   function handleDataFromChild(response) {
+    setIsLoggedIn(response.isLoggedIn);
     sendUserDataToParent(response);
     setNameFromLogin(response.name);
     setIsAdmin(response.isAdmin);
@@ -16,7 +18,7 @@ function Header({ sendUserDataToParent }) {
 
   return (
     <div className="headerContainer">
-      {nameFromLogin && (
+      {isLoggedIn && (
         <p>
           Logged in as: {nameFromLogin}! {isAdmin && '(You are an admin!)'}
         </p>

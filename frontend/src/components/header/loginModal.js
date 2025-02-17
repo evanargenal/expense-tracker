@@ -12,53 +12,56 @@ import './style.css';
 function LoginModal({ sendDataToParent }) {
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [fullName, setFullName] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formFullName, setFormFullName] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [formPassword, setFormPassword] = useState('');
+
+  // TODO: Add validation for email and password
 
   const toggleLoginPage = (event) => {
-    handleClear();
+    handleClearForm();
     setIsLoginPage(!isLoginPage);
   };
   const handleClose = () => {
     setShowLoginModal(false);
-    handleClear();
+    handleClearForm();
     setIsLoginPage(true);
   };
   const handleShow = () => {
     setIsLoginPage(true);
     setShowLoginModal(true);
   };
-  const handleClear = () => {
-    setFullName('');
-    setEmail('');
-    setPassword('');
+  const handleClearForm = () => {
+    setFormFullName('');
+    setFormEmail('');
+    setFormPassword('');
   };
 
-  const handleFullNameChange = (event) => {
-    setFullName(event.target.value);
+  const handleFormFullNameChange = (event) => {
+    setFormFullName(event.target.value);
   };
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleFormEmailChange = (event) => {
+    setFormEmail(event.target.value);
   };
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const handleFormPasswordChange = (event) => {
+    setFormPassword(event.target.value);
   };
 
-  const handleLogin = (email, password) => {
-    setEmail(email);
-    setPassword(password);
-    console.log('Logging in with this form data: ', email, password);
+  const handleLogin = (formEmail, formPassword) => {
+    setEmail(formEmail);
     axios
       .post('/api/auth/login', {
-        email: email,
-        password: password,
+        email: formEmail,
+        password: formPassword,
       })
       .then((response) => {
         console.log('User logged in successfully');
-        // Store JWT token
         localStorage.setItem('token', response.data.token);
         sendDataToParent(response.data);
+        setIsLoggedIn(true);
         handleClose();
       })
       .catch((error) => {
@@ -66,40 +69,67 @@ function LoginModal({ sendDataToParent }) {
       });
   };
 
-  const handleSignUp = (fullName, email, password) => {
-    setFullName(fullName);
-    setEmail(email);
-    setPassword(password);
-    console.log('Signing up with this form data: ', fullName, email, password);
+  const handleSignUp = (formFullName, formEmail, formPassword) => {
+    // setFullName(formFullName);
+    setEmail(formEmail);
     axios
       .post('/api/auth/register', {
-        fullName: fullName,
-        email: email,
-        password: password,
+        fullName: formFullName,
+        email: formEmail,
+        password: formPassword,
+        isLoggedIn: true,
         isAdmin: false,
       })
       .then((response) => {
         console.log('User registered successfully');
         localStorage.setItem('token', response.data.token);
         sendDataToParent(response.data);
+        setIsLoggedIn(true);
         handleClose();
       })
       .catch((error) => {
-        console.error('Error fetching user:', error);
+        console.error('Error signing up user:', error);
+      });
+  };
+
+  const handleLogout = () => {
+    axios
+      .post('/api/auth/logout', {
+        email: email,
+      })
+      .then((response) => {
+        console.log('User logged out successfully');
+        localStorage.removeItem('token');
+        setIsLoggedIn(false);
+        handleClose();
+        sendDataToParent(response.data);
+      })
+      .catch((error) => {
+        console.error('Error logging out user:', error);
       });
   };
 
   return (
     <>
-      <Button
-        className="Login-button"
-        variant="primary"
-        size="lg"
-        onClick={handleShow}
-      >
-        Log In
-      </Button>
-
+      {!isLoggedIn ? (
+        <Button
+          className="Login-button"
+          variant="primary"
+          size="lg"
+          onClick={handleShow}
+        >
+          Log In
+        </Button>
+      ) : (
+        <Button
+          className="Login-button"
+          variant="primary"
+          size="lg"
+          onClick={handleLogout}
+        >
+          Log Out
+        </Button>
+      )}
       <Modal show={showLoginModal} onHide={handleClose}>
         <Modal.Header className="loginHeader">
           <Modal.Title>{isLoginPage ? 'Log In' : 'Sign Up'}</Modal.Title>
@@ -120,8 +150,8 @@ function LoginModal({ sendDataToParent }) {
                   type="text"
                   placeholder="Name"
                   name="fullName"
-                  onChange={handleFullNameChange}
-                  value={fullName}
+                  onChange={handleFormFullNameChange}
+                  value={formFullName}
                   autoFocus
                 />
               </Form.Group>
@@ -132,8 +162,8 @@ function LoginModal({ sendDataToParent }) {
                 type="email"
                 placeholder="Email"
                 name="email"
-                onChange={handleEmailChange}
-                value={email}
+                onChange={handleFormEmailChange}
+                value={formEmail}
                 autoFocus
               />
             </Form.Group>
@@ -143,8 +173,8 @@ function LoginModal({ sendDataToParent }) {
                 type="password"
                 placeholder="Password"
                 name="password"
-                onChange={handlePasswordChange}
-                value={password}
+                onChange={handleFormPasswordChange}
+                value={formPassword}
               />
             </Form.Group>
           </Form>
@@ -155,7 +185,7 @@ function LoginModal({ sendDataToParent }) {
               variant="primary"
               size="lg"
               type="submit"
-              onClick={() => handleLogin(email, password)}
+              onClick={() => handleLogin(formEmail, formPassword)}
             >
               Log In
             </Button>
@@ -164,7 +194,9 @@ function LoginModal({ sendDataToParent }) {
               variant="primary"
               size="lg"
               type="submit"
-              onClick={() => handleSignUp(fullName, email, password)}
+              onClick={() =>
+                handleSignUp(formFullName, formEmail, formPassword)
+              }
             >
               Sign Up
             </Button>
