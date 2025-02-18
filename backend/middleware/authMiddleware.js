@@ -15,11 +15,7 @@ function verifyAccessToken(token) {
 
 function authenticateToken(req, res, next) {
   const token = req.cookies.token;
-  if (typeof token !== 'undefined') {
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' }); // token is missing (401)
-    }
-
+  if (token) {
     const result = verifyAccessToken(token);
 
     if (!result.success) {

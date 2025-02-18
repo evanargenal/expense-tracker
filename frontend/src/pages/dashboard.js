@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
 import { useAuth } from '../context/authContext';
-import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -11,14 +9,7 @@ import logo from '../assets/logo.svg';
 import Header from '../components/header/index';
 
 function Dashboard() {
-  const navigate = useNavigate();
-  const { user, setUser } = useAuth();
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/');
-    }
-  }, [user, navigate]); // Runs when `user` changes
+  const { user } = useAuth();
 
   const handleTestAuth = () => {
     axios
@@ -29,6 +20,7 @@ function Dashboard() {
           'User ID of current user logged in: ',
           response.data.user.userId
         );
+        console.log('response.data is: ', response.data);
         console.log('authContext user is: ', user);
       })
       .catch((error) => {
@@ -39,7 +31,7 @@ function Dashboard() {
   return (
     <div className="App">
       <div className="App-header">
-        <Header updateApp={setUser} />
+        <Header />
       </div>
       <div className="App-body">
         <img src={logo} className="App-logo" alt="logo" />

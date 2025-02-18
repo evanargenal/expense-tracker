@@ -41,7 +41,11 @@ router.post('/login', async (req, res) => {
     }
 
     // Generate JWT token
-    const tokenPayload = { userId: user._id, email: user.email };
+    const tokenPayload = {
+      userId: user._id,
+      email: user.email,
+      fullName: user.fullName,
+    };
     const tokenOptions = { expiresIn: '1h' };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions);
 
@@ -96,7 +100,11 @@ router.post('/register', async (req, res) => {
     const result = await collection.insertOne(newUser);
 
     // Generate JWT token
-    const tokenPayload = { userId: result.insertedId, email: newUser.email };
+    const tokenPayload = {
+      userId: result.insertedId,
+      email: newUser.email,
+      fullName: newUser.fullName,
+    };
     const tokenOptions = { expiresIn: '1h' };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions);
 

@@ -1,16 +1,11 @@
-import { useEffect } from 'react';
 import { useAuth } from '../../context/authContext';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './style.css';
 import LoginModal from '../modals/loginModal';
 
-function Header({ updateApp }) {
+function Header() {
   const { user } = useAuth();
-
-  useEffect(() => {
-    updateApp(user);
-  }, [user, updateApp]);
 
   return (
     <div className="headerContainer">

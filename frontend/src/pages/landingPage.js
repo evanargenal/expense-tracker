@@ -1,6 +1,4 @@
-// import { useEffect } from 'react';
 import { useAuth } from '../context/authContext';
-// import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -11,30 +9,7 @@ import logo from '../assets/logo.svg';
 import Header from '../components/header/index';
 
 function LandingPage() {
-  // const navigate = useNavigate();
-  const { user, setUser } = useAuth();
-
-  // Auto-login on page load
-  // useEffect(() => {
-  //   const checkIsLoggedIn = async () => {
-  //     axios
-  //       .get('/api/auth/validate', { withCredentials: true })
-  //       .then((response) => {
-  //         console.log('Token is valid!');
-  //         console.log(
-  //           'User ID of current user logged in: ',
-  //           response.data.user.userId
-  //         );
-  //         setUser(response.data);
-  //         navigate('/dashboard'); // Redirect if logged in
-  //       })
-  //       .catch((error) => {
-  //         console.error('Auto-login failed', error);
-  //       });
-  //   };
-
-  //   checkIsLoggedIn();
-  // }, [setUser, navigate]);
+  const { user } = useAuth();
 
   const handleTestAuth = () => {
     axios
@@ -45,6 +20,7 @@ function LandingPage() {
           'User ID of current user logged in: ',
           response.data.user.userId
         );
+        console.log('response.data is: ', response.data);
         console.log('authContext user is: ', user);
       })
       .catch((error) => {
@@ -55,7 +31,7 @@ function LandingPage() {
   return (
     <div className="App">
       <div className="App-header">
-        <Header updateApp={setUser} />
+        <Header />
       </div>
       <div className="App-body">
         <img src={logo} className="App-logo" alt="logo" />

@@ -62,7 +62,7 @@ function LoginModal() {
         navigate('dashboard');
       })
       .catch((error) => {
-        console.error('Error fetching user:', error);
+        console.error('Error logging in user:', error);
       });
   };
 
@@ -94,7 +94,7 @@ function LoginModal() {
         navigate('/');
       })
       .catch((error) => {
-        console.error('Error signing up user:', error);
+        console.error('Error logging user out: ', error);
       });
   };
 
