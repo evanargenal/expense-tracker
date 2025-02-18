@@ -17,7 +17,7 @@ function authenticateToken(req, res, next) {
   const token = req.cookies.token;
   if (typeof token !== 'undefined') {
     if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.status(401).json({ error: 'Unauthorized' }); // token is missing (401)
     }
 
     const result = verifyAccessToken(token);
@@ -29,7 +29,7 @@ function authenticateToken(req, res, next) {
     req.user = result.data;
     next();
   } else {
-    return res.status(403).json({ message: 'Forbidden' }); // token is undefined
+    return res.status(401).json({ error: 'Unauthorized' }); // fallback - token is undefined/missing (401)
   }
 }
 

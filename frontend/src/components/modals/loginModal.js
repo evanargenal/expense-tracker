@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/authContext';
 
 import axios from 'axios';
 
@@ -9,10 +11,11 @@ import Modal from 'react-bootstrap/Modal';
 
 import './style.css';
 
-function LoginModal({ setUser }) {
+function LoginModal() {
+  const navigate = useNavigate();
+  const { user, setUser } = useAuth();
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [formFullName, setFormFullName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formPassword, setFormPassword] = useState('');
@@ -55,8 +58,8 @@ function LoginModal({ setUser }) {
       .then((response) => {
         console.log('User logged in successfully');
         setUser(response.data);
-        setIsLoggedIn(true);
         handleClose();
+        navigate('dashboard');
       })
       .catch((error) => {
         console.error('Error fetching user:', error);
@@ -74,8 +77,8 @@ function LoginModal({ setUser }) {
       .then((response) => {
         console.log('User registered successfully');
         setUser(response.data);
-        setIsLoggedIn(true);
         handleClose();
+        navigate('dashboard');
       })
       .catch((error) => {
         console.error('Error signing up user:', error);
@@ -85,11 +88,10 @@ function LoginModal({ setUser }) {
   const handleLogout = () => {
     axios
       .post('/api/auth/logout')
-      .then((response) => {
+      .then(() => {
         console.log('User logged out successfully');
-        setUser({});
-        setIsLoggedIn(false);
-        handleClose();
+        setUser(null);
+        navigate('/');
       })
       .catch((error) => {
         console.error('Error signing up user:', error);
@@ -98,7 +100,7 @@ function LoginModal({ setUser }) {
 
   return (
     <>
-      {!isLoggedIn ? (
+      {!user ? (
         <Button
           className="Login-button"
           variant="primary"

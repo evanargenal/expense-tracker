@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useAuth } from '../../context/authContext';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import './style.css';
-import LoginModal from './loginModal';
+import LoginModal from '../modals/loginModal';
 
 function Header({ updateApp }) {
-  const [user, setUser] = useState({});
+  const { user } = useAuth();
 
   useEffect(() => {
     updateApp(user);
@@ -13,12 +14,12 @@ function Header({ updateApp }) {
 
   return (
     <div className="headerContainer">
-      {user.fullName && (
+      {user && (
         <p>
           Logged in as: {user.fullName}! {user.isAdmin && '(You are an admin!)'}
         </p>
       )}
-      <LoginModal setUser={setUser} />
+      <LoginModal />
     </div>
   );
 }
