@@ -8,14 +8,17 @@ function Header() {
   const { user } = useAuth();
 
   return (
-    <div className="headerContainer">
-      {user && (
-        <p>
-          Logged in as: {user.fullName}! {user.isAdmin && '(You are an admin!)'}
-        </p>
-      )}
-      <LoginModal />
-    </div>
+    <>
+      <div className="headerContainer">
+        {user && (
+          <p>
+            Logged in as: {user.fullName}
+            {user.isAdmin && '(You are an admin!)'}
+          </p>
+        )}
+        <LoginModal />
+      </div>
+    </>
   );
 }
 

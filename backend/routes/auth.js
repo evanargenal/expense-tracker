@@ -126,8 +126,8 @@ router.post('/register', async (req, res) => {
 });
 
 // Logout user
-// POST /api/auth/logout
-router.post('/logout', (req, res) => {
+// GET /api/auth/logout
+router.get('/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });
 });

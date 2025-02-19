@@ -5,8 +5,9 @@ const cors = require('cors');
 const server = express();
 const connectDB = require('./db');
 
-const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
+const expenseRoutes = require('./routes/expense');
+const userRoutes = require('./routes/user');
 
 server.use(cors());
 
@@ -15,8 +16,9 @@ server.use(express.json()); // To parse JSON request body
 server.use(cookieParser()); // To parse cookies
 
 // Mount routes
-server.use('/api/users', userRoutes);
 server.use('/api/auth', authRoutes);
+server.use('/api/expenses', expenseRoutes);
+server.use('/api/users', userRoutes);
 
 // Connect to MongoDB
 connectDB().then(() => {

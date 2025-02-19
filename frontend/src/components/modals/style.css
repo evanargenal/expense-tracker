@@ -1,25 +1,4 @@
-.App-header {
-  background-color: #282c34;
-  min-height: 12vh;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.headerContainer {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  padding-left: 20px;
-  align-items: center;
-  width: 100%;
-  min-height: 12vh;
-}
-
-.Login-button {
+.loginButton {
   position: absolute;
   right: 50px;
 }
@@ -30,15 +9,9 @@
   justify-content: center;
 }
 
-.modalCloseButton {
+.modalXButton {
   position: absolute;
   right: 30px;
-}
-
-.loginFooter {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
 }
 
 .footerLogInSignUpText {
@@ -49,10 +22,4 @@
 
 p {
   margin: 0;
-}
-
-@media (max-width: 768px) {
-  .App-header {
-    min-height: 10vh;
-  }
 }

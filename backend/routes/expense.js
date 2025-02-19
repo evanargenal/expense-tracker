@@ -3,15 +3,20 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const connectDB = require('../db');
 
-// Get all users
-// GET /api/users
-router.get('/', async (req, res) => {
+const authenticateToken = require('../middleware/authMiddleware');
+
+// Get all expenses for logged-in user
+// GET /api/expenses
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const db = await connectDB();
-    const collection = db.collection('users');
+    const collection = db.collection('expenses');
+    const currentUserId = req.user.userId;
 
-    const users = await collection.find().toArray();
-    res.json(users);
+    const expenses = await collection
+      .find({ userId: new ObjectId(String(currentUserId)) })
+      .toArray();
+    res.json(expenses);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }

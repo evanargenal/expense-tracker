@@ -13,6 +13,22 @@
   }
 }
 
+.App-header {
+  background-color: #282c34;
+  min-height: calc(10px + 10vmin);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+/* @media (max-width: 768px) {
+  .App-header {
+    min-height: 8vh;
+  }
+} */
+
 .App-body {
   background-color: #444d62;
   min-height: 88vh;

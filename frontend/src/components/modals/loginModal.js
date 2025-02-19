@@ -87,7 +87,7 @@ function LoginModal() {
 
   const handleLogout = () => {
     axios
-      .post('/api/auth/logout')
+      .get('/api/auth/logout')
       .then(() => {
         console.log('User logged out successfully');
         setUser(null);
@@ -102,18 +102,18 @@ function LoginModal() {
     <>
       {!user ? (
         <Button
-          className="Login-button"
+          className="loginButton"
           variant="primary"
-          size="lg"
+          size="md"
           onClick={handleShow}
         >
           Log In
         </Button>
       ) : (
         <Button
-          className="Login-button"
+          className="loginButton"
           variant="primary"
-          size="lg"
+          size="md"
           onClick={handleLogout}
         >
           Log Out
@@ -123,17 +123,14 @@ function LoginModal() {
         <Modal.Header className="loginHeader">
           <Modal.Title>{isLoginPage ? 'Log In' : 'Sign Up'}</Modal.Title>
           <CloseButton
-            className="modalCloseButton"
+            className="modalXButton"
             onClick={handleClose}
           ></CloseButton>
         </Modal.Header>
         <Modal.Body>
           <Form>
             {!isLoginPage && (
-              <Form.Group
-                className="nameForm"
-                style={{ paddingBottom: '10px' }}
-              >
+              <Form.Group style={{ paddingBottom: '10px' }}>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
@@ -145,7 +142,7 @@ function LoginModal() {
                 />
               </Form.Group>
             )}
-            <Form.Group className="emailForm" style={{ paddingBottom: '10px' }}>
+            <Form.Group style={{ paddingBottom: '10px' }}>
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
@@ -156,7 +153,7 @@ function LoginModal() {
                 autoFocus
               />
             </Form.Group>
-            <Form.Group className="passwordForm">
+            <Form.Group>
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
