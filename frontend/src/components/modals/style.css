@@ -14,10 +14,11 @@
   right: 30px;
 }
 
-.footerLogInSignUpText {
+.footerText {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  padding-top: 5px;
 }
 
 p {

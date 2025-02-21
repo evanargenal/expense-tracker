@@ -21,6 +21,7 @@ function LoginModal() {
   const [formPassword, setFormPassword] = useState('');
 
   const toggleLoginPage = (event) => {
+    event.preventDefault();
     handleClearForm();
     setIsLoginPage(!isLoginPage);
   };
@@ -187,51 +188,16 @@ function LoginModal() {
               Sign Up
             </Button>
           )}
-          {isLoginPage ? (
-            <div
-              className="footerLogInSignUpText"
-              style={{
-                paddingTop: '5px',
-              }}
-            >
-              <p style={{ margin: 0 }}>
-                New around here? I think it's time you{' '}
-                <Button
-                  variant="link"
-                  onClick={toggleLoginPage}
-                  style={{
-                    padding: 0,
-                    paddingBottom: '3px',
-                    textDecoration: 'none',
-                  }}
-                >
-                  sign up
-                </Button>
-              </p>
-            </div>
-          ) : (
-            <div
-              className="footerLogInSignUpText"
-              style={{
-                paddingTop: '5px',
-              }}
-            >
-              <p style={{ margin: 0 }}>
-                Been here before? Maybe you should{' '}
-                <Button
-                  variant="link"
-                  onClick={toggleLoginPage}
-                  style={{
-                    padding: 0,
-                    paddingBottom: '3px',
-                    textDecoration: 'none',
-                  }}
-                >
-                  log in
-                </Button>
-              </p>
-            </div>
-          )}
+          <div className="footerText">
+            <p>
+              {isLoginPage
+                ? "New around here? I think it's time you "
+                : 'Been here before? Maybe you should '}
+              <a href="/#" role="button" onClick={toggleLoginPage}>
+                {isLoginPage ? 'sign up!' : 'log in!'}
+              </a>
+            </p>
+          </div>
         </Modal.Footer>
       </Modal>
     </>

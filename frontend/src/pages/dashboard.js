@@ -6,7 +6,6 @@
 // import Button from 'react-bootstrap/Button';
 
 import './pages.css';
-import logo from '../assets/logo.svg';
 import Header from '../components/header/header';
 import TableExpenses from '../components/tables/expensesTable';
 
@@ -29,7 +28,6 @@ function Dashboard() {
   //     .catch((error) => {
   //       console.error('Error with token check', error);
   //     });
-
   //   axios
   //     .get('/api/expenses', { withCredentials: true })
   //     .then((response) => {
@@ -49,8 +47,9 @@ function Dashboard() {
           <Header />
         </div>
         <div className="App-body">
-          <TableExpenses></TableExpenses>
-          <img src={logo} className="App-logo" alt="logo" />
+          <div className="tableExpenses">
+            <TableExpenses></TableExpenses>
+          </div>
           <p className="mb-2">
             Congrats, you logged in! Here are your expenses!
           </p>

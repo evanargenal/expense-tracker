@@ -40,6 +40,12 @@
   color: white;
 }
 
+.tableExpenses {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
 @media (max-width: 768px) {
   .App-body {
     min-height: 90vh;
