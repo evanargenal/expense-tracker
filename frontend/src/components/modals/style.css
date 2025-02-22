@@ -3,7 +3,7 @@
   right: 50px;
 }
 
-.loginHeader {
+.modalHeader {
   display: flex;
   flex-direction: row;
   justify-content: center;

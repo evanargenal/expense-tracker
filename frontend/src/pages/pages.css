@@ -15,7 +15,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: calc(10px + 10vmin);
+  min-height: calc(50px + 5vmin);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -43,7 +43,7 @@
 .tableExpenses {
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 85%;
 }
 
 @media (max-width: 768px) {

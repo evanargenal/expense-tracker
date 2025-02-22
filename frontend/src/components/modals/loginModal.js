@@ -14,6 +14,7 @@ import './style.css';
 function LoginModal() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
+  // const [validated, setValidated] = useState(false);
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formFullName, setFormFullName] = useState('');
@@ -57,6 +58,7 @@ function LoginModal() {
         password: formPassword,
       })
       .then((response) => {
+        // setValidated(true);
         console.log('User logged in successfully');
         setUser(response.data);
         handleClose();
@@ -64,6 +66,7 @@ function LoginModal() {
       })
       .catch((error) => {
         console.error('Error logging in user:', error);
+        // setValidated(false);
       });
   };
 
@@ -76,6 +79,7 @@ function LoginModal() {
         isAdmin: false,
       })
       .then((response) => {
+        // setValidated(true);
         console.log('User registered successfully');
         setUser(response.data);
         handleClose();
@@ -83,6 +87,7 @@ function LoginModal() {
       })
       .catch((error) => {
         console.error('Error signing up user:', error);
+        // setValidated(false);
       });
   };
 
@@ -101,27 +106,16 @@ function LoginModal() {
 
   return (
     <>
-      {!user ? (
-        <Button
-          className="loginButton"
-          variant="primary"
-          size="md"
-          onClick={handleShow}
-        >
-          Log In
-        </Button>
-      ) : (
-        <Button
-          className="loginButton"
-          variant="primary"
-          size="md"
-          onClick={handleLogout}
-        >
-          Log Out
-        </Button>
-      )}
+      <Button
+        className="loginButton"
+        variant="primary"
+        size="md"
+        onClick={!user ? handleShow : handleLogout}
+      >
+        {!user ? 'Log In' : 'Log Out'}
+      </Button>
       <Modal show={showLoginModal} onHide={handleClose}>
-        <Modal.Header className="loginHeader">
+        <Modal.Header className="modalHeader">
           <Modal.Title>{isLoginPage ? 'Log In' : 'Sign Up'}</Modal.Title>
           <CloseButton
             className="modalXButton"
@@ -134,6 +128,7 @@ function LoginModal() {
               <Form.Group style={{ paddingBottom: '10px' }}>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
+                  // required
                   type="text"
                   placeholder="Name"
                   name="fullName"
@@ -146,6 +141,7 @@ function LoginModal() {
             <Form.Group style={{ paddingBottom: '10px' }}>
               <Form.Label>Email</Form.Label>
               <Form.Control
+                // required
                 type="email"
                 placeholder="Email"
                 name="email"
@@ -157,6 +153,7 @@ function LoginModal() {
             <Form.Group>
               <Form.Label>Password</Form.Label>
               <Form.Control
+                // required
                 type="password"
                 placeholder="Password"
                 name="password"
@@ -167,27 +164,18 @@ function LoginModal() {
           </Form>
         </Modal.Body>
         <Modal.Footer className="d-grid" style={{ justifyContent: 'unset' }}>
-          {isLoginPage ? (
-            <Button
-              variant="primary"
-              size="lg"
-              type="submit"
-              onClick={() => handleLogin(formEmail, formPassword)}
-            >
-              Log In
-            </Button>
-          ) : (
-            <Button
-              variant="primary"
-              size="lg"
-              type="submit"
-              onClick={() =>
-                handleSignUp(formFullName, formEmail, formPassword)
-              }
-            >
-              Sign Up
-            </Button>
-          )}
+          <Button
+            variant="primary"
+            size="lg"
+            type="submit"
+            onClick={() =>
+              isLoginPage
+                ? handleLogin(formEmail, formPassword)
+                : handleSignUp(formFullName, formEmail, formPassword)
+            }
+          >
+            {isLoginPage ? 'Log In' : 'Sign Up'}
+          </Button>
           <div className="footerText">
             <p>
               {isLoginPage

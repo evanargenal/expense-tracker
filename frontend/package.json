@@ -36,8 +36,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "web-vitals": "^4.2.4"
-  },
   "proxy": "http://localhost:8080"
 }
