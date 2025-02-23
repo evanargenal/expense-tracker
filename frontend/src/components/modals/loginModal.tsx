@@ -109,7 +109,6 @@ function LoginModal() {
       <Button
         className="loginButton"
         variant="primary"
-        size="md"
         onClick={!user ? handleShow : handleLogout}
       >
         {!user ? 'Log In' : 'Log Out'}

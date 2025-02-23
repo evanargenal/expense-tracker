@@ -44,7 +44,8 @@ function ExpensesTable() {
       );
     }
     const sortedExpenses = userExpenses.sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
+      (a: { date: string }, b: { date: string }): number =>
+        new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     return (
       <Table striped bordered responsive variant="dark" size="sm">
@@ -94,7 +95,6 @@ function ExpensesTable() {
       {!isLoading ? (
         renderSortedExpenseRows()
       ) : (
-        // REDO THIS PART, MAKE CONTAINER OUTSIDE OF EXPENSESTABLE.JS SO PLACEHOLDERS/SPACING IS UNIFORM FOR THE PLACEHOLDERS AND THEH TABLE!!
         <div className="mb-4">
           <Placeholder as="p" animation="wave">
             <Placeholder xs={12} />

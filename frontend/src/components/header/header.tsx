@@ -1,6 +1,5 @@
 import { useAuth } from '../../context/authContext';
 
-import 'bootstrap/dist/css/bootstrap.css';
 import './style.css';
 import LoginModal from '../modals/loginModal';
 

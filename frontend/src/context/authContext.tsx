@@ -16,13 +16,8 @@ export function AuthProvider({ children }) {
         });
         setUser(data.user);
       } catch (error) {
-        // Expected case: User is not logged in (no token)
-        if (error.response?.status === 401) {
-          setUser(null);
-        } else {
-          console.error('Error with token check', error);
-          setUser(null);
-        }
+        // Expected error: User is not logged in (no token)
+        setUser(null);
       } finally {
         setLoading(false);
       }
