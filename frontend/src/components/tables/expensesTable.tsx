@@ -8,7 +8,18 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import './style.css';
 
 function ExpensesTable() {
-  const [userExpenses, setUserExpenses] = useState([]);
+  interface ExpenseItem {
+    _id: string;
+    categoryName: string;
+    cost: number;
+    date: Date;
+    description: string;
+    icon: string;
+    name: string;
+    userId: string;
+  }
+
+  const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
   const [userExpenseTotal, setUserExpenseTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -20,10 +31,12 @@ function ExpensesTable() {
         });
         setIsLoading(false);
         setUserExpenses(data);
-        console.log(data);
         setUserExpenseTotal(
           data
-            .reduce((total, item) => total + Number(item.cost || 0), 0)
+            .reduce(
+              (total: number, item: ExpenseItem) => total + (item.cost || 0),
+              0
+            )
             .toFixed(2)
         );
       } catch (error) {
@@ -44,7 +57,7 @@ function ExpensesTable() {
       );
     }
     const sortedExpenses = userExpenses.sort(
-      (a: { date: string }, b: { date: string }): number =>
+      (a: { date: Date }, b: { date: Date }): number =>
         new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     return (
@@ -68,7 +81,6 @@ function ExpensesTable() {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
-                  hour: 'numeric',
                 })}
               </td>
               <td>{item.name}</td>
@@ -76,9 +88,7 @@ function ExpensesTable() {
               <td>
                 {item.categoryName} {item.icon}
               </td>
-              <td className="text-end">
-                ${(Number(item.cost) || 0).toFixed(2)}
-              </td>
+              <td className="text-end">${(item.cost || 0).toFixed(2)}</td>
             </tr>
           ))}
           <tr>

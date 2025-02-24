@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/authContext';
 
@@ -21,7 +21,7 @@ function LoginModal() {
   const [formEmail, setFormEmail] = useState('');
   const [formPassword, setFormPassword] = useState('');
 
-  const toggleLoginPage = (event) => {
+  const toggleLoginPage = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     handleClearForm();
     setIsLoginPage(!isLoginPage);
@@ -41,17 +41,23 @@ function LoginModal() {
     setFormPassword('');
   };
 
-  const handleFormFullNameChange = (event) => {
+  const handleFormFullNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFormFullName(event.target.value);
   };
-  const handleFormEmailChange = (event) => {
+  const handleFormEmailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFormEmail(event.target.value);
   };
-  const handleFormPasswordChange = (event) => {
+  const handleFormPasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFormPassword(event.target.value);
   };
 
-  const handleLogin = (formEmail, formPassword) => {
+  const handleLogin = (formEmail: string, formPassword: string) => {
     axios
       .post('/api/auth/login', {
         email: formEmail,
@@ -70,7 +76,11 @@ function LoginModal() {
       });
   };
 
-  const handleSignUp = (formFullName, formEmail, formPassword) => {
+  const handleSignUp = (
+    formFullName: string,
+    formEmail: string,
+    formPassword: string
+  ) => {
     axios
       .post('/api/auth/register', {
         fullName: formFullName,

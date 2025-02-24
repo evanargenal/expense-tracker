@@ -1,11 +1,36 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 import axios from 'axios';
 
-const AuthContext = createContext(null);
+interface User {
+  userId: string;
+  email: string;
+  fullName: string;
+  isAdmin: boolean;
+  exp: number;
+  iat: number;
+}
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+interface AuthContextType {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  loading: boolean;
+}
+
+interface AuthProviderProps {
+  children: ReactNode; // Typing for children
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true); // Prevents UI flickering
 
   useEffect(() => {
@@ -15,9 +40,14 @@ export function AuthProvider({ children }) {
           withCredentials: true,
         });
         setUser(data.user);
-      } catch (error) {
-        // Expected error: User is not logged in (no token)
-        setUser(null);
+      } catch (error: any) {
+        // Expected case: User is not logged in (no token)
+        if (error.response?.status === 401) {
+          setUser(null);
+        } else {
+          console.error('Error with token check', error);
+          setUser(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -34,5 +64,9 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }
