@@ -5,7 +5,7 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
 
-import './style.css';
+// import styles from './ExpensesTable.module.css';
 
 function ExpensesTable() {
   interface ExpenseItem {

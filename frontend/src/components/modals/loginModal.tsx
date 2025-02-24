@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../context/AuthContext';
 
 import axios from 'axios';
 
@@ -9,12 +9,11 @@ import CloseButton from 'react-bootstrap/CloseButton';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
-import './style.css';
+import styles from './LoginModal.module.css';
 
 function LoginModal() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
-  // const [validated, setValidated] = useState(false);
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formFullName, setFormFullName] = useState('');
@@ -64,7 +63,6 @@ function LoginModal() {
         password: formPassword,
       })
       .then((response) => {
-        // setValidated(true);
         console.log('User logged in successfully');
         setUser(response.data);
         handleClose();
@@ -72,7 +70,6 @@ function LoginModal() {
       })
       .catch((error) => {
         console.error('Error logging in user:', error);
-        // setValidated(false);
       });
   };
 
@@ -89,7 +86,6 @@ function LoginModal() {
         isAdmin: false,
       })
       .then((response) => {
-        // setValidated(true);
         console.log('User registered successfully');
         setUser(response.data);
         handleClose();
@@ -97,7 +93,6 @@ function LoginModal() {
       })
       .catch((error) => {
         console.error('Error signing up user:', error);
-        // setValidated(false);
       });
   };
 
@@ -117,17 +112,17 @@ function LoginModal() {
   return (
     <>
       <Button
-        className="loginButton"
+        className={styles.loginButton}
         variant="primary"
         onClick={!user ? handleShow : handleLogout}
       >
         {!user ? 'Log In' : 'Log Out'}
       </Button>
       <Modal show={showLoginModal} onHide={handleClose}>
-        <Modal.Header className="modalHeader">
+        <Modal.Header className={styles.modalHeader}>
           <Modal.Title>{isLoginPage ? 'Log In' : 'Sign Up'}</Modal.Title>
           <CloseButton
-            className="modalXButton"
+            className={styles.modalXButton}
             onClick={handleClose}
           ></CloseButton>
         </Modal.Header>
@@ -137,7 +132,6 @@ function LoginModal() {
               <Form.Group style={{ paddingBottom: '10px' }}>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
-                  // required
                   type="text"
                   placeholder="Name"
                   name="fullName"
@@ -150,7 +144,6 @@ function LoginModal() {
             <Form.Group style={{ paddingBottom: '10px' }}>
               <Form.Label>Email</Form.Label>
               <Form.Control
-                // required
                 type="email"
                 placeholder="Email"
                 name="email"
@@ -162,7 +155,6 @@ function LoginModal() {
             <Form.Group>
               <Form.Label>Password</Form.Label>
               <Form.Control
-                // required
                 type="password"
                 placeholder="Password"
                 name="password"
@@ -185,7 +177,7 @@ function LoginModal() {
           >
             {isLoginPage ? 'Log In' : 'Sign Up'}
           </Button>
-          <div className="footerText">
+          <div className={styles.footerText}>
             <p>
               {isLoginPage
                 ? "New around here? I think it's time you "

@@ -1,6 +1,6 @@
 import './pages.css';
 import LoginLogo from '../assets/loginLogo.png';
-import Header from '../components/header/header';
+import Header from '../components/header/Header';
 
 function LandingPage() {
   return (

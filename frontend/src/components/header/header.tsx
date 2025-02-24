@@ -1,14 +1,14 @@
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../context/AuthContext';
 
-import './style.css';
-import LoginModal from '../modals/loginModal';
+import styles from './Header.module.css';
+import LoginModal from '../modals/LoginModal';
 
 function Header() {
   const { user } = useAuth();
 
   return (
     <>
-      <div className="headerContainer">
+      <div className={styles.headerContainer}>
         {user && (
           <p>
             Logged in as: {user.fullName}

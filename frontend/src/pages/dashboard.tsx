@@ -6,8 +6,8 @@
 // import Button from 'react-bootstrap/Button';
 
 import './pages.css';
-import Header from '../components/header/header';
-import TableExpenses from '../components/tables/expensesTable';
+import Header from '../components/header/Header';
+import TableExpenses from '../components/tables/ExpensesTable';
 
 function Dashboard() {
   // const { user } = useAuth();

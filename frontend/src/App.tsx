@@ -1,13 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './context/authContext';
+import { useAuth } from './context/AuthContext';
 
 import './index.css';
 
 import Spinner from 'react-bootstrap/Spinner';
 
-import LandingPage from './pages/landingPage';
-import Dashboard from './pages/dashboard';
-import NoMatch from './pages/noMatch';
+import LandingPage from './pages/LandingPage';
+import Dashboard from './pages/Dashboard';
+import NoMatch from './pages/NoMatch';
 
 function App() {
   const { user, loading } = useAuth();
