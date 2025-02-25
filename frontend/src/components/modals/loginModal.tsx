@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
-import axios from 'axios';
+import {
+  loginUser,
+  registerUser,
+  logoutUser,
+} from '../../services/authService';
 
 import Button from 'react-bootstrap/Button';
 import CloseButton from 'react-bootstrap/CloseButton';
@@ -11,15 +14,26 @@ import Modal from 'react-bootstrap/Modal';
 
 import styles from './LoginModal.module.css';
 
+interface FormData {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
 function LoginModal() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
+
   const [validated, setValidated] = useState(false);
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [formFullName, setFormFullName] = useState('');
-  const [formEmail, setFormEmail] = useState('');
-  const [formPassword, setFormPassword] = useState('');
+
+  const emptyFormData: FormData = { fullName: '', email: '', password: '' };
+  const [formData, setFormData] = useState<FormData>(emptyFormData);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const toggleLoginPage = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
@@ -37,30 +51,11 @@ function LoginModal() {
   };
   const handleClearForm = () => {
     setValidated(false);
-    setFormFullName('');
-    setFormEmail('');
-    setFormPassword('');
+    setFormData(emptyFormData);
   };
 
-  const handleFormFullNameChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormFullName(event.target.value);
-  };
-  const handleFormEmailChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormEmail(event.target.value);
-  };
-  const handleFormPasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFormPassword(event.target.value);
-  };
-
-  const handleLogin = (
-    formEmail: string,
-    formPassword: string,
+  const handleSubmit = async (
+    formData: FormData,
     event: React.FormEvent<HTMLFormElement>
   ) => {
     const form = event.currentTarget;
@@ -70,64 +65,39 @@ function LoginModal() {
       event.stopPropagation();
       return;
     }
-    axios
-      .post('/api/auth/login', {
-        email: formEmail,
-        password: formPassword,
-      })
-      .then((response) => {
-        console.log('User logged in successfully');
-        setUser(response.data);
-        handleClose();
-        navigate('dashboard');
-      })
-      .catch((error) => {
-        console.error('Error logging in user:', error);
-      });
-  };
-
-  const handleSignUp = (
-    formFullName: string,
-    formEmail: string,
-    formPassword: string,
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    const form = event.currentTarget;
-    event.preventDefault();
-    setValidated(true);
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-      return;
+    try {
+      const response = isLoginPage
+        ? await loginUser(formData.email, formData.password)
+        : await registerUser(
+            formData.fullName,
+            formData.email,
+            formData.password
+          );
+      console.log(
+        isLoginPage
+          ? 'User logged in successfully'
+          : 'User registered successfully'
+      );
+      setUser(response.data);
+      handleClose();
+      navigate('/dashboard');
+    } catch (error) {
+      console.error(
+        `Error ${isLoginPage ? 'logging in' : 'signing up'}:`,
+        error
+      );
     }
-    axios
-      .post('/api/auth/register', {
-        fullName: formFullName,
-        email: formEmail,
-        password: formPassword,
-        isAdmin: false,
-      })
-      .then((response) => {
-        console.log('User registered successfully');
-        setUser(response.data);
-        handleClose();
-        navigate('dashboard');
-      })
-      .catch((error) => {
-        console.error('Error signing up user:', error);
-      });
   };
 
-  const handleLogout = () => {
-    axios
-      .get('/api/auth/logout')
-      .then(() => {
-        console.log('User logged out successfully');
-        setUser(null);
-        navigate('/');
-      })
-      .catch((error) => {
-        console.error('Error logging user out: ', error);
-      });
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      console.log('User logged out successfully');
+      setUser(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging user out:', error);
+    }
   };
 
   return (
@@ -151,11 +121,7 @@ function LoginModal() {
           <Form
             noValidate
             validated={validated}
-            onSubmit={(event) =>
-              isLoginPage
-                ? handleLogin(formEmail, formPassword, event)
-                : handleSignUp(formFullName, formEmail, formPassword, event)
-            }
+            onSubmit={(event) => handleSubmit(formData, event)}
           >
             {!isLoginPage && (
               <Form.Group style={{ paddingBottom: '10px' }}>
@@ -165,8 +131,8 @@ function LoginModal() {
                   type="text"
                   placeholder="Name"
                   name="fullName"
-                  onChange={handleFormFullNameChange}
-                  value={formFullName}
+                  onChange={handleChange}
+                  value={formData.fullName}
                   autoFocus
                 />
                 <Form.Control.Feedback type="invalid">
@@ -181,8 +147,8 @@ function LoginModal() {
                 type="email"
                 placeholder="Email"
                 name="email"
-                onChange={handleFormEmailChange}
-                value={formEmail}
+                onChange={handleChange}
+                value={formData.email}
                 autoFocus
               />
               <Form.Control.Feedback type="invalid">
@@ -196,8 +162,8 @@ function LoginModal() {
                 type="password"
                 placeholder="Password"
                 name="password"
-                onChange={handleFormPasswordChange}
-                value={formPassword}
+                onChange={handleChange}
+                value={formData.password}
               />
               <Form.Control.Feedback type="invalid">
                 Please enter a password.

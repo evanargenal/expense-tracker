@@ -5,8 +5,7 @@ import {
   useEffect,
   ReactNode,
 } from 'react';
-
-import axios from 'axios';
+import { validateUser } from '../services/authService';
 
 interface User {
   userId: string;
@@ -36,18 +35,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const { data } = await axios.get('/api/auth/validate', {
-          withCredentials: true,
-        });
+        const data = await validateUser();
         setUser(data.user);
-      } catch (error: any) {
-        // Expected case: User is not logged in (no token)
-        if (error.response?.status === 401) {
-          setUser(null);
-        } else {
-          console.error('Error with token check', error);
-          setUser(null);
-        }
+      } catch (error) {
+        setUser(null);
       } finally {
         setLoading(false);
       }

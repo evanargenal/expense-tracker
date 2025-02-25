@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import axios from 'axios';
+import { getExpenses } from '../../services/expenseService';
 
 import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
@@ -26,9 +25,7 @@ function ExpensesTable() {
   useEffect(() => {
     const fetchUserExpenses = async () => {
       try {
-        const { data } = await axios.get('/api/expenses', {
-          withCredentials: true,
-        });
+        const data = await getExpenses();
         setIsLoading(false);
         setUserExpenses(data);
         setUserExpenseTotal(
