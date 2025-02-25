@@ -1,19 +1,32 @@
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
-const jwt_secret = process.env.JWT_SECRET;
+const jwt_secret = process.env.JWT_SECRET!;
 
-function verifyAccessToken(token) {
+interface AuthenticatedRequest extends Request {
+  user?: any; // Replace `any` with the actual user type
+}
+
+function verifyAccessToken(token: string): {
+  success: boolean;
+  data?: any;
+  error?: string;
+} {
   try {
     const decoded = jwt.verify(token, jwt_secret);
     return { success: true, data: decoded };
-  } catch (error) {
+  } catch (error: any) {
     return { success: false, error: error.message };
   }
 }
 
-function authenticateToken(req, res, next) {
+function authenticateToken(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) {
   const token = req.cookies.token;
   if (token) {
     const result = verifyAccessToken(token);

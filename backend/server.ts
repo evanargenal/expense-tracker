@@ -1,3 +1,5 @@
+import { Request, Response } from 'express';
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -25,7 +27,7 @@ connectDB().then(() => {
   console.log('Database running!');
 });
 
-server.get('/', (req, res) => {
+server.get('/', (req: Request, res: Response) => {
   res.send('Hello from my server!');
 });
 

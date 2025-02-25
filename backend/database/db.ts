@@ -1,8 +1,9 @@
-const { MongoClient } = require('mongodb');
-const dotenv = require('dotenv');
+import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
+
 dotenv.config({ path: '../.env' });
 
-const client = new MongoClient(process.env.MONGODB_URI);
+const client = new MongoClient(process.env.MONGODB_URI!);
 
 async function connectDB() {
   try {

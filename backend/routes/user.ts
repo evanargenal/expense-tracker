@@ -1,3 +1,5 @@
+import { Request, Response } from 'express';
+
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
@@ -5,7 +7,7 @@ const connectDB = require('../database/db');
 
 // Get all users
 // GET /api/users
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
     const db = await connectDB();
     const collection = db.collection('users');
@@ -19,7 +21,7 @@ router.get('/', async (req, res) => {
 
 // Get user by ID
 // GET /api/users/:id
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
     const db = await connectDB();

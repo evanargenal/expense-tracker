@@ -1,3 +1,5 @@
+import { Request, Response } from 'express';
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -9,15 +11,23 @@ const connectDB = require('../database/db');
 
 const authenticateToken = require('../middleware/authMiddleware');
 
+interface AuthenticatedRequest extends Request {
+  user?: any; // Replace `any` with the actual user type
+}
+
 // Validate token
 // GET /api/auth/validate
-router.get('/validate', authenticateToken, async (req, res) => {
-  res.json({ message: 'Token is valid', user: req.user });
-});
+router.get(
+  '/validate',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    res.json({ message: 'Token is valid', user: req.user });
+  }
+);
 
 // Authenticate user
 // POST /api/auth/login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response) => {
   let { email, password } = req.body;
 
   if (!email || !password) {
@@ -54,7 +64,7 @@ router.post('/login', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true, // Prevent access from JavaScript (XSS protection)
       secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
-      sameSite: 'Strict', // Prevent CSRF attacks
+      sameSite: 'strict', // Prevent CSRF attacks
       maxAge: 3600000, // 1 hour
     });
 
@@ -70,7 +80,7 @@ router.post('/login', async (req, res) => {
 
 // Register new user
 // POST /api/auth/register
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: Request, res: Response) => {
   let { fullName, email, password, isAdmin } = req.body;
 
   if (!fullName || !email || !password) {
@@ -116,7 +126,7 @@ router.post('/register', async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true, // Prevent access from JavaScript (XSS protection)
       secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
-      sameSite: 'Strict', // Prevent CSRF attacks
+      sameSite: 'strict', // Prevent CSRF attacks
       maxAge: 3600000, // 1 hour
     });
 
@@ -132,7 +142,7 @@ router.post('/register', async (req, res) => {
 
 // Logout user
 // GET /api/auth/logout
-router.get('/logout', (req, res) => {
+router.get('/logout', (req: Request, res: Response) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });
 });
