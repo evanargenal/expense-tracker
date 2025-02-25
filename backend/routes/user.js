@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
-const connectDB = require('../db');
+const connectDB = require('../database/db');
 
 // Get all users
 // GET /api/users

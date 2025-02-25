@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '../.env' });
 
 const router = express.Router();
-const connectDB = require('../db');
+const connectDB = require('../database/db');
 
 const authenticateToken = require('../middleware/authMiddleware');
 
