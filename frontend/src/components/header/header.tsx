@@ -11,7 +11,7 @@ function Header() {
       <div className={styles.headerContainer}>
         {user && (
           <p>
-            Logged in as: {user.fullName}
+            Logged in as: {user.fullName}{' '}
             {user.isAdmin && '(You are an admin!)'}
           </p>
         )}

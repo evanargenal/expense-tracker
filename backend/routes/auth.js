@@ -18,11 +18,13 @@ router.get('/validate', authenticateToken, async (req, res) => {
 // Authenticate user
 // POST /api/auth/login
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required' });
   }
+
+  email = email.toLowerCase();
 
   try {
     const db = await connectDB();
@@ -69,11 +71,14 @@ router.post('/login', async (req, res) => {
 // Register new user
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
-  const { fullName, email, password, isAdmin } = req.body;
+  let { fullName, email, password, isAdmin } = req.body;
 
   if (!fullName || !email || !password) {
     return res.status(400).json({ message: 'All fields are required' });
   }
+
+  email = email.toLowerCase();
+
   try {
     const db = await connectDB();
     const collection = db.collection('users');

@@ -14,6 +14,7 @@ import styles from './LoginModal.module.css';
 function LoginModal() {
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
+  const [validated, setValidated] = useState(false);
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [formFullName, setFormFullName] = useState('');
@@ -35,6 +36,7 @@ function LoginModal() {
     setShowLoginModal(true);
   };
   const handleClearForm = () => {
+    setValidated(false);
     setFormFullName('');
     setFormEmail('');
     setFormPassword('');
@@ -56,7 +58,18 @@ function LoginModal() {
     setFormPassword(event.target.value);
   };
 
-  const handleLogin = (formEmail: string, formPassword: string) => {
+  const handleLogin = (
+    formEmail: string,
+    formPassword: string,
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    const form = event.currentTarget;
+    event.preventDefault();
+    setValidated(true);
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      return;
+    }
     axios
       .post('/api/auth/login', {
         email: formEmail,
@@ -76,8 +89,16 @@ function LoginModal() {
   const handleSignUp = (
     formFullName: string,
     formEmail: string,
-    formPassword: string
+    formPassword: string,
+    event: React.FormEvent<HTMLFormElement>
   ) => {
+    const form = event.currentTarget;
+    event.preventDefault();
+    setValidated(true);
+    if (form.checkValidity() === false) {
+      event.stopPropagation();
+      return;
+    }
     axios
       .post('/api/auth/register', {
         fullName: formFullName,
@@ -127,11 +148,20 @@ function LoginModal() {
           ></CloseButton>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form
+            noValidate
+            validated={validated}
+            onSubmit={(event) =>
+              isLoginPage
+                ? handleLogin(formEmail, formPassword, event)
+                : handleSignUp(formFullName, formEmail, formPassword, event)
+            }
+          >
             {!isLoginPage && (
               <Form.Group style={{ paddingBottom: '10px' }}>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
+                  required
                   type="text"
                   placeholder="Name"
                   name="fullName"
@@ -139,11 +169,15 @@ function LoginModal() {
                   value={formFullName}
                   autoFocus
                 />
+                <Form.Control.Feedback type="invalid">
+                  Please enter your name.
+                </Form.Control.Feedback>
               </Form.Group>
             )}
             <Form.Group style={{ paddingBottom: '10px' }}>
               <Form.Label>Email</Form.Label>
               <Form.Control
+                required
                 type="email"
                 placeholder="Email"
                 name="email"
@@ -151,32 +185,32 @@ function LoginModal() {
                 value={formEmail}
                 autoFocus
               />
+              <Form.Control.Feedback type="invalid">
+                Please enter a valid email.
+              </Form.Control.Feedback>
             </Form.Group>
-            <Form.Group>
+            <Form.Group className="mb-4">
               <Form.Label>Password</Form.Label>
               <Form.Control
+                required
                 type="password"
                 placeholder="Password"
                 name="password"
                 onChange={handleFormPasswordChange}
                 value={formPassword}
               />
+              <Form.Control.Feedback type="invalid">
+                Please enter a password.
+              </Form.Control.Feedback>
             </Form.Group>
+            <div className="d-grid">
+              <Button variant="primary" size="lg" type="submit">
+                {isLoginPage ? 'Log In' : 'Sign Up'}
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
         <Modal.Footer className="d-grid" style={{ justifyContent: 'unset' }}>
-          <Button
-            variant="primary"
-            size="lg"
-            type="submit"
-            onClick={() =>
-              isLoginPage
-                ? handleLogin(formEmail, formPassword)
-                : handleSignUp(formFullName, formEmail, formPassword)
-            }
-          >
-            {isLoginPage ? 'Log In' : 'Sign Up'}
-          </Button>
           <div className={styles.footerText}>
             <p>
               {isLoginPage
