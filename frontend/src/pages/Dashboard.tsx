@@ -1,5 +1,5 @@
 // import { useState } from 'react';
-// import { useAuth } from '../context/authContext';
+// import { useAuth } from '../context/AuthContext';
 
 // import axios from 'axios';
 
@@ -53,9 +53,6 @@ function Dashboard() {
           <p className="mb-2">
             Congrats, you logged in! Here are your expenses!
           </p>
-          {/* <Button size="md" onClick={handleTestAuth}>
-            Test Token
-          </Button> */}
         </div>
       </div>
     </>
