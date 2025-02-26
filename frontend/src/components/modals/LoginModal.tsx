@@ -25,6 +25,9 @@ function LoginModal() {
   const { user, setUser } = useAuth();
 
   const [validated, setValidated] = useState(false);
+  const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
+  const [formErrorMessage, setFormErrorMessage] = useState('');
+
   const [isLoginPage, setIsLoginPage] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
@@ -33,25 +36,26 @@ function LoginModal() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setValidated(true);
+    setIsInvalidCredentials(false);
   };
 
   const toggleLoginPage = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
-    handleClearForm();
+    clearForm();
     setIsLoginPage(!isLoginPage);
   };
   const handleClose = () => {
     setShowLoginModal(false);
-    handleClearForm();
-    setIsLoginPage(true);
   };
   const handleShow = () => {
+    clearForm();
     setIsLoginPage(true);
     setShowLoginModal(true);
   };
-  const handleClearForm = () => {
+  const clearForm = () => {
     setValidated(false);
+    setIsInvalidCredentials(false);
+    setFormErrorMessage('');
     setFormData(emptyFormData);
   };
 
@@ -61,8 +65,8 @@ function LoginModal() {
   ) => {
     const form = event.currentTarget;
     event.preventDefault();
-    setValidated(true);
     if (form.checkValidity() === false) {
+      setValidated(true);
       event.stopPropagation();
       return;
     }
@@ -82,11 +86,32 @@ function LoginModal() {
       setUser(response.data);
       handleClose();
       navigate('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error(
         `Error ${isLoginPage ? 'logging in' : 'signing up'}:`,
         error
       );
+      switch (error.response?.data?.message) {
+        case 'User does not exist':
+          setFormErrorMessage(
+            'No email found. Please check your email or sign up.'
+          );
+          break;
+        case 'Invalid credentials':
+          setFormErrorMessage('Incorrect email or password. Please try again.');
+          break;
+        case 'User already exists':
+          setFormErrorMessage(
+            'An account with this email already exists. Try logging in.'
+          );
+          break;
+        default:
+          setFormErrorMessage(
+            'An unexpected error occurred. Please try again later.'
+          );
+      }
+      setValidated(false);
+      setIsInvalidCredentials(true);
     }
   };
 
@@ -134,11 +159,16 @@ function LoginModal() {
                   name="fullName"
                   onChange={handleChange}
                   value={formData.fullName}
+                  isInvalid={isInvalidCredentials}
                   autoFocus
                 />
-                <Form.Control.Feedback type="invalid">
-                  Please enter your name.
-                </Form.Control.Feedback>
+                {isInvalidCredentials ? (
+                  ''
+                ) : (
+                  <Form.Control.Feedback type="invalid">
+                    Please enter your name.
+                  </Form.Control.Feedback>
+                )}
               </Form.Group>
             )}
             <Form.Group style={{ paddingBottom: '10px' }}>
@@ -150,13 +180,18 @@ function LoginModal() {
                 name="email"
                 onChange={handleChange}
                 value={formData.email}
+                isInvalid={isInvalidCredentials}
                 autoFocus
               />
-              <Form.Control.Feedback type="invalid">
-                Please enter a valid email.
-              </Form.Control.Feedback>
+              {isInvalidCredentials ? (
+                ''
+              ) : (
+                <Form.Control.Feedback type="invalid">
+                  Please enter a valid email.
+                </Form.Control.Feedback>
+              )}
             </Form.Group>
-            <Form.Group className="mb-4">
+            <Form.Group className="position-relative mb-4">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 required
@@ -165,10 +200,17 @@ function LoginModal() {
                 name="password"
                 onChange={handleChange}
                 value={formData.password}
+                isInvalid={isInvalidCredentials}
               />
-              <Form.Control.Feedback type="invalid">
-                Please enter a password.
-              </Form.Control.Feedback>
+              {isInvalidCredentials ? (
+                <Form.Control.Feedback tooltip type="invalid">
+                  {formErrorMessage}
+                </Form.Control.Feedback>
+              ) : (
+                <Form.Control.Feedback type="invalid">
+                  Please enter a password.
+                </Form.Control.Feedback>
+              )}
             </Form.Group>
             <div className="d-grid">
               <Button variant="primary" size="lg" type="submit">

@@ -43,7 +43,7 @@ router.post('/login', async (req: Request, res: Response) => {
     // Find user by email
     const user = await collection.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'User does not exist' });
     }
 
     // Compare passwords
