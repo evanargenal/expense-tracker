@@ -5,8 +5,16 @@ dotenv.config({ path: '../.env' });
 
 const jwt_secret = process.env.JWT_SECRET!;
 
+interface AuthenticatedUser {
+  userId: string;
+  email: string;
+  fullName: string;
+  exp: number;
+  iat: number;
+}
+
 interface AuthenticatedRequest extends Request {
-  user?: any; // Replace `any` with the actual user type
+  user?: AuthenticatedUser;
 }
 
 function verifyAccessToken(token: string): {

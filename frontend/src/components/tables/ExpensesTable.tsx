@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { getExpenses } from '../../services/expenseService';
+import { getExpenses, deleteExpense } from '../../services/expenseService';
 
 import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { Trash, Pencil } from 'react-bootstrap-icons';
 
-// import styles from './ExpensesTable.module.css';
+import styles from './ExpensesTable.module.css';
 
 function ExpensesTable() {
   interface ExpenseItem {
@@ -37,12 +40,25 @@ function ExpensesTable() {
             .toFixed(2)
         );
       } catch (error) {
-        console.error('Error retrieving expenses for user', error);
+        console.error('Error retrieving expenses for user:', error);
       }
     };
 
     fetchUserExpenses();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this expense?'))
+      return;
+    try {
+      await deleteExpense(id);
+      setUserExpenses((prevExpenses) =>
+        prevExpenses.filter((expense) => expense._id !== id)
+      );
+    } catch (error) {
+      console.error('Failed to delete expense:', error);
+    }
+  };
 
   const renderSortedExpenseRows = () => {
     if (userExpenses.length === 0) {
@@ -58,42 +74,81 @@ function ExpensesTable() {
         new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     return (
-      <Table striped bordered responsive variant="dark" size="sm">
-        <thead>
-          <tr>
-            <th>Expense #</th>
-            <th>Date</th>
-            <th>Expense Name</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedExpenses?.map((item, index) => (
-            <tr key={item._id}>
-              <td>{index + 1}</td>
-              <td>
-                {new Date(item.date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </td>
-              <td>{item.name}</td>
-              <td>{item.description}</td>
-              <td>
-                {item.categoryName} {item.icon}
-              </td>
-              <td className="text-end">${(item.cost || 0).toFixed(2)}</td>
+      <div>
+        <div className={styles.bodyHeader}>
+          <Button variant="success" size="lg">
+            +
+          </Button>
+        </div>
+        <Table
+          className={styles.expensesTable}
+          striped
+          responsive
+          variant="dark"
+          size="sm"
+        >
+          <thead>
+            <tr>
+              <th>
+                <Form.Check
+                  aria-label="option 1"
+                  className={styles.customCheck}
+                />
+              </th>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Cost</th>
+              <th>Action</th>
             </tr>
-          ))}
-          <tr>
-            <th colSpan={5}>Total</th>
-            <th className="text-end">${userExpenseTotal}</th>
-          </tr>
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {sortedExpenses?.map((item) => (
+              <tr key={item._id}>
+                <td>
+                  <Form.Check
+                    aria-label="option 1"
+                    className={styles.customCheck}
+                  />
+                </td>
+                <td>
+                  {new Date(item.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </td>
+                <td>{item.name}</td>
+                <td>{item.description}</td>
+                <td>
+                  {item.categoryName} {item.icon}
+                </td>
+                <td className="text-end">${(item.cost || 0).toFixed(2)}</td>
+                <td>
+                  <Button variant="secondary" size="sm">
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(item._id)}
+                  >
+                    <Trash />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <th colSpan={5}>Total</th>
+              <th colSpan={1} className="text-end">
+                ${userExpenseTotal}
+              </th>
+              <th colSpan={1}></th>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
     );
   };
 

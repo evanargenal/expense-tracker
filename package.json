@@ -2,7 +2,9 @@
   "scripts": {
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "start:backend": "cd backend && nodemon server.ts",
-    "start:frontend": "cd frontend && npm start"
+    "start:frontend": "cd frontend && npm start",
+    "install-all": "concurrently \"npm install\" \"cd frontend && npm install\" \"cd backend && npm install\"",
+    "clean": "concurrently \"rm -rf node_modules package-lock.json\" \"rm -rf frontend/node_modules frontend/package-lock.json\" \"rm -rf backend/node_modules backend/package-lock.json\""
   },
   "devDependencies": {
     "@babel/plugin-transform-private-property-in-object": "^7.25.9",

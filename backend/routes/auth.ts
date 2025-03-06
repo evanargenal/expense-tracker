@@ -11,8 +11,16 @@ const connectDB = require('../database/db');
 
 const authenticateToken = require('../middleware/authMiddleware');
 
+interface AuthenticatedUser {
+  userId: string;
+  email: string;
+  fullName: string;
+  exp: number;
+  iat: number;
+}
+
 interface AuthenticatedRequest extends Request {
-  user?: any; // Replace `any` with the actual user type
+  user?: AuthenticatedUser;
 }
 
 // Validate token

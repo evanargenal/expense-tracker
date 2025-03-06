@@ -13,3 +13,13 @@ export const getExpenses = async () => {
     throw error; // Re-throw so the component can handle it
   }
 };
+
+export const deleteExpense = async (id: string) => {
+  try {
+    const response = await axios.delete(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete expense:', error);
+    throw error; // Re-throw so the component can handle it
+  }
+};

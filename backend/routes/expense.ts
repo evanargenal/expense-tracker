@@ -7,8 +7,16 @@ const connectDB = require('../database/db');
 
 const authenticateToken = require('../middleware/authMiddleware');
 
+interface AuthenticatedUser {
+  userId: string;
+  email: string;
+  fullName: string;
+  exp: number;
+  iat: number;
+}
+
 interface AuthenticatedRequest extends Request {
-  user?: any; // Replace `any` with the actual user type
+  user?: AuthenticatedUser;
 }
 
 interface ExpenseItem {
@@ -30,9 +38,10 @@ router.get(
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       const db = await connectDB();
-      // const expensesCollection = db.collection('expenses');
+      if (!req.user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
       const currentUserId = req.user.userId;
-
       const result = await db
         .collection('expenses')
         .aggregate([
@@ -96,6 +105,9 @@ router.post(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     const currentUserId = req.user.userId;
     const { name, description, cost, date, categoryId } = req.body;
     if (!name || !description || !cost || !date || !categoryId) {
@@ -123,7 +135,7 @@ router.post(
       const result = await expensesCollection.insertOne(newExpense);
 
       res.status(201).json({
-        message: 'Expense added successfully!',
+        message: 'Expense added successfully',
       });
     } catch (err) {
       res.status(500).json({ error: err });
@@ -131,22 +143,30 @@ router.post(
   }
 );
 
-// Get user by ID
-// GET /api/users/:id
-// router.get('/:id', async (req: Request, res: Response) => {
-//   try {
-//     const userId = req.params.id;
-//     const db = await connectDB();
-//     const collection = db.collection('users');
+// Get expense by ID
+// DELETE /api/expenses/:id
+router.delete('/:id', async (req: Request, res: Response) => {
+  const expenseId = req.params.id;
+  try {
+    const db = await connectDB();
+    const expensesCollection = db.collection('expenses');
 
-//     const user = await collection.findOne({ _id: new ObjectId(userId) });
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' });
-//     }
-//     res.json(user);
-//   } catch (err) {
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// });
+    // Delete expense by ID in the database
+    const result = await expensesCollection.deleteOne({
+      _id: new ObjectId(String(expenseId)),
+    });
+
+    // If expense doesn't exist in database
+    if (result.deletedCount < 1) {
+      return res.status(404).json({ message: 'Expense not found' });
+    }
+
+    res.status(200).json({
+      message: 'Expense deleted successfully',
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
 
 module.exports = router;

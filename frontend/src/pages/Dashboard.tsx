@@ -6,6 +6,7 @@
 // import Button from 'react-bootstrap/Button';
 
 import './pages.css';
+import styles from './Dashboard.module.css';
 import Header from '../components/header/Header';
 import TableExpenses from '../components/tables/ExpensesTable';
 
@@ -47,12 +48,9 @@ function Dashboard() {
           <Header />
         </div>
         <div className="App-body">
-          <div className="tableExpenses">
+          <div className={styles.tableExpenses}>
             <TableExpenses></TableExpenses>
           </div>
-          <p className="mb-2">
-            Congrats, you logged in! Here are your expenses!
-          </p>
         </div>
       </div>
     </>

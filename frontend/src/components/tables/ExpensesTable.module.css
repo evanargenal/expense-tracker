@@ -1,0 +1,22 @@
+.bodyHeader {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  padding-right: 5px;
+  align-items: center;
+  padding-bottom: 15px;
+}
+
+.expensesTable th {
+  vertical-align: middle;
+  font-size: calc(10px + 1.5vmin);
+}
+
+.expensesTable td {
+  vertical-align: middle;
+  font-size: calc(8px + 1.5vmin);
+}
+
+.customCheck {
+  margin: 0.25em;
+}
