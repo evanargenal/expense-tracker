@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Double } from 'mongodb';
 
 const express = require('express');
 const router = express.Router();
@@ -49,6 +50,16 @@ router.get(
             $match: { userId: new ObjectId(String(currentUserId)) }, // Filter by userId before lookup
           },
           {
+            $addFields: {
+              categoryId: {
+                $ifNull: [
+                  '$categoryId',
+                  new ObjectId('000000000000000000000000'),
+                ],
+              }, // Ensure categoryId is never null
+            },
+          },
+          {
             $lookup: {
               from: 'categories',
               localField: 'categoryId',
@@ -59,6 +70,7 @@ router.get(
           {
             $unwind: {
               path: '$lookup',
+              preserveNullAndEmptyArrays: true, // Keep documents even if lookup is empty
             },
           },
           {
@@ -69,8 +81,8 @@ router.get(
               cost: 1,
               date: 1,
               userId: 1,
-              categoryName: '$lookup.categoryName',
-              icon: '$lookup.icon',
+              categoryName: { $ifNull: ['$lookup.categoryName', ''] }, // Set empty string if null
+              icon: { $ifNull: ['$lookup.icon', ''] }, // Set empty string if null
             },
           },
         ])
@@ -88,11 +100,6 @@ router.get(
           icon: expense.icon,
         }))
       );
-
-      // const expenses = await expensesCollection
-      //   .find({ userId: new ObjectId(String(currentUserId)) })
-      //   .toArray();
-      // res.json(expenses);
     } catch (err) {
       res.status(500).json({ error: err });
     }
@@ -109,30 +116,45 @@ router.post(
       return res.status(404).json({ message: 'User not found' });
     }
     const currentUserId = req.user.userId;
-    const { name, description, cost, date, categoryId } = req.body;
-    if (!name || !description || !cost || !date || !categoryId) {
-      return res.status(400).json({ message: 'All fields are required' });
+    const { name, description, cost, date, categoryName } = req.body;
+    if (!name || (cost === '' && cost !== '0') || !date) {
+      return res.status(400).json({
+        message: 'All fields are required (name, cost, date)',
+      });
     }
     try {
       const db = await connectDB();
       const expensesCollection = db.collection('expenses');
+      const categoryCollection = db.collection('categories');
 
-      const expenses = await expensesCollection
-        .find({ userId: new ObjectId(String(currentUserId)) })
-        .toArray();
+      // Find the category ID by category name
+      let categoryId = new ObjectId('000000000000000000000000');
+
+      if (categoryName) {
+        // If categoryName is set, perform the findOne query
+        const categoryIdObject = await categoryCollection.findOne({
+          categoryName: categoryName,
+        });
+        // If the category is not found, make it default, else assign it
+        if (!categoryIdObject) {
+          categoryId = new ObjectId('000000000000000000000000');
+        } else {
+          categoryId = categoryIdObject._id;
+        }
+      }
 
       // Create new expense object
       const newExpense = {
         name,
         description,
-        cost: parseFloat(cost),
+        cost: new Double(cost), // Ensure cost is always a double
         date: new Date(date),
         userId: new ObjectId(String(currentUserId)),
-        categoryId: new ObjectId(String(categoryId)),
+        categoryId: categoryId,
       };
 
       // Insert user into the database
-      const result = await expensesCollection.insertOne(newExpense);
+      await expensesCollection.insertOne(newExpense);
 
       res.status(201).json({
         message: 'Expense added successfully',

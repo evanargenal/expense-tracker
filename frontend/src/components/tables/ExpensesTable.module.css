@@ -5,6 +5,7 @@
   padding-right: 5px;
   align-items: center;
   padding-bottom: 15px;
+  gap: 10px;
 }
 
 .expensesTable th {
@@ -19,4 +20,20 @@
 
 .customCheck {
   margin: 0.25em;
+}
+
+.actionItems {
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+  gap: 5px;
+}
+
+/* Remove number increase/decrease buttons in number forms */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
 }

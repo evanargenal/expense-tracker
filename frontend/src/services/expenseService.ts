@@ -14,6 +14,34 @@ export const getExpenses = async () => {
   }
 };
 
+export const addExpense = async (
+  name: string,
+  description: string,
+  cost: number,
+  date: Date,
+  categoryName: string
+) => {
+  try {
+    const response = await axios.post(
+      API_URL,
+      {
+        name,
+        description,
+        cost,
+        date,
+        categoryName,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error adding expense:', error);
+    throw error; // Re-throw so the component can handle it
+  }
+};
+
 export const deleteExpense = async (id: string) => {
   try {
     const response = await axios.delete(`${API_URL}/${id}`);
