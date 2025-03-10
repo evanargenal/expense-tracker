@@ -288,20 +288,22 @@ function ExpensesTable() {
                     />
                   </td>
                   <td>
-                    <Button
-                      variant="success"
-                      size="sm"
-                      onClick={handleAddExpense}
-                    >
-                      <CheckLg />
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={toggleNewExpenseMode}
-                    >
-                      <XLg />
-                    </Button>
+                    <div className={styles.actionItems}>
+                      <Button
+                        variant="success"
+                        size="sm"
+                        onClick={handleAddExpense}
+                      >
+                        <CheckLg />
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={toggleNewExpenseMode}
+                      >
+                        <XLg />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               </>

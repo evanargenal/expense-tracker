@@ -8,7 +8,6 @@ const jwt_secret = process.env.JWT_SECRET!;
 interface AuthenticatedUser {
   userId: string;
   email: string;
-  fullName: string;
   exp: number;
   iat: number;
 }

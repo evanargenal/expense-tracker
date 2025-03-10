@@ -12,8 +12,7 @@ interface AuthenticatedUser {
   userId: string;
   email: string;
   fullName: string;
-  exp: number;
-  iat: number;
+  isAdmin: boolean;
 }
 
 interface AuthenticatedRequest extends Request {

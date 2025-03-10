@@ -4,6 +4,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const { ObjectId } = require('mongodb');
 dotenv.config({ path: '../.env' });
 
 const router = express.Router();
@@ -15,8 +16,7 @@ interface AuthenticatedUser {
   userId: string;
   email: string;
   fullName: string;
-  exp: number;
-  iat: number;
+  isAdmin: boolean;
 }
 
 interface AuthenticatedRequest extends Request {
@@ -29,7 +29,22 @@ router.get(
   '/validate',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    res.json({ message: 'Token is valid', user: req.user });
+    const db = await connectDB();
+    const collection = db.collection('users');
+    // Retrieve most up to date user info
+    const user = await collection.findOne({
+      _id: new ObjectId(req.user?.userId),
+    });
+    if (!user) {
+      return res.status(401).json({ message: 'User not found - unauthorized' });
+    }
+
+    res.json({
+      userId: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    });
   }
 );
 
@@ -64,7 +79,6 @@ router.post('/login', async (req: Request, res: Response) => {
     const tokenPayload = {
       userId: user._id,
       email: user.email,
-      fullName: user.fullName,
     };
     const tokenOptions = { expiresIn: '1h' };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions);
@@ -77,6 +91,7 @@ router.post('/login', async (req: Request, res: Response) => {
     });
 
     res.status(200).json({
+      userId: user._id,
       fullName: user.fullName,
       email: user.email,
       isAdmin: user.isAdmin,
@@ -126,7 +141,6 @@ router.post('/register', async (req: Request, res: Response) => {
     const tokenPayload = {
       userId: result.insertedId,
       email: newUser.email,
-      fullName: newUser.fullName,
     };
     const tokenOptions = { expiresIn: '1h' };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions);
@@ -139,6 +153,7 @@ router.post('/register', async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
+      userId: result.insertedId,
       fullName: fullName,
       email: email,
       isAdmin: false,
