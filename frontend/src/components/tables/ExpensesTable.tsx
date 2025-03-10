@@ -36,6 +36,7 @@ function ExpensesTable() {
   const [userExpenseTotal, setUserExpenseTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [newExpenseMode, setNewExpenseMode] = useState(false);
+  const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
 
   const emptyNewExpenseForm: ExpenseItem = {
     _id: '',
@@ -69,6 +70,21 @@ function ExpensesTable() {
               ) // Adjust to local time zone offset
           : e.target.value,
     }));
+  };
+
+  // Toggle selection for a specific expense
+  const handleSelect = (id: string) => {
+    setSelectedExpenses((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedExpenses.length === userExpenses.length) {
+      setSelectedExpenses([]);
+    } else {
+      setSelectedExpenses(userExpenses.map((expense) => expense._id));
+    }
   };
 
   const fetchUserExpenses = useCallback(async () => {
@@ -129,20 +145,36 @@ function ExpensesTable() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this expense?'))
+  const handleDelete = async (ids: string | string[]) => {
+    // Convert a single ID into an array if necessary
+    const idsArray = Array.isArray(ids) ? ids : [ids];
+
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${
+          idsArray.length === 1
+            ? 'this expense'
+            : `these ${idsArray.length} expenses`
+        }?`
+      )
+    )
       return;
+
     try {
-      await deleteExpense(id);
-      setUserExpenses((prevExpenses) => {
-        const updatedExpenses = prevExpenses.filter(
-          (expense) => expense._id !== id
-        );
-        fetchUserExpenses();
-        return updatedExpenses;
-      });
+      // await deleteExpense(ids);
+      await Promise.all(idsArray.map((id) => deleteExpense(id)));
+
+      // Remove deleted expenses from userExpenses and selectedExpenses arrays
+      setUserExpenses((prevExpenses) =>
+        prevExpenses.filter((expense) => !idsArray.includes(expense._id))
+      );
+      setSelectedExpenses((prevSelected) =>
+        prevSelected.filter((id) => !idsArray.includes(id))
+      );
+
+      fetchUserExpenses();
     } catch (error) {
-      console.error('Failed to delete expense:', error);
+      console.error('Failed to delete expense(s):', error);
     }
   };
 
@@ -171,6 +203,18 @@ function ExpensesTable() {
           <Button variant="secondary" size="lg" onClick={fetchUserExpenses}>
             <ArrowClockwise className="mb-1" />
           </Button>
+          {selectedExpenses.length !== 0 ? (
+            <Button
+              variant="danger"
+              size="lg"
+              onClick={() => handleDelete(selectedExpenses)}
+              disabled={selectedExpenses.length === 0}
+            >
+              Delete Selected
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
         <Table
           className={styles.expensesTable}
@@ -183,8 +227,10 @@ function ExpensesTable() {
             <tr>
               <th>
                 <Form.Check
-                  aria-label="option 1"
+                  aria-label="select all"
                   className={styles.customCheck}
+                  checked={selectedExpenses.length === userExpenses.length}
+                  onChange={handleSelectAll}
                 />
               </th>
               <th>Date</th>
@@ -196,28 +242,30 @@ function ExpensesTable() {
             </tr>
           </thead>
           <tbody>
-            {sortedExpenses?.map((item) => (
-              <tr key={item._id}>
+            {sortedExpenses?.map((expense) => (
+              <tr key={expense._id}>
                 <td>
                   <Form.Check
-                    aria-label="option 1"
+                    aria-label="select"
                     className={styles.customCheck}
+                    checked={selectedExpenses.includes(expense._id)}
+                    onChange={() => handleSelect(expense._id)}
                   />
                 </td>
                 <td>
-                  {new Date(item.date).toLocaleDateString('en-US', {
+                  {new Date(expense.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                   })}
                 </td>
-                <td>{item.name}</td>
-                <td>{item.description}</td>
+                <td>{expense.name}</td>
+                <td>{expense.description}</td>
                 <td>
-                  {item.categoryName} {item.icon}
+                  {expense.categoryName} {expense.icon}
                 </td>
                 <td className="text-end">
-                  ${(Number(item.cost) || 0).toFixed(2)}
+                  ${(Number(expense.cost) || 0).toFixed(2)}
                 </td>
                 <td>
                   <div className={styles.actionItems}>
@@ -227,7 +275,7 @@ function ExpensesTable() {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDelete(item._id)}
+                      onClick={() => handleDelete(expense._id)}
                     >
                       <Trash />
                     </Button>
@@ -258,6 +306,7 @@ function ExpensesTable() {
                       placeholder="Name"
                       value={newExpense.name}
                       onChange={handleInputChange}
+                      autoFocus
                     />
                   </td>
                   <td>

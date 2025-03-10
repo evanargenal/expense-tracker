@@ -15,7 +15,7 @@
 
 .expensesTable td {
   vertical-align: middle;
-  font-size: calc(8px + 1.5vmin);
+  font-size: calc(6px + 1.5vmin);
 }
 
 .customCheck {
