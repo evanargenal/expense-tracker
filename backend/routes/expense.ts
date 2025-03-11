@@ -164,7 +164,40 @@ router.post(
   }
 );
 
-// Get expense by ID
+// Delete multiple expenses
+// POST /api/expenses/delete
+router.post('/delete', async (req: Request, res: Response) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: 'Invalid request: provide an array of expense IDs' });
+  }
+
+  try {
+    const db = await connectDB();
+    const expensesCollection = db.collection('expenses');
+
+    // Map ids to ObjectIds and delete them from the db
+    const expenseObjectIds = ids.map((id) => new ObjectId(id));
+    const result = await expensesCollection.deleteMany({
+      _id: { $in: expenseObjectIds },
+    });
+
+    // If no expenses exist in database
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'No matching expenses found' });
+    }
+
+    res.status(200).json({
+      message: `Deleted ${result.deletedCount} expense(s) successfully`,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
+});
+
+// Delete expense by ID
 // DELETE /api/expenses/:id
 router.delete('/:id', async (req: Request, res: Response) => {
   const expenseId = req.params.id;
@@ -178,7 +211,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     });
 
     // If expense doesn't exist in database
-    if (result.deletedCount < 1) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'Expense not found' });
     }
 

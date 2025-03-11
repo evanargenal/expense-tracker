@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getExpenses,
   addExpense,
-  deleteExpense,
+  deleteExpenses,
 } from '../../services/expenseService';
 
 import Table from 'react-bootstrap/Table';
@@ -161,8 +161,7 @@ function ExpensesTable() {
       return;
 
     try {
-      // await deleteExpense(ids);
-      await Promise.all(idsArray.map((id) => deleteExpense(id)));
+      await deleteExpenses(idsArray);
 
       // Remove deleted expenses from userExpenses and selectedExpenses arrays
       setUserExpenses((prevExpenses) =>

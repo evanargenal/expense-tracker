@@ -42,12 +42,12 @@ export const addExpense = async (
   }
 };
 
-export const deleteExpense = async (id: string) => {
+export const deleteExpenses = async (ids: string[]) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`);
+    const response = await axios.post(`${API_URL}/delete`, { ids });
     return response.data;
   } catch (error) {
-    console.error('Failed to delete expense:', error);
+    console.error('Failed to delete expense(s):', error);
     throw error; // Re-throw so the component can handle it
   }
 };
