@@ -5,6 +5,8 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 const connectDB = require('../database/db');
+import { validateDate, validateCost } from '../utils/validators';
+import { getCategoryIdByName } from '../utils/dbUtils';
 
 const authenticateToken = require('../middleware/authMiddleware');
 
@@ -30,7 +32,7 @@ interface ExpenseItem {
   userId: string;
 }
 
-// Get all expenses for logged-in user
+// Get all expenses for current user (auth)
 // GET /api/expenses
 router.get(
   '/',
@@ -39,7 +41,7 @@ router.get(
     try {
       const db = await connectDB();
       if (!req.user) {
-        return res.status(404).json({ message: 'User not found' });
+        return res.status(404).json({ error: 'User not found' });
       }
       const currentUserId = req.user.userId;
       const result = await db
@@ -105,20 +107,20 @@ router.get(
   }
 );
 
-// Add expense to current user
+// Add expense to current user (auth)
 // POST /api/expenses
 router.post(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ error: 'User not found' });
     }
     const currentUserId = req.user.userId;
     const { name, description, cost, date, categoryName } = req.body;
     if (!name || (cost === '' && cost !== '0') || !date) {
       return res.status(400).json({
-        message: 'All fields are required (name, cost, date)',
+        error: 'All fields are required (name, cost, date)',
       });
     }
     try {
@@ -127,20 +129,10 @@ router.post(
       const categoryCollection = db.collection('categories');
 
       // Find the category ID by category name
-      let categoryId = new ObjectId('000000000000000000000000');
-
-      if (categoryName) {
-        // If categoryName is set, perform the findOne query
-        const categoryIdObject = await categoryCollection.findOne({
-          categoryName: categoryName,
-        });
-        // If the category is not found, make it default, else assign it
-        if (!categoryIdObject) {
-          categoryId = new ObjectId('000000000000000000000000');
-        } else {
-          categoryId = categoryIdObject._id;
-        }
-      }
+      const categoryId = await getCategoryIdByName(
+        categoryName,
+        categoryCollection
+      );
 
       // Create new expense object
       const newExpense = {
@@ -164,43 +156,141 @@ router.post(
   }
 );
 
-// Delete multiple expenses
-// POST /api/expenses/delete
-router.post('/delete', async (req: Request, res: Response) => {
-  const { ids } = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length === 0) {
-    return res
-      .status(400)
-      .json({ message: 'Invalid request: provide an array of expense IDs' });
-  }
+// Update expense field(s) by ID (auth)
+// PATCH /api/expenses/:id
+router.patch(
+  '/:id',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const expenseId = req.params.id;
+    const updateFields = req.body; // Only include fields that need updating
 
-  try {
-    const db = await connectDB();
-    const expensesCollection = db.collection('expenses');
-
-    // Map ids to ObjectIds and delete them from the db
-    const expenseObjectIds = ids.map((id) => new ObjectId(id));
-    const result = await expensesCollection.deleteMany({
-      _id: { $in: expenseObjectIds },
-    });
-
-    // If no expenses exist in database
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ message: 'No matching expenses found' });
+    if (!ObjectId.isValid(expenseId)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
     }
 
-    res.status(200).json({
-      message: `Deleted ${result.deletedCount} expense(s) successfully`,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-});
+    // Define the allowed fields for update
+    const allowedFields = [
+      'date',
+      'name',
+      'description',
+      'categoryName',
+      'cost',
+    ];
 
-// Delete expense by ID
+    // Filter out any fields that are not part of the schema
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(updateFields).filter(([key]) =>
+        allowedFields.includes(key)
+      )
+    );
+    if (Object.keys(filteredUpdates).length === 0) {
+      return res.status(400).json({ error: 'No valid fields to update' });
+    }
+
+    // Validate 'date' field if it exists
+    if (filteredUpdates.date !== undefined) {
+      const validatedDate = validateDate(filteredUpdates.date);
+      if (validatedDate === null) {
+        return res.status(400).json({
+          error: 'Invalid value for date. It must be a valid date string.',
+        });
+      }
+      filteredUpdates.date = validatedDate;
+    }
+
+    // Validate 'cost' field if it exists
+    if (filteredUpdates.cost !== undefined) {
+      const validatedCost = validateCost(filteredUpdates.cost);
+      if (validatedCost === null) {
+        return res
+          .status(400)
+          .json({ error: 'Invalid value for cost. It must be a number.' });
+      }
+      filteredUpdates.cost = validatedCost;
+    }
+    try {
+      const db = await connectDB();
+      const expensesCollection = db.collection('expenses');
+      const categoryCollection = db.collection('categories');
+
+      // Validate 'categoryName' field if it exists
+      if (filteredUpdates.categoryName !== undefined) {
+        const validatedCategoryId = await getCategoryIdByName(
+          String(filteredUpdates.categoryName),
+          categoryCollection
+        );
+        // Assign the retrieved categoryId to filteredUpdates
+        filteredUpdates.categoryId = validatedCategoryId;
+
+        // Remove the original categoryName since it's no longer needed
+        delete filteredUpdates.categoryName;
+      }
+
+      // Delete expense fields by ID in the database
+      const result = await expensesCollection.updateOne(
+        { _id: new ObjectId(String(expenseId)) },
+        { $set: filteredUpdates } // Only updates the fields provided
+      );
+
+      // If expense doesn't exist in database
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ error: 'Expense not found' });
+      }
+
+      res.status(200).json({
+        message: 'Expense updated successfully',
+      });
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  }
+);
+
+// Delete multiple expenses (auth)
+// POST /api/expenses/delete
+router.post(
+  '/delete',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res
+        .status(400)
+        .json({ error: 'Invalid request: provide an array of expense IDs' });
+    }
+
+    try {
+      const db = await connectDB();
+      const expensesCollection = db.collection('expenses');
+
+      // Map ids to ObjectIds and delete them from the db
+      const expenseObjectIds = ids.map((id) => new ObjectId(id));
+      const result = await expensesCollection.deleteMany({
+        _id: { $in: expenseObjectIds },
+      });
+
+      // If no expenses exist in database
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'No matching expenses found' });
+      }
+
+      res.status(200).json({
+        message: `Deleted ${result.deletedCount} expense(s) successfully`,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  }
+);
+
+// Delete expense by ID (auth)
 // DELETE /api/expenses/:id
 router.delete('/:id', async (req: Request, res: Response) => {
   const expenseId = req.params.id;
+  if (!ObjectId.isValid(expenseId)) {
+    return res.status(400).json({ error: 'Invalid ID format' });
+  }
   try {
     const db = await connectDB();
     const expensesCollection = db.collection('expenses');
@@ -212,7 +302,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     // If expense doesn't exist in database
     if (result.deletedCount === 0) {
-      return res.status(404).json({ message: 'Expense not found' });
+      return res.status(404).json({ error: 'Expense not found' });
     }
 
     res.status(200).json({

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getExpenses,
   addExpense,
+  editExpense,
   deleteExpenses,
 } from '../../services/expenseService';
 
@@ -32,13 +33,7 @@ function ExpensesTable() {
     userId: string;
   }
 
-  const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
-  const [userExpenseTotal, setUserExpenseTotal] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [newExpenseMode, setNewExpenseMode] = useState(false);
-  const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
-
-  const emptyNewExpenseForm: ExpenseItem = {
+  const emptyExpenseForm: ExpenseItem = {
     _id: '',
     categoryName: '',
     cost: '',
@@ -48,29 +43,42 @@ function ExpensesTable() {
     name: '',
     userId: '',
   };
-  const [newExpense, setNewExpense] =
-    useState<ExpenseItem>(emptyNewExpenseForm);
+
+  const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [newExpenseMode, setNewExpenseMode] = useState(false);
+  const [newExpense, setNewExpense] = useState<ExpenseItem>(emptyExpenseForm);
+  const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
+  const [editingExpense, setEditingExpense] =
+    useState<ExpenseItem>(emptyExpenseForm);
 
   const toggleNewExpenseMode = () => {
     setNewExpenseMode(!newExpenseMode);
-    setNewExpense(emptyNewExpenseForm);
+    setNewExpense(emptyExpenseForm);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewExpense((prev) => ({
+  const handleExpenseInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setExpense: React.Dispatch<React.SetStateAction<ExpenseItem>>
+  ) => {
+    const { name, value, type } = e.target;
+
+    setExpense((prev) => ({
       ...prev,
-      [e.target.name]:
-        e.target.type === 'date'
-          ? e.target.value === ''
-            ? ''
-            : new Date(
-                new Date(e.target.value).toLocaleString('en-US', {
-                  timeZone: 'UTC',
-                })
-              ) // Adjust to local time zone offset
-          : e.target.value,
+      [name]:
+        type === 'date' && value
+          ? new Date(
+              new Date(value).toLocaleString('en-US', { timeZone: 'UTC' })
+            )
+          : value,
     }));
   };
+
+  const handleNewInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleExpenseInputChange(e, setNewExpense);
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    handleExpenseInputChange(e, setEditingExpense);
 
   // Toggle selection for a specific expense
   const handleSelect = (id: string) => {
@@ -90,17 +98,8 @@ function ExpensesTable() {
   const fetchUserExpenses = useCallback(async () => {
     try {
       const data = await getExpenses();
-      setIsLoading(false);
       setUserExpenses(data);
-      setUserExpenseTotal(
-        data
-          .reduce(
-            (total: number, item: ExpenseItem) =>
-              total + (Number(item.cost) || 0),
-            0
-          )
-          .toFixed(2)
-      );
+      setIsLoading(false);
     } catch (error) {
       console.error('Error retrieving expenses for user:', error);
     }
@@ -145,6 +144,27 @@ function ExpensesTable() {
     }
   };
 
+  const handleEditExpense = async () => {
+    if (!editingExpense.name || !editingExpense.cost) {
+      alert('Name and cost are required!');
+      return;
+    }
+    if (!editingExpense) return;
+    try {
+      // Ensure cost is a number and date is a proper Date object
+      const sanitizedExpense = {
+        ...editingExpense,
+        cost: editingExpense.cost ? Number(editingExpense.cost) : undefined, // Convert cost to number
+        date: editingExpense.date ? new Date(editingExpense.date) : undefined, // Ensure date is a Date
+      };
+      await editExpense(editingExpense._id, sanitizedExpense);
+      setEditingExpense(emptyExpenseForm); // Exit edit mode
+      fetchUserExpenses();
+    } catch (error) {
+      console.error('Error updating expense:', error);
+    }
+  };
+
   const handleDelete = async (ids: string | string[]) => {
     // Convert a single ID into an array if necessary
     const idsArray = Array.isArray(ids) ? ids : [ids];
@@ -180,13 +200,15 @@ function ExpensesTable() {
   const renderSortedExpenseRows = () => {
     if (userExpenses.length === 0) {
       return (
-        <p className="mb-4">
-          No expenses found for your account. <br></br>
-          Either you're a liar or you need to add some! <br></br> <br></br>
-          <Button variant="success" size="lg" onClick={toggleNewExpenseMode}>
-            Add Expense <PlusLg className="mb-1" />
-          </Button>
-        </p>
+        <>
+          <p className="mb-4 mt-5">
+            No expenses found for your account. <br></br>
+            Either you're a liar or you need to add some! <br></br> <br></br>
+            <Button variant="success" size="lg" onClick={toggleNewExpenseMode}>
+              Add Expense <PlusLg className="mb-1" />
+            </Button>
+          </p>
+        </>
       );
     }
     const sortedExpenses = userExpenses.sort(
@@ -243,43 +265,123 @@ function ExpensesTable() {
           <tbody>
             {sortedExpenses?.map((expense) => (
               <tr key={expense._id}>
-                <td>
-                  <Form.Check
-                    aria-label="select"
-                    className={styles.customCheck}
-                    checked={selectedExpenses.includes(expense._id)}
-                    onChange={() => handleSelect(expense._id)}
-                  />
-                </td>
-                <td>
-                  {new Date(expense.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </td>
-                <td>{expense.name}</td>
-                <td>{expense.description}</td>
-                <td>
-                  {expense.categoryName} {expense.icon}
-                </td>
-                <td className="text-end">
-                  ${(Number(expense.cost) || 0).toFixed(2)}
-                </td>
-                <td>
-                  <div className={styles.actionItems}>
-                    <Button variant="secondary" size="sm">
-                      <Pencil />
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDelete(expense._id)}
-                    >
-                      <Trash />
-                    </Button>
-                  </div>
-                </td>
+                {editingExpense._id === expense._id ? (
+                  <>
+                    <td></td>
+                    <td>
+                      <Form.Control
+                        type="date"
+                        name="date"
+                        value={
+                          editingExpense.date
+                            ? new Date(editingExpense.date).toLocaleDateString(
+                                'en-CA'
+                              )
+                            : ''
+                        }
+                        onChange={handleEditInputChange}
+                      />
+                    </td>
+                    <td>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                        value={editingExpense.name}
+                        onChange={handleEditInputChange}
+                      />
+                    </td>
+                    <td>
+                      <Form.Control
+                        type="text"
+                        name="description"
+                        placeholder="Description"
+                        value={editingExpense.description}
+                        onChange={handleEditInputChange}
+                      />
+                    </td>
+                    <td>
+                      <Form.Control
+                        type="text"
+                        name="categoryName"
+                        placeholder="Category"
+                        value={editingExpense.categoryName}
+                        onChange={handleEditInputChange}
+                      />
+                    </td>
+                    <td>
+                      <Form.Control
+                        type="number"
+                        name="cost"
+                        placeholder="Cost"
+                        value={editingExpense.cost}
+                        onChange={handleEditInputChange}
+                      />
+                    </td>
+                    <td>
+                      <div className={styles.actionItems}>
+                        <Button
+                          variant="success"
+                          size="sm"
+                          onClick={handleEditExpense}
+                        >
+                          <CheckLg />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => setEditingExpense(emptyExpenseForm)}
+                        >
+                          <XLg />
+                        </Button>
+                      </div>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>
+                      <Form.Check
+                        aria-label="select"
+                        className={styles.customCheck}
+                        checked={selectedExpenses.includes(expense._id)}
+                        onChange={() => handleSelect(expense._id)}
+                      />
+                    </td>
+                    <td>
+                      {new Date(expense.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </td>
+                    <td>{expense.name}</td>
+                    <td>{expense.description}</td>
+                    <td>
+                      {expense.categoryName} {expense.icon}
+                    </td>
+                    <td className="text-end">
+                      ${Number(expense.cost).toFixed(2)}
+                    </td>
+                    <td>
+                      <div className={styles.actionItems}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => setEditingExpense(expense)}
+                        >
+                          <Pencil />
+                        </Button>
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => handleDelete(expense._id)}
+                        >
+                          <Trash />
+                        </Button>
+                      </div>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
             {newExpenseMode ? (
@@ -295,7 +397,7 @@ function ExpensesTable() {
                           ? newExpense.date.toLocaleDateString('en-CA') // Localized to YYYY-MM-DD
                           : ''
                       }
-                      onChange={handleInputChange}
+                      onChange={handleNewInputChange}
                     />
                   </td>
                   <td>
@@ -304,7 +406,7 @@ function ExpensesTable() {
                       name="name"
                       placeholder="Name"
                       value={newExpense.name}
-                      onChange={handleInputChange}
+                      onChange={handleNewInputChange}
                       autoFocus
                     />
                   </td>
@@ -314,7 +416,7 @@ function ExpensesTable() {
                       name="description"
                       placeholder="Description"
                       value={newExpense.description}
-                      onChange={handleInputChange}
+                      onChange={handleNewInputChange}
                     />
                   </td>
                   <td>
@@ -323,7 +425,7 @@ function ExpensesTable() {
                       name="categoryName"
                       placeholder="Category"
                       value={newExpense.categoryName}
-                      onChange={handleInputChange}
+                      onChange={handleNewInputChange}
                     />
                   </td>
                   <td>
@@ -332,7 +434,7 @@ function ExpensesTable() {
                       name="cost"
                       placeholder="Cost"
                       value={newExpense.cost}
-                      onChange={handleInputChange}
+                      onChange={handleNewInputChange}
                     />
                   </td>
                   <td>
@@ -361,7 +463,10 @@ function ExpensesTable() {
             <tr>
               <th colSpan={5}>Total</th>
               <th colSpan={1} className="text-end">
-                ${userExpenseTotal}
+                $
+                {userExpenses
+                  .reduce((total, item) => total + Number(item.cost), 0)
+                  .toFixed(2)}
               </th>
               <th colSpan={1}></th>
             </tr>

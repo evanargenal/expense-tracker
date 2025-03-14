@@ -42,9 +42,36 @@ export const addExpense = async (
   }
 };
 
+export const editExpense = async (
+  id: string,
+  updates: Partial<{
+    name: string;
+    description: string;
+    cost: number | undefined;
+    date: Date | undefined;
+    categoryName: string;
+  }>
+) => {
+  try {
+    const response = await axios.patch(`${API_URL}/${id}`, updates, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error editing expense:', error);
+    throw error; // Re-throw so the component can handle it
+  }
+};
+
 export const deleteExpenses = async (ids: string[]) => {
   try {
-    const response = await axios.post(`${API_URL}/delete`, { ids });
+    const response = await axios.post(
+      `${API_URL}/delete`,
+      { ids },
+      {
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Failed to delete expense(s):', error);
