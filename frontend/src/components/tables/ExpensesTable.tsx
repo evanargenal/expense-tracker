@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   getExpenses,
+  getCategories,
   addExpense,
   editExpense,
   deleteExpenses,
 } from '../../services/expenseService';
+import ExpenseForm from './ExpenseForm';
 
 import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
@@ -14,9 +16,9 @@ import {
   Trash,
   Pencil,
   PlusLg,
-  XLg,
-  CheckLg,
+  DashLg,
   ArrowClockwise,
+  PencilFill,
 } from 'react-bootstrap-icons';
 
 import styles from './ExpensesTable.module.css';
@@ -33,6 +35,13 @@ function ExpensesTable() {
     userId: string;
   }
 
+  interface Category {
+    categoryId: string;
+    categoryName: string;
+    icon: string;
+    userId: string;
+  }
+
   const emptyExpenseForm: ExpenseItem = {
     _id: '',
     categoryName: '',
@@ -45,40 +54,25 @@ function ExpensesTable() {
   };
 
   const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
+  const [userCategories, setUserCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newExpenseMode, setNewExpenseMode] = useState(false);
   const [newExpense, setNewExpense] = useState<ExpenseItem>(emptyExpenseForm);
   const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
   const [editingExpense, setEditingExpense] =
     useState<ExpenseItem>(emptyExpenseForm);
+  const [editExpenseMode, setEditExpenseMode] = useState(false);
+
+  const toggleEditMode = () => {
+    setEditExpenseMode(!editExpenseMode);
+    setEditingExpense(emptyExpenseForm);
+    setSelectedExpenses([]);
+  };
 
   const toggleNewExpenseMode = () => {
     setNewExpenseMode(!newExpenseMode);
     setNewExpense(emptyExpenseForm);
   };
-
-  const handleExpenseInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setExpense: React.Dispatch<React.SetStateAction<ExpenseItem>>
-  ) => {
-    const { name, value, type } = e.target;
-
-    setExpense((prev) => ({
-      ...prev,
-      [name]:
-        type === 'date' && value
-          ? new Date(
-              new Date(value).toLocaleString('en-US', { timeZone: 'UTC' })
-            )
-          : value,
-    }));
-  };
-
-  const handleNewInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    handleExpenseInputChange(e, setNewExpense);
-
-  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    handleExpenseInputChange(e, setEditingExpense);
 
   // Toggle selection for a specific expense
   const handleSelect = (id: string) => {
@@ -98,6 +92,7 @@ function ExpensesTable() {
   const fetchUserExpenses = useCallback(async () => {
     try {
       const data = await getExpenses();
+      getUserCategories();
       setUserExpenses(data);
       setIsLoading(false);
     } catch (error) {
@@ -105,16 +100,20 @@ function ExpensesTable() {
     }
   }, []);
 
+  const getUserCategories = async () => {
+    try {
+      const data = await getCategories();
+      setUserCategories(data);
+    } catch (error) {
+      console.error('Error retrieving expenses for user:', error);
+    }
+  };
+
   useEffect(() => {
     fetchUserExpenses();
   }, [fetchUserExpenses]);
 
-  const handleAddExpense = async () => {
-    if (!newExpense.name || !newExpense.cost) {
-      alert('Name and cost are required!');
-      return;
-    }
-
+  const handleAddExpense = async (newExpense: ExpenseItem) => {
     const expenseToAdd: ExpenseItem = {
       ...newExpense,
       _id: Date.now().toString(), // Temporary ID until saved in the database
@@ -144,12 +143,7 @@ function ExpensesTable() {
     }
   };
 
-  const handleEditExpense = async () => {
-    if (!editingExpense.name || !editingExpense.cost) {
-      alert('Name and cost are required!');
-      return;
-    }
-    if (!editingExpense) return;
+  const handleEditExpense = async (editingExpense: ExpenseItem) => {
     try {
       // Ensure cost is a number and date is a proper Date object
       const sanitizedExpense = {
@@ -204,10 +198,51 @@ function ExpensesTable() {
           <p className="mb-4 mt-5">
             No expenses found for your account. <br></br>
             Either you're a liar or you need to add some! <br></br> <br></br>
-            <Button variant="success" size="lg" onClick={toggleNewExpenseMode}>
-              Add Expense <PlusLg className="mb-1" />
+            <Button
+              variant={newExpenseMode ? 'secondary' : 'success'}
+              size="lg"
+              onClick={toggleNewExpenseMode}
+            >
+              Add Expense{' '}
+              {newExpenseMode ? (
+                <DashLg className="mb-1" />
+              ) : (
+                <PlusLg className="mb-1" />
+              )}
             </Button>
           </p>
+          {newExpenseMode && (
+            <Table
+              className={styles.expensesTable}
+              responsive
+              striped
+              variant="dark"
+            >
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Category</th>
+                  <th>Cost</th>
+                  <th>Confirm?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <ExpenseForm
+                    expense={newExpense}
+                    userCategories={userCategories}
+                    onSave={handleAddExpense}
+                    onCancel={toggleNewExpenseMode}
+                    isEditing={false}
+                    selectedExpenses={selectedExpenses}
+                    onSelect={handleSelect}
+                  />
+                </tr>
+              </tbody>
+            </Table>
+          )}
         </>
       );
     }
@@ -218,135 +253,126 @@ function ExpensesTable() {
     return (
       <div>
         <div className={styles.bodyHeader}>
-          <Button variant="success" size="lg" onClick={toggleNewExpenseMode}>
-            <PlusLg className="mb-1" />
+          <Button
+            variant={newExpenseMode ? 'secondary' : 'success'}
+            size="lg"
+            onClick={toggleNewExpenseMode}
+          >
+            {newExpenseMode ? (
+              <DashLg className="mb-1" />
+            ) : (
+              <PlusLg className="mb-1" />
+            )}
           </Button>
-          <Button variant="secondary" size="lg" onClick={fetchUserExpenses}>
+          <Button
+            variant={editExpenseMode ? 'warning' : 'secondary'}
+            size="lg"
+            onClick={toggleEditMode}
+          >
+            <PencilFill className="mb-1" />
+          </Button>
+          {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
+          <Button
+            variant="outline-primary"
+            size="lg"
+            onClick={fetchUserExpenses}
+          >
             <ArrowClockwise className="mb-1" />
           </Button>
-          {selectedExpenses.length !== 0 ? (
+          {selectedExpenses.length !== 0 && (
             <Button
               variant="danger"
               size="lg"
               onClick={() => handleDelete(selectedExpenses)}
               disabled={selectedExpenses.length === 0}
             >
-              Delete Selected
+              Delete Selected ({selectedExpenses.length})
             </Button>
-          ) : (
-            <></>
           )}
         </div>
+        {newExpenseMode && (
+          <Table
+            className={styles.expensesTable}
+            responsive
+            striped
+            variant="dark"
+          >
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Cost</th>
+                <th>Confirm?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <ExpenseForm
+                  expense={newExpense}
+                  userCategories={userCategories}
+                  onSave={handleAddExpense}
+                  onCancel={toggleNewExpenseMode}
+                  isEditing={false}
+                  selectedExpenses={selectedExpenses}
+                  onSelect={handleSelect}
+                />
+              </tr>
+            </tbody>
+          </Table>
+        )}
         <Table
           className={styles.expensesTable}
           striped
           responsive
           variant="dark"
-          size="sm"
         >
           <thead>
             <tr>
-              <th>
-                <Form.Check
-                  aria-label="select all"
-                  className={styles.customCheck}
-                  checked={selectedExpenses.length === userExpenses.length}
-                  onChange={handleSelectAll}
-                />
-              </th>
+              {editExpenseMode && (
+                <th>
+                  <Form.Check
+                    aria-label="select all"
+                    className={styles.customCheck}
+                    checked={selectedExpenses.length === userExpenses.length}
+                    onChange={handleSelectAll}
+                  />
+                </th>
+              )}
               <th>Date</th>
               <th>Name</th>
               <th>Description</th>
               <th>Category</th>
               <th>Cost</th>
-              <th>Action</th>
+              {editExpenseMode && <th>Action</th>}
             </tr>
           </thead>
           <tbody>
             {sortedExpenses?.map((expense) => (
               <tr key={expense._id}>
                 {editingExpense._id === expense._id ? (
-                  <>
-                    <td></td>
-                    <td>
-                      <Form.Control
-                        type="date"
-                        name="date"
-                        value={
-                          editingExpense.date
-                            ? new Date(editingExpense.date).toLocaleDateString(
-                                'en-CA'
-                              )
-                            : ''
-                        }
-                        onChange={handleEditInputChange}
-                      />
-                    </td>
-                    <td>
-                      <Form.Control
-                        type="text"
-                        name="name"
-                        placeholder="Name"
-                        value={editingExpense.name}
-                        onChange={handleEditInputChange}
-                      />
-                    </td>
-                    <td>
-                      <Form.Control
-                        type="text"
-                        name="description"
-                        placeholder="Description"
-                        value={editingExpense.description}
-                        onChange={handleEditInputChange}
-                      />
-                    </td>
-                    <td>
-                      <Form.Control
-                        type="text"
-                        name="categoryName"
-                        placeholder="Category"
-                        value={editingExpense.categoryName}
-                        onChange={handleEditInputChange}
-                      />
-                    </td>
-                    <td>
-                      <Form.Control
-                        type="number"
-                        name="cost"
-                        placeholder="Cost"
-                        value={editingExpense.cost}
-                        onChange={handleEditInputChange}
-                      />
-                    </td>
-                    <td>
-                      <div className={styles.actionItems}>
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={handleEditExpense}
-                        >
-                          <CheckLg />
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => setEditingExpense(emptyExpenseForm)}
-                        >
-                          <XLg />
-                        </Button>
-                      </div>
-                    </td>
-                  </>
+                  <ExpenseForm
+                    expense={editingExpense}
+                    userCategories={userCategories}
+                    onSave={handleEditExpense}
+                    onCancel={() => setEditingExpense(emptyExpenseForm)}
+                    isEditing={true}
+                    selectedExpenses={selectedExpenses}
+                    onSelect={handleSelect}
+                  />
                 ) : (
                   <>
-                    <td>
-                      <Form.Check
-                        aria-label="select"
-                        className={styles.customCheck}
-                        checked={selectedExpenses.includes(expense._id)}
-                        onChange={() => handleSelect(expense._id)}
-                      />
-                    </td>
+                    {editExpenseMode && (
+                      <td>
+                        <Form.Check
+                          aria-label="select"
+                          className={styles.customCheck}
+                          checked={selectedExpenses.includes(expense._id)}
+                          onChange={() => handleSelect(expense._id)}
+                        />
+                      </td>
+                    )}
                     <td>
                       {new Date(expense.date).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -362,113 +388,40 @@ function ExpensesTable() {
                     <td className="text-end">
                       ${Number(expense.cost).toFixed(2)}
                     </td>
-                    <td>
-                      <div className={styles.actionItems}>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => setEditingExpense(expense)}
-                        >
-                          <Pencil />
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDelete(expense._id)}
-                        >
-                          <Trash />
-                        </Button>
-                      </div>
-                    </td>
+                    {editExpenseMode && (
+                      <td>
+                        <div className={styles.actionItems}>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setEditingExpense(expense)}
+                          >
+                            <Pencil />
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDelete(expense._id)}
+                          >
+                            <Trash />
+                          </Button>
+                        </div>
+                      </td>
+                    )}
                   </>
                 )}
               </tr>
             ))}
-            {newExpenseMode ? (
-              <>
-                <tr>
-                  <td></td>
-                  <td>
-                    <Form.Control
-                      type="date"
-                      name="date"
-                      value={
-                        newExpense.date instanceof Date
-                          ? newExpense.date.toLocaleDateString('en-CA') // Localized to YYYY-MM-DD
-                          : ''
-                      }
-                      onChange={handleNewInputChange}
-                    />
-                  </td>
-                  <td>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      placeholder="Name"
-                      value={newExpense.name}
-                      onChange={handleNewInputChange}
-                      autoFocus
-                    />
-                  </td>
-                  <td>
-                    <Form.Control
-                      type="text"
-                      name="description"
-                      placeholder="Description"
-                      value={newExpense.description}
-                      onChange={handleNewInputChange}
-                    />
-                  </td>
-                  <td>
-                    <Form.Control
-                      type="text"
-                      name="categoryName"
-                      placeholder="Category"
-                      value={newExpense.categoryName}
-                      onChange={handleNewInputChange}
-                    />
-                  </td>
-                  <td>
-                    <Form.Control
-                      type="number"
-                      name="cost"
-                      placeholder="Cost"
-                      value={newExpense.cost}
-                      onChange={handleNewInputChange}
-                    />
-                  </td>
-                  <td>
-                    <div className={styles.actionItems}>
-                      <Button
-                        variant="success"
-                        size="sm"
-                        onClick={handleAddExpense}
-                      >
-                        <CheckLg />
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={toggleNewExpenseMode}
-                      >
-                        <XLg />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              </>
-            ) : (
-              <></>
-            )}
             <tr>
-              <th colSpan={5}>Total</th>
+              {editExpenseMode && <th colSpan={1}></th>}
+              <th colSpan={4}>Total</th>
               <th colSpan={1} className="text-end">
                 $
                 {userExpenses
                   .reduce((total, item) => total + Number(item.cost), 0)
                   .toFixed(2)}
               </th>
-              <th colSpan={1}></th>
+              {editExpenseMode && <th colSpan={1}></th>}
             </tr>
           </tbody>
         </Table>

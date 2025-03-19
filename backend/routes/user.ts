@@ -10,9 +10,9 @@ const connectDB = require('../database/db');
 router.get('/', async (req: Request, res: Response) => {
   try {
     const db = await connectDB();
-    const collection = db.collection('users');
+    const usersCollection = db.collection('users');
 
-    const users = await collection.find().toArray();
+    const users = await usersCollection.find().toArray();
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
@@ -25,9 +25,9 @@ router.get('/:id', async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
     const db = await connectDB();
-    const collection = db.collection('users');
+    const usersCollection = db.collection('users');
 
-    const user = await collection.findOne({ _id: new ObjectId(userId) });
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }

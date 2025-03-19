@@ -30,9 +30,9 @@ router.get(
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
     const db = await connectDB();
-    const collection = db.collection('users');
+    const usersCollection = db.collection('users');
     // Retrieve most up to date user info
-    const user = await collection.findOne({
+    const user = await usersCollection.findOne({
       _id: new ObjectId(req.user?.userId),
     });
     if (!user) {
@@ -44,6 +44,7 @@ router.get(
       fullName: user.fullName,
       email: user.email,
       isAdmin: user.isAdmin,
+      hiddenCategories: user.hiddenCategories,
     });
   }
 );
@@ -61,10 +62,10 @@ router.post('/login', async (req: Request, res: Response) => {
 
   try {
     const db = await connectDB();
-    const collection = db.collection('users');
+    const usersCollection = db.collection('users');
 
     // Find user by email
-    const user = await collection.findOne({ email });
+    const user = await usersCollection.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'User does not exist' });
     }
@@ -95,6 +96,7 @@ router.post('/login', async (req: Request, res: Response) => {
       fullName: user.fullName,
       email: user.email,
       isAdmin: user.isAdmin,
+      hiddenCategories: user.hiddenCategories,
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -114,10 +116,10 @@ router.post('/register', async (req: Request, res: Response) => {
 
   try {
     const db = await connectDB();
-    const collection = db.collection('users');
+    const usersCollection = db.collection('users');
 
     // Check if the user already exists
-    const existingUser = await collection.findOne({ email });
+    const existingUser = await usersCollection.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -132,10 +134,11 @@ router.post('/register', async (req: Request, res: Response) => {
       email,
       password: hashedPassword,
       isAdmin,
+      hiddenCategories: [],
     };
 
     // Insert user into the database
-    const result = await collection.insertOne(newUser);
+    const result = await usersCollection.insertOne(newUser);
 
     // Generate JWT token
     const tokenPayload = {
@@ -157,6 +160,7 @@ router.post('/register', async (req: Request, res: Response) => {
       fullName: fullName,
       email: email,
       isAdmin: false,
+      hiddenCategories: [],
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });

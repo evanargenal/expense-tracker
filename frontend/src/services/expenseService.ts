@@ -14,6 +14,18 @@ export const getExpenses = async () => {
   }
 };
 
+export const getCategories = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/categories`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    throw error; // Re-throw so the component can handle it
+  }
+};
+
 export const addExpense = async (
   name: string,
   description: string,

@@ -32,7 +32,7 @@ interface ExpenseItem {
   userId: string;
 }
 
-// Get all expenses for current user (auth)
+// Get current user's expenses (auth)
 // GET /api/expenses
 router.get(
   '/',
@@ -43,12 +43,13 @@ router.get(
       if (!req.user) {
         return res.status(404).json({ error: 'User not found' });
       }
+      const expensesCollection = db.collection('expenses');
+
       const currentUserId = req.user.userId;
-      const result = await db
-        .collection('expenses')
+      const result = await expensesCollection
         .aggregate([
           {
-            $match: { userId: new ObjectId(String(currentUserId)) }, // Filter by userId before lookup
+            $match: { userId: new ObjectId(currentUserId) }, // Filter by userId before lookup
           },
           {
             $addFields: {
@@ -107,6 +108,63 @@ router.get(
   }
 );
 
+// Get current user's categories (auth)
+// GET /api/categories
+router.get(
+  '/categories',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const db = await connectDB();
+      if (!req.user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      const usersCollection = db.collection('users');
+      const categoriesCollection = db.collection('categories');
+
+      const currentUserId = req.user.userId;
+      const currentUser = await usersCollection.findOne(
+        { _id: new ObjectId(currentUserId) },
+        { projection: { hiddenCategories: 1 } }
+      );
+
+      const userHiddenCategories = currentUser.hiddenCategories;
+
+      const result = await categoriesCollection
+        .aggregate([
+          {
+            $match: {
+              $or: [
+                { userId: new ObjectId(currentUserId) },
+                { userId: new ObjectId('000000000000000000000000') },
+              ], // Get user-specific and default categories
+            },
+          },
+          {
+            $match: { _id: { $nin: userHiddenCategories } }, // Exclude hidden ones
+          },
+          {
+            $sort: { userId: -1, categoryName: 1 }, // Prioritize user created categories, then alphabetize
+          },
+          {
+            $project: {
+              _id: 0, // Exclude MongoDB default _id field
+              categoryId: '$_id', // Rename _id to categoryId
+              categoryName: 1,
+              icon: 1,
+              userId: 1, // Include userId to differentiate between user-specific & default categories
+            },
+          },
+        ])
+        .toArray();
+
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  }
+);
+
 // Add expense to current user (auth)
 // POST /api/expenses
 router.post(
@@ -126,12 +184,12 @@ router.post(
     try {
       const db = await connectDB();
       const expensesCollection = db.collection('expenses');
-      const categoryCollection = db.collection('categories');
+      const categoriesCollection = db.collection('categories');
 
       // Find the category ID by category name
       const categoryId = await getCategoryIdByName(
         categoryName,
-        categoryCollection
+        categoriesCollection
       );
 
       // Create new expense object
@@ -140,7 +198,7 @@ router.post(
         description,
         cost: new Double(cost), // Ensure cost is always a double
         date: new Date(date),
-        userId: new ObjectId(String(currentUserId)),
+        userId: new ObjectId(currentUserId),
         categoryId: categoryId,
       };
 
@@ -212,13 +270,13 @@ router.patch(
     try {
       const db = await connectDB();
       const expensesCollection = db.collection('expenses');
-      const categoryCollection = db.collection('categories');
+      const categoriesCollection = db.collection('categories');
 
       // Validate 'categoryName' field if it exists
       if (filteredUpdates.categoryName !== undefined) {
         const validatedCategoryId = await getCategoryIdByName(
           String(filteredUpdates.categoryName),
-          categoryCollection
+          categoriesCollection
         );
         // Assign the retrieved categoryId to filteredUpdates
         filteredUpdates.categoryId = validatedCategoryId;
@@ -229,7 +287,7 @@ router.patch(
 
       // Delete expense fields by ID in the database
       const result = await expensesCollection.updateOne(
-        { _id: new ObjectId(String(expenseId)) },
+        { _id: new ObjectId(expenseId) },
         { $set: filteredUpdates } // Only updates the fields provided
       );
 
@@ -297,7 +355,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 
     // Delete expense by ID in the database
     const result = await expensesCollection.deleteOne({
-      _id: new ObjectId(String(expenseId)),
+      _id: new ObjectId(expenseId),
     });
 
     // If expense doesn't exist in database
