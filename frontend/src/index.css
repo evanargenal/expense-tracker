@@ -23,3 +23,8 @@ code {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.nav-underline .nav-link.active,
+.nav-underline .show > .nav-link {
+  color: white !important;
+}

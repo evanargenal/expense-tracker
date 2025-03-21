@@ -1,7 +1,7 @@
 import './pages.css';
 import styles from './Dashboard.module.css';
 import Header from '../components/header/Header';
-import TableExpenses from '../components/tables/ExpensesTable';
+import ExpensesTable from '../components/tables/ExpensesTable';
 
 function Dashboard() {
   return (
@@ -12,7 +12,7 @@ function Dashboard() {
         </div>
         <div className="App-body" style={{ justifyContent: 'unset' }}>
           <div className={styles.tableExpenses}>
-            <TableExpenses></TableExpenses>
+            <ExpensesTable></ExpensesTable>
           </div>
         </div>
       </div>

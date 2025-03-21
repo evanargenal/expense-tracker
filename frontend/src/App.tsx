@@ -8,6 +8,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import NoMatch from './pages/NoMatch';
+import Categories from './pages/Categories';
 
 function App() {
   const { user, loading } = useAuth();
@@ -29,6 +30,10 @@ function App() {
       <Route
         path="/dashboard"
         element={user ? <Dashboard /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/categories"
+        element={user ? <Categories /> : <Navigate to="/" />}
       />
       <Route path="*" element={<NoMatch />} />
     </Routes>

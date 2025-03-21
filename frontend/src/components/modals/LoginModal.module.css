@@ -1,8 +1,3 @@
-.loginButton {
-  position: absolute;
-  right: 50px;
-}
-
 .modalHeader {
   display: flex;
   flex-direction: row;

@@ -2,6 +2,7 @@ import { useAuth } from '../../context/AuthContext';
 
 import styles from './Header.module.css';
 import LoginModal from '../modals/LoginModal';
+import TabNavigation from '../tabs/TabNavigation';
 
 function Header() {
   const { user } = useAuth();
@@ -10,11 +11,17 @@ function Header() {
     <>
       <div className={styles.headerContainer}>
         {user && (
-          <p>
-            Logged in as: {user.fullName}{' '}
-            {user.isAdmin && '(You are an admin!)'}
+          <p className="mb-1">
+            {user.fullName} {user.isAdmin && '(Admin)'}
           </p>
         )}
+        {user && (
+          <div className={styles.tabContainer}>
+            <TabNavigation />
+          </div>
+        )}
+      </div>
+      <div className={styles.logInLogOutButtonContainer}>
         <LoginModal />
       </div>
     </>

@@ -128,11 +128,7 @@ function LoginModal() {
 
   return (
     <>
-      <Button
-        className={styles.loginButton}
-        variant="primary"
-        onClick={!user ? handleShow : handleLogout}
-      >
+      <Button variant="primary" onClick={!user ? handleShow : handleLogout}>
         {!user ? 'Log In' : 'Log Out'}
       </Button>
       <Modal show={showLoginModal} onHide={handleClose}>
