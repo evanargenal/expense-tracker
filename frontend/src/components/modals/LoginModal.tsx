@@ -6,6 +6,7 @@ import {
   registerUser,
   logoutUser,
 } from '../../services/authService';
+import { FormData } from '../../types/types';
 
 import Button from 'react-bootstrap/Button';
 import CloseButton from 'react-bootstrap/CloseButton';
@@ -13,12 +14,6 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
 import styles from './LoginModal.module.css';
-
-interface FormData {
-  fullName: string;
-  email: string;
-  password: string;
-}
 
 function LoginModal() {
   const navigate = useNavigate();

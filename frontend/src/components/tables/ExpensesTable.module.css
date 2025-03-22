@@ -1,13 +1,3 @@
-.bodyHeader {
-  position: relative;
-  display: flex;
-  flex-direction: row-reverse;
-  padding-right: 5px;
-  align-items: center;
-  padding: 15px;
-  gap: 10px;
-}
-
 .expensesTable th {
   vertical-align: middle;
   font-size: calc(10px + 1.5vmin);

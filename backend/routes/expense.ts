@@ -7,29 +7,12 @@ const { ObjectId } = require('mongodb');
 const connectDB = require('../database/db');
 import { validateDate, validateCost } from '../utils/validators';
 import { getCategoryIdByName } from '../utils/dbUtils';
+import { AuthenticatedUser, ExpenseItem } from '../types/types';
 
 const authenticateToken = require('../middleware/authMiddleware');
 
-interface AuthenticatedUser {
-  userId: string;
-  email: string;
-  fullName: string;
-  isAdmin: boolean;
-}
-
 interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
-}
-
-interface ExpenseItem {
-  _id: string;
-  categoryName: string;
-  cost: number;
-  date: Date;
-  description: string;
-  icon: string;
-  name: string;
-  userId: string;
 }
 
 // Get current user's expenses (auth)

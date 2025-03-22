@@ -7,13 +7,7 @@ import {
   useCallback,
 } from 'react';
 import { validateUser } from '../services/authService';
-
-interface User {
-  userId: string;
-  email: string;
-  fullName: string;
-  isAdmin: boolean;
-}
+import { User } from '../types/types';
 
 interface AuthContextType {
   user: User | null;

@@ -1,0 +1,9 @@
+.tableHeader {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  padding-right: 5px;
+  align-items: center;
+  padding: 15px;
+  gap: 10px;
+}

@@ -3,25 +3,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { CheckLg, XLg } from 'react-bootstrap-icons';
 
+import { ExpenseItem, Category } from '../../types/types';
+
 import styles from './ExpensesTable.module.css';
-
-interface ExpenseItem {
-  _id: string;
-  categoryName: string;
-  cost: string; // Converts to number before submitting API call
-  date: Date;
-  description: string;
-  icon: string;
-  name: string;
-  userId: string;
-}
-
-interface Category {
-  categoryId: string;
-  categoryName: string;
-  icon: string;
-  userId: string;
-}
 
 interface ExpenseFormProps {
   expense: ExpenseItem;

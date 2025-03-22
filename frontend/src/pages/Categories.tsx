@@ -1,7 +1,7 @@
 import './pages.css';
-import styles from './Categories.module.css';
+// import styles from './Categories.module.css';
 import Header from '../components/header/Header';
-import CategoriesTable from '../components/tables/CategoriesTable';
+// import CategoriesTable from '../components/tables/CategoriesTable';
 
 function Categories() {
   return (

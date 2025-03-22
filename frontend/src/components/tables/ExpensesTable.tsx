@@ -7,41 +7,18 @@ import {
   deleteExpenses,
 } from '../../services/expenseService';
 import ExpenseForm from './ExpenseForm';
+import ExpensesTableHeader from './ExpensesTableHeader';
+import { ExpenseItem, Category } from '../../types/types';
 
 import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {
-  Trash,
-  Pencil,
-  PlusLg,
-  DashLg,
-  ArrowClockwise,
-  PencilFill,
-} from 'react-bootstrap-icons';
+import { Trash, Pencil, PlusLg, DashLg } from 'react-bootstrap-icons';
 
 import styles from './ExpensesTable.module.css';
 
 function ExpensesTable() {
-  interface ExpenseItem {
-    _id: string;
-    categoryName: string;
-    cost: string; // Converts to number before submitting API call
-    date: Date;
-    description: string;
-    icon: string;
-    name: string;
-    userId: string;
-  }
-
-  interface Category {
-    categoryId: string;
-    categoryName: string;
-    icon: string;
-    userId: string;
-  }
-
   const emptyExpenseForm: ExpenseItem = {
     _id: '',
     categoryName: '',
@@ -119,8 +96,6 @@ function ExpensesTable() {
       _id: Date.now().toString(), // Temporary ID until saved in the database
       date: newExpense.date ? new Date(newExpense.date) : new Date(), // Ensure it's a Date object
       cost: newExpense.cost,
-      userId: '', // Set userId (will be assigned during API call)
-      icon: '', // Ensure icon has a default value (will be pulled from API call)
     };
 
     try {
@@ -252,44 +227,15 @@ function ExpensesTable() {
     );
     return (
       <div>
-        <div className={styles.bodyHeader}>
-          <Button
-            variant={newExpenseMode ? 'secondary' : 'success'}
-            size="lg"
-            onClick={toggleNewExpenseMode}
-          >
-            {newExpenseMode ? (
-              <DashLg className="mb-1" />
-            ) : (
-              <PlusLg className="mb-1" />
-            )}
-          </Button>
-          <Button
-            variant={editExpenseMode ? 'warning' : 'secondary'}
-            size="lg"
-            onClick={toggleEditMode}
-          >
-            <PencilFill className="mb-1" />
-          </Button>
-          {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
-          <Button
-            variant="outline-primary"
-            size="lg"
-            onClick={fetchUserExpenses}
-          >
-            <ArrowClockwise className="mb-1" />
-          </Button>
-          {selectedExpenses.length !== 0 && (
-            <Button
-              variant="danger"
-              size="lg"
-              onClick={() => handleDelete(selectedExpenses)}
-              disabled={selectedExpenses.length === 0}
-            >
-              Delete Selected ({selectedExpenses.length})
-            </Button>
-          )}
-        </div>
+        <ExpensesTableHeader
+          newExpenseMode={newExpenseMode}
+          toggleNewExpenseMode={toggleNewExpenseMode}
+          editExpenseMode={editExpenseMode}
+          toggleEditMode={toggleEditMode}
+          selectedExpenses={selectedExpenses}
+          handleDelete={() => handleDelete(selectedExpenses)}
+          fetchUserExpenses={fetchUserExpenses}
+        />
         {newExpenseMode && (
           <Table
             className={styles.expensesTable}

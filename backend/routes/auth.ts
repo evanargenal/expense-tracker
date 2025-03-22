@@ -12,12 +12,7 @@ const connectDB = require('../database/db');
 
 const authenticateToken = require('../middleware/authMiddleware');
 
-interface AuthenticatedUser {
-  userId: string;
-  email: string;
-  fullName: string;
-  isAdmin: boolean;
-}
+import { AuthenticatedUser } from '../types/types';
 
 interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;

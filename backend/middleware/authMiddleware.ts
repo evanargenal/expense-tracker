@@ -2,15 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
+import { AuthenticatedUser } from '../types/types';
 
 const jwt_secret = process.env.JWT_SECRET!;
-
-interface AuthenticatedUser {
-  userId: string;
-  email: string;
-  exp: number;
-  iat: number;
-}
 
 interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
