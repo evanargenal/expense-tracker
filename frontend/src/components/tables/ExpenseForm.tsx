@@ -5,7 +5,7 @@ import { CheckLg, XLg } from 'react-bootstrap-icons';
 
 import { ExpenseItem, Category } from '../../types/types';
 
-import styles from './ExpensesTable.module.css';
+import styles from './TableStyle.module.css';
 
 interface ExpenseFormProps {
   expense: ExpenseItem;

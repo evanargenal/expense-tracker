@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
+import Table from 'react-bootstrap/Table';
+import Placeholder from 'react-bootstrap/Placeholder';
+import Form from 'react-bootstrap/Form';
+
 import {
   getExpenses,
   getCategories,
@@ -6,29 +10,17 @@ import {
   editExpense,
   deleteExpenses,
 } from '../../services/expenseService';
-import ExpenseForm from './ExpenseForm';
 import ExpensesTableHeader from './ExpensesTableHeader';
+import NoExpensesMessage from './NoExpensesMessage';
+import NewExpenseTableForm from './NewExpenseTableForm';
+import ExpenseRow from './ExpenseRow';
 import { ExpenseItem, Category } from '../../types/types';
+import { getEmptyExpenseItem } from '../../utils/expenseUtils';
 
-import Table from 'react-bootstrap/Table';
-import Placeholder from 'react-bootstrap/Placeholder';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import { Trash, Pencil, PlusLg, DashLg } from 'react-bootstrap-icons';
-
-import styles from './ExpensesTable.module.css';
+import styles from './TableStyle.module.css';
 
 function ExpensesTable() {
-  const emptyExpenseForm: ExpenseItem = {
-    _id: '',
-    categoryName: '',
-    cost: '',
-    date: new Date(new Date().setHours(0, 0, 0, 0)), // Set today's date at midnight in local timezone
-    description: '',
-    icon: '',
-    name: '',
-    userId: '',
-  };
+  const emptyExpenseForm = getEmptyExpenseItem();
 
   const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
   const [userCategories, setUserCategories] = useState<Category[]>([]);
@@ -36,9 +28,9 @@ function ExpensesTable() {
   const [newExpenseMode, setNewExpenseMode] = useState(false);
   const [newExpense, setNewExpense] = useState<ExpenseItem>(emptyExpenseForm);
   const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
+  const [editExpenseMode, setEditExpenseMode] = useState(false);
   const [editingExpense, setEditingExpense] =
     useState<ExpenseItem>(emptyExpenseForm);
-  const [editExpenseMode, setEditExpenseMode] = useState(false);
 
   const toggleEditMode = () => {
     setEditExpenseMode(!editExpenseMode);
@@ -51,7 +43,6 @@ function ExpensesTable() {
     setNewExpense(emptyExpenseForm);
   };
 
-  // Toggle selection for a specific expense
   const handleSelect = (id: string) => {
     setSelectedExpenses((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -91,26 +82,14 @@ function ExpensesTable() {
   }, [fetchUserExpenses]);
 
   const handleAddExpense = async (newExpense: ExpenseItem) => {
-    const expenseToAdd: ExpenseItem = {
-      ...newExpense,
-      _id: Date.now().toString(), // Temporary ID until saved in the database
-      date: newExpense.date ? new Date(newExpense.date) : new Date(), // Ensure it's a Date object
-      cost: newExpense.cost,
-    };
-
     try {
-      const response = await addExpense(
+      await addExpense(
         newExpense.name,
         newExpense.description,
         Number(newExpense.cost),
         newExpense.date,
         newExpense.categoryName
       );
-
-      if (response.status < 200 || response.status >= 300)
-        throw new Error('Failed to add expense');
-
-      setUserExpenses((prev) => [...prev, expenseToAdd]); // Add to state
       toggleNewExpenseMode();
       fetchUserExpenses();
     } catch (error) {
@@ -151,82 +130,41 @@ function ExpensesTable() {
 
     try {
       await deleteExpenses(idsArray);
-
-      // Remove deleted expenses from userExpenses and selectedExpenses arrays
-      setUserExpenses((prevExpenses) =>
-        prevExpenses.filter((expense) => !idsArray.includes(expense._id))
-      );
-      setSelectedExpenses((prevSelected) =>
-        prevSelected.filter((id) => !idsArray.includes(id))
-      );
-
       fetchUserExpenses();
     } catch (error) {
       console.error('Failed to delete expense(s):', error);
     }
   };
 
-  const renderSortedExpenseRows = () => {
-    if (userExpenses.length === 0) {
-      return (
-        <>
-          <p className="mb-4 mt-5">
-            No expenses found for your account. <br></br>
-            Either you're a liar or you need to add some! <br></br> <br></br>
-            <Button
-              variant={newExpenseMode ? 'secondary' : 'success'}
-              size="lg"
-              onClick={toggleNewExpenseMode}
-            >
-              Add Expense{' '}
-              {newExpenseMode ? (
-                <DashLg className="mb-1" />
-              ) : (
-                <PlusLg className="mb-1" />
-              )}
-            </Button>
-          </p>
-          {newExpenseMode && (
-            <Table
-              className={styles.expensesTable}
-              responsive
-              striped
-              variant="dark"
-            >
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Category</th>
-                  <th>Cost</th>
-                  <th>Confirm?</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <ExpenseForm
-                    expense={newExpense}
-                    userCategories={userCategories}
-                    onSave={handleAddExpense}
-                    onCancel={toggleNewExpenseMode}
-                    isEditing={false}
-                    selectedExpenses={selectedExpenses}
-                    onSelect={handleSelect}
-                  />
-                </tr>
-              </tbody>
-            </Table>
-          )}
-        </>
-      );
-    }
-    const sortedExpenses = userExpenses.sort(
-      (a: { date: Date }, b: { date: Date }): number =>
-        new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+  const renderNoExpenses = () => {
     return (
-      <div>
+      <>
+        <NoExpensesMessage
+          newExpenseMode={newExpenseMode}
+          toggleNewExpenseMode={toggleNewExpenseMode}
+        />
+        {newExpenseMode && (
+          <NewExpenseTableForm
+            newExpense={newExpense}
+            userCategories={userCategories}
+            handleAddExpense={handleAddExpense}
+            toggleNewExpenseMode={toggleNewExpenseMode}
+            selectedExpenses={selectedExpenses}
+            handleSelect={handleSelect}
+          />
+        )}
+      </>
+    );
+  };
+
+  const sortedExpenses = userExpenses.sort(
+    (a: { date: Date }, b: { date: Date }): number =>
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
+  const renderSortedExpenseRows = () => {
+    return (
+      <>
         <ExpensesTableHeader
           newExpenseMode={newExpenseMode}
           toggleNewExpenseMode={toggleNewExpenseMode}
@@ -236,37 +174,15 @@ function ExpensesTable() {
           handleDelete={() => handleDelete(selectedExpenses)}
           fetchUserExpenses={fetchUserExpenses}
         />
-        {newExpenseMode && (
-          <Table
-            className={styles.expensesTable}
-            responsive
-            striped
-            variant="dark"
-          >
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Cost</th>
-                <th>Confirm?</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <ExpenseForm
-                  expense={newExpense}
-                  userCategories={userCategories}
-                  onSave={handleAddExpense}
-                  onCancel={toggleNewExpenseMode}
-                  isEditing={false}
-                  selectedExpenses={selectedExpenses}
-                  onSelect={handleSelect}
-                />
-              </tr>
-            </tbody>
-          </Table>
+        {newExpenseMode && ( // Add new expense form
+          <NewExpenseTableForm
+            newExpense={newExpense}
+            userCategories={userCategories}
+            handleAddExpense={handleAddExpense}
+            toggleNewExpenseMode={toggleNewExpenseMode}
+            selectedExpenses={selectedExpenses}
+            handleSelect={handleSelect}
+          />
         )}
         <Table
           className={styles.expensesTable}
@@ -296,89 +212,42 @@ function ExpensesTable() {
           </thead>
           <tbody>
             {sortedExpenses?.map((expense) => (
-              <tr key={expense._id}>
-                {editingExpense._id === expense._id ? (
-                  <ExpenseForm
-                    expense={editingExpense}
-                    userCategories={userCategories}
-                    onSave={handleEditExpense}
-                    onCancel={() => setEditingExpense(emptyExpenseForm)}
-                    isEditing={true}
-                    selectedExpenses={selectedExpenses}
-                    onSelect={handleSelect}
-                  />
-                ) : (
-                  <>
-                    {editExpenseMode && (
-                      <td>
-                        <Form.Check
-                          aria-label="select"
-                          className={styles.customCheck}
-                          checked={selectedExpenses.includes(expense._id)}
-                          onChange={() => handleSelect(expense._id)}
-                        />
-                      </td>
-                    )}
-                    <td>
-                      {new Date(expense.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </td>
-                    <td>{expense.name}</td>
-                    <td>{expense.description}</td>
-                    <td>
-                      {expense.categoryName} {expense.icon}
-                    </td>
-                    <td className="text-end">
-                      ${Number(expense.cost).toFixed(2)}
-                    </td>
-                    {editExpenseMode && (
-                      <td>
-                        <div className={styles.actionItems}>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => setEditingExpense(expense)}
-                          >
-                            <Pencil />
-                          </Button>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => handleDelete(expense._id)}
-                          >
-                            <Trash />
-                          </Button>
-                        </div>
-                      </td>
-                    )}
-                  </>
-                )}
-              </tr>
+              <ExpenseRow
+                key={expense._id}
+                expense={expense}
+                isEditing={editingExpense._id === expense._id}
+                editExpenseMode={editExpenseMode}
+                selectedExpenses={selectedExpenses}
+                userCategories={userCategories}
+                setEditingExpense={setEditingExpense}
+                handleDelete={handleDelete}
+                handleSelect={handleSelect}
+                handleEditExpense={handleEditExpense} // Pass handleAddExpense for ExpenseForm
+              />
             ))}
             <tr>
-              {editExpenseMode && <th colSpan={1}></th>}
-              <th colSpan={4}>Total</th>
-              <th colSpan={1} className="text-end">
+              <th colSpan={editExpenseMode ? 5 : 4}>Total</th>
+              <th colSpan={editExpenseMode ? 2 : 1} className="text-end">
                 $
                 {userExpenses
                   .reduce((total, item) => total + Number(item.cost), 0)
                   .toFixed(2)}
               </th>
-              {editExpenseMode && <th colSpan={1}></th>}
             </tr>
           </tbody>
         </Table>
-      </div>
+      </>
     );
   };
 
   return (
     <>
       {!isLoading ? (
-        renderSortedExpenseRows()
+        userExpenses.length === 0 ? (
+          renderNoExpenses()
+        ) : (
+          renderSortedExpenseRows()
+        )
       ) : (
         <div className="mb-4">
           <Placeholder as="p" animation="wave">
