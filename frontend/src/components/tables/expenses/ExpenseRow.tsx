@@ -1,9 +1,9 @@
 import { Button, Form } from 'react-bootstrap';
 import { Trash, Pencil } from 'react-bootstrap-icons';
-import { ExpenseItem, Category } from '../../types/types';
-import { getEmptyExpenseItem } from '../../utils/expenseUtils';
+import { ExpenseItem, Category } from '../../../types/types';
+import { getEmptyExpenseItem } from '../../../utils/expenseUtils';
 import ExpenseForm from './ExpenseForm';
-import styles from './TableStyle.module.css';
+import styles from '../TableStyle.module.css';
 
 interface ExpenseRowProps {
   expense: ExpenseItem;

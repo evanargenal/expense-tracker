@@ -1,7 +1,7 @@
 import Table from 'react-bootstrap/Table';
-import ExpenseForm from './expenses/ExpenseForm';
-import { ExpenseItem, Category } from '../../types/types';
-import styles from './TableStyle.module.css';
+import ExpenseForm from './ExpenseForm';
+import { ExpenseItem, Category } from '../../../types/types';
+import styles from '../TableStyle.module.css';
 
 interface NewExpenseTableFormProps {
   newExpense: ExpenseItem;

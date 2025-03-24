@@ -54,7 +54,7 @@ function LoginModal() {
     setFormData(emptyFormData);
   };
 
-  const handleSubmit = async (
+  const handleLoginOrRegister = async (
     formData: FormData,
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -138,7 +138,7 @@ function LoginModal() {
           <Form
             noValidate
             validated={validated}
-            onSubmit={(event) => handleSubmit(formData, event)}
+            onSubmit={(event) => handleLoginOrRegister(formData, event)}
           >
             {!isLoginPage && (
               <Form.Group style={{ paddingBottom: '10px' }}>

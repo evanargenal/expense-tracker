@@ -1,47 +1,33 @@
-import { useState, useEffect, useCallback } from 'react';
 import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 
-import {
-  getExpenses,
-  getCategories,
-  addExpense,
-  editExpense,
-  deleteExpenses,
-} from '../../services/expenseService';
 import ExpensesTableHeader from './ExpensesTableHeader';
 import NoExpensesMessage from './NoExpensesMessage';
 import NewExpenseTableForm from './NewExpenseTableForm';
 import ExpenseRow from './ExpenseRow';
-import { ExpenseItem, Category } from '../../types/types';
-import { getEmptyExpenseItem } from '../../utils/expenseUtils';
+import { useExpenses } from '../../../hooks/expenses/useExpenses';
+import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
 
-import styles from './TableStyle.module.css';
+import styles from '../TableStyle.module.css';
 
 function ExpensesTable() {
-  const emptyExpenseForm = getEmptyExpenseItem();
-
-  const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
-  const [userCategories, setUserCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [newExpenseMode, setNewExpenseMode] = useState(false);
-  const [newExpense, setNewExpense] = useState<ExpenseItem>(emptyExpenseForm);
-  const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
-  const [editExpenseMode, setEditExpenseMode] = useState(false);
-  const [editingExpense, setEditingExpense] =
-    useState<ExpenseItem>(emptyExpenseForm);
-
-  const toggleEditMode = () => {
-    setEditExpenseMode(!editExpenseMode);
-    setEditingExpense(emptyExpenseForm);
-    setSelectedExpenses([]);
-  };
-
-  const toggleNewExpenseMode = () => {
-    setNewExpenseMode(!newExpenseMode);
-    setNewExpense(emptyExpenseForm);
-  };
+  const { userExpenses, userCategories, isLoading, fetchUserExpenses } =
+    useExpenses();
+  const {
+    newExpenseMode,
+    toggleNewExpenseMode,
+    newExpense,
+    editExpenseMode,
+    toggleEditMode,
+    editingExpense,
+    setEditingExpense,
+    selectedExpenses,
+    setSelectedExpenses,
+    handleAddExpense,
+    handleEditExpense,
+    handleDelete,
+  } = useExpenseActions(fetchUserExpenses);
 
   const handleSelect = (id: string) => {
     setSelectedExpenses((prev) =>
@@ -54,85 +40,6 @@ function ExpensesTable() {
       setSelectedExpenses([]);
     } else {
       setSelectedExpenses(userExpenses.map((expense) => expense._id));
-    }
-  };
-
-  const fetchUserExpenses = useCallback(async () => {
-    try {
-      const data = await getExpenses();
-      getUserCategories();
-      setUserExpenses(data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error retrieving expenses for user:', error);
-    }
-  }, []);
-
-  const getUserCategories = async () => {
-    try {
-      const data = await getCategories();
-      setUserCategories(data);
-    } catch (error) {
-      console.error('Error retrieving expenses for user:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserExpenses();
-  }, [fetchUserExpenses]);
-
-  const handleAddExpense = async (newExpense: ExpenseItem) => {
-    try {
-      await addExpense(
-        newExpense.name,
-        newExpense.description,
-        Number(newExpense.cost),
-        newExpense.date,
-        newExpense.categoryName
-      );
-      toggleNewExpenseMode();
-      fetchUserExpenses();
-    } catch (error) {
-      console.error('Error adding expense:', error);
-    }
-  };
-
-  const handleEditExpense = async (editingExpense: ExpenseItem) => {
-    try {
-      // Ensure cost is a number and date is a proper Date object
-      const sanitizedExpense = {
-        ...editingExpense,
-        cost: editingExpense.cost ? Number(editingExpense.cost) : undefined, // Convert cost to number
-        date: editingExpense.date ? new Date(editingExpense.date) : undefined, // Ensure date is a Date
-      };
-      await editExpense(editingExpense._id, sanitizedExpense);
-      setEditingExpense(emptyExpenseForm); // Exit edit mode
-      fetchUserExpenses();
-    } catch (error) {
-      console.error('Error updating expense:', error);
-    }
-  };
-
-  const handleDelete = async (ids: string | string[]) => {
-    // Convert a single ID into an array if necessary
-    const idsArray = Array.isArray(ids) ? ids : [ids];
-
-    if (
-      !window.confirm(
-        `Are you sure you want to delete ${
-          idsArray.length === 1
-            ? 'this expense'
-            : `these ${idsArray.length} expenses`
-        }?`
-      )
-    )
-      return;
-
-    try {
-      await deleteExpenses(idsArray);
-      fetchUserExpenses();
-    } catch (error) {
-      console.error('Failed to delete expense(s):', error);
     }
   };
 

@@ -6,7 +6,7 @@ import {
   ArrowClockwise,
 } from 'react-bootstrap-icons';
 
-import styles from './ExpensesTableHeader.module.css';
+import styles from '../TableStyle.module.css';
 
 interface ExpensesTableHeaderProps {
   newExpenseMode: boolean;

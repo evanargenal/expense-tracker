@@ -3,9 +3,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { CheckLg, XLg } from 'react-bootstrap-icons';
 
-import { ExpenseItem, Category } from '../../types/types';
+import { ExpenseItem, Category } from '../../../types/types';
 
-import styles from './TableStyle.module.css';
+import styles from '../TableStyle.module.css';
 
 interface ExpenseFormProps {
   expense: ExpenseItem;

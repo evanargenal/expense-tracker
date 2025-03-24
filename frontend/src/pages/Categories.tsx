@@ -1,7 +1,7 @@
 import './pages.css';
-// import styles from './Categories.module.css';
+import styles from './Categories.module.css';
 import Header from '../components/header/Header';
-// import CategoriesTable from '../components/tables/CategoriesTable';
+import CategoriesTable from '../components/tables/categories/CategoriesTable';
 
 function Categories() {
   return (
@@ -11,9 +11,9 @@ function Categories() {
           <Header />
         </div>
         <div className="App-body" style={{ justifyContent: 'unset' }}>
-          {/* <div className={styles.tableExpenses}>
+          <div className={styles.tableExpenses}>
             <CategoriesTable></CategoriesTable>
-          </div> */}
+          </div>
           <p className="mt-5">
             🛠️ Categories table is under construction, come back later! 🛠️
           </p>

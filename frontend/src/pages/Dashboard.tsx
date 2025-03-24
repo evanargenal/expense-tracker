@@ -1,7 +1,7 @@
 import './pages.css';
 import styles from './Dashboard.module.css';
 import Header from '../components/header/Header';
-import ExpensesTable from '../components/tables/ExpensesTable';
+import ExpensesTable from '../components/tables/expenses/ExpensesTable';
 
 function Dashboard() {
   return (

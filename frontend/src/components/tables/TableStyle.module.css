@@ -8,14 +8,24 @@
   font-size: calc(6px + 1.5vmin);
 }
 
+.tableHeader {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  padding-right: 5px;
+  align-items: center;
+  padding: 15px;
+  gap: 10px;
+}
+
 .customCheck {
-  margin: 0.25em;
+  margin: 0;
 }
 
 .actionItems {
   display: flex;
   justify-content: center;
-  padding: 5px;
+  padding: 0px;
   gap: 5px;
 }
 
