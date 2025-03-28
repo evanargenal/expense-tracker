@@ -3,7 +3,7 @@ import ExpenseForm from './ExpenseForm';
 import { ExpenseItem, Category } from '../../../types/types';
 import styles from '../TableStyle.module.css';
 
-interface NewExpenseTableFormProps {
+interface ExpenseTableNewFormProps {
   newExpense: ExpenseItem;
   userCategories: Category[];
   handleAddExpense: (expense: ExpenseItem) => void;
@@ -12,7 +12,7 @@ interface NewExpenseTableFormProps {
   handleSelect: (id: string) => void;
 }
 
-const NewExpenseTableForm: React.FC<NewExpenseTableFormProps> = ({
+const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
   newExpense,
   userCategories,
   handleAddExpense,
@@ -49,4 +49,4 @@ const NewExpenseTableForm: React.FC<NewExpenseTableFormProps> = ({
   );
 };
 
-export default NewExpenseTableForm;
+export default ExpenseTableNewForm;

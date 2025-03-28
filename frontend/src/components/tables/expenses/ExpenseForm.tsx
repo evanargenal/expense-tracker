@@ -110,7 +110,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         >
           <option value="">Category (None)</option>
           {userCategories.map((category) => (
-            <option key={category.categoryId} value={category.categoryName}>
+            <option key={category._id} value={category.categoryName}>
               {category.icon} {category.categoryName}
             </option>
           ))}

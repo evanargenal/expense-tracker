@@ -14,9 +14,6 @@ function Categories() {
           <div className={styles.tableExpenses}>
             <CategoriesTable></CategoriesTable>
           </div>
-          <p className="mt-5">
-            🛠️ Categories table is under construction, come back later! 🛠️
-          </p>
         </div>
       </div>
     </>

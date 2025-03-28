@@ -15,3 +15,10 @@ export interface ExpenseItem {
   name: string;
   userId: string;
 }
+
+export interface Category {
+  _id: string;
+  categoryName: string;
+  icon: string;
+  userId: string;
+}

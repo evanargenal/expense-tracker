@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 
 import ExpensesTableHeader from './ExpensesTableHeader';
 import NoExpensesMessage from './NoExpensesMessage';
-import NewExpenseTableForm from './NewExpenseTableForm';
+import ExpenseTableNewForm from './ExpenseTableNewForm';
 import ExpenseRow from './ExpenseRow';
 import { useExpenses } from '../../../hooks/expenses/useExpenses';
 import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
@@ -51,7 +51,7 @@ function ExpensesTable() {
           toggleNewExpenseMode={toggleNewExpenseMode}
         />
         {newExpenseMode && (
-          <NewExpenseTableForm
+          <ExpenseTableNewForm
             newExpense={newExpense}
             userCategories={userCategories}
             handleAddExpense={handleAddExpense}
@@ -82,7 +82,7 @@ function ExpensesTable() {
           fetchUserExpenses={fetchUserExpenses}
         />
         {newExpenseMode && ( // Add new expense form
-          <NewExpenseTableForm
+          <ExpenseTableNewForm
             newExpense={newExpense}
             userCategories={userCategories}
             handleAddExpense={handleAddExpense}

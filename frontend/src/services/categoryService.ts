@@ -1,35 +1,26 @@
 import axios from 'axios';
 
-const API_URL = '/api/expenses'; // Base API URL
+const API_URL = '/api/categories'; // Base API URL
 
-export const getExpenses = async () => {
+export const getCategories = async () => {
   try {
     const response = await axios.get(API_URL, {
       withCredentials: true,
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching expenses:', error);
+    console.error('Error fetching categories:', error);
     throw error; // Re-throw so the component can handle it
   }
 };
 
-export const addExpense = async (
-  name: string,
-  description: string,
-  cost: number,
-  date: Date,
-  categoryName: string
-) => {
+export const addCategory = async (categoryName: string, icon: string) => {
   try {
     const response = await axios.post(
       API_URL,
       {
-        name,
-        description,
-        cost,
-        date,
         categoryName,
+        icon,
       },
       {
         withCredentials: true,
@@ -37,19 +28,16 @@ export const addExpense = async (
     );
     return response.data;
   } catch (error) {
-    console.error('Error adding expense:', error);
+    console.error('Error adding category:', error);
     throw error; // Re-throw so the component can handle it
   }
 };
 
-export const editExpense = async (
+export const editCategory = async (
   id: string,
   updates: Partial<{
-    name: string;
-    description: string;
-    cost: number | undefined;
-    date: Date | undefined;
     categoryName: string;
+    icon: string;
   }>
 ) => {
   try {
@@ -58,12 +46,12 @@ export const editExpense = async (
     });
     return response.data;
   } catch (error) {
-    console.error('Error editing expense:', error);
+    console.error('Error editing category:', error);
     throw error; // Re-throw so the component can handle it
   }
 };
 
-export const deleteExpenses = async (ids: string[]) => {
+export const deleteCategories = async (ids: string[]) => {
   try {
     const response = await axios.post(
       `${API_URL}/delete`,
@@ -74,7 +62,7 @@ export const deleteExpenses = async (ids: string[]) => {
     );
     return response.data;
   } catch (error) {
-    console.error('Failed to delete expense(s):', error);
+    console.error('Failed to delete one or more categories:', error);
     throw error; // Re-throw so the component can handle it
   }
 };

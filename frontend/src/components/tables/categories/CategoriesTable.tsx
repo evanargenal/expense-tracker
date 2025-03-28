@@ -2,61 +2,59 @@ import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 
-import ExpensesTableHeader from '../expenses/ExpensesTableHeader';
-import NoExpensesMessage from '../expenses/NoExpensesMessage';
-import NewExpenseTableForm from '../expenses/NewExpenseTableForm';
-import ExpenseRow from '../expenses/ExpenseRow';
-import { useExpenses } from '../../../hooks/expenses/useExpenses';
-import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
+import CategoriesTableHeader from '../categories/CategoriesTableHeader';
+import NoCategoriesMessage from '../categories/NoCategoriesMessage';
+import NewCategoryTableForm from './CategoryTableNewForm';
+import CategoryRow from '../categories/CategoryRow';
+import { useCategories } from '../../../hooks/categories/useCategories';
+import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
 
 import styles from '../TableStyle.module.css';
 
-function ExpensesTable() {
-  const { userExpenses, userCategories, isLoading, fetchUserExpenses } =
-    useExpenses();
+function CategoriesTable() {
+  const { userCategories, isLoading, fetchUserCategories } = useCategories();
   const {
-    newExpenseMode,
-    toggleNewExpenseMode,
-    newExpense,
-    editExpenseMode,
+    newCategoryMode,
+    toggleNewCategoryMode,
+    newCategory,
+    editCategoryMode,
     toggleEditMode,
-    editingExpense,
-    setEditingExpense,
-    selectedExpenses,
-    setSelectedExpenses,
-    handleAddExpense,
-    handleEditExpense,
+    editingCategory,
+    setEditingCategory,
+    selectedCategories,
+    setSelectedCategories,
+    handleAddCategory,
+    handleEditCategory,
     handleDelete,
-  } = useExpenseActions(fetchUserExpenses);
+  } = useCategoryActions(fetchUserCategories);
 
   const handleSelect = (id: string) => {
-    setSelectedExpenses((prev) =>
+    setSelectedCategories((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const handleSelectAll = () => {
-    if (selectedExpenses.length === userExpenses.length) {
-      setSelectedExpenses([]);
+    if (selectedCategories.length === userCategories.length) {
+      setSelectedCategories([]);
     } else {
-      setSelectedExpenses(userExpenses.map((expense) => expense._id));
+      setSelectedCategories(userCategories.map((category) => category._id));
     }
   };
 
-  const renderNoExpenses = () => {
+  const renderNoCategories = () => {
     return (
       <>
-        <NoExpensesMessage
-          newExpenseMode={newExpenseMode}
-          toggleNewExpenseMode={toggleNewExpenseMode}
+        <NoCategoriesMessage
+          newCategoryMode={newCategoryMode}
+          toggleNewCategoryMode={toggleNewCategoryMode}
         />
-        {newExpenseMode && (
-          <NewExpenseTableForm
-            newExpense={newExpense}
-            userCategories={userCategories}
-            handleAddExpense={handleAddExpense}
-            toggleNewExpenseMode={toggleNewExpenseMode}
-            selectedExpenses={selectedExpenses}
+        {newCategoryMode && (
+          <NewCategoryTableForm
+            newCategory={newCategory}
+            handleAddCategory={handleAddCategory}
+            toggleNewCategoryMode={toggleNewCategoryMode}
+            selectedCategories={selectedCategories}
             handleSelect={handleSelect}
           />
         )}
@@ -64,30 +62,24 @@ function ExpensesTable() {
     );
   };
 
-  const sortedExpenses = userExpenses.sort(
-    (a: { date: Date }, b: { date: Date }): number =>
-      new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
-
-  const renderSortedExpenseRows = () => {
+  const renderCategoryRows = () => {
     return (
       <>
-        <ExpensesTableHeader
-          newExpenseMode={newExpenseMode}
-          toggleNewExpenseMode={toggleNewExpenseMode}
-          editExpenseMode={editExpenseMode}
+        <CategoriesTableHeader
+          newCategoryMode={newCategoryMode}
+          toggleNewCategoryMode={toggleNewCategoryMode}
+          editCategoryMode={editCategoryMode}
           toggleEditMode={toggleEditMode}
-          selectedExpenses={selectedExpenses}
-          handleDelete={() => handleDelete(selectedExpenses)}
-          fetchUserExpenses={fetchUserExpenses}
+          selectedCategories={selectedCategories}
+          handleDelete={() => handleDelete(selectedCategories)}
+          fetchUserCategories={fetchUserCategories}
         />
-        {newExpenseMode && ( // Add new expense form
-          <NewExpenseTableForm
-            newExpense={newExpense}
-            userCategories={userCategories}
-            handleAddExpense={handleAddExpense}
-            toggleNewExpenseMode={toggleNewExpenseMode}
-            selectedExpenses={selectedExpenses}
+        {newCategoryMode && ( // Add new category form
+          <NewCategoryTableForm
+            newCategory={newCategory}
+            handleAddCategory={handleAddCategory}
+            toggleNewCategoryMode={toggleNewCategoryMode}
+            selectedCategories={selectedCategories}
             handleSelect={handleSelect}
           />
         )}
@@ -99,37 +91,37 @@ function ExpensesTable() {
         >
           <thead>
             <tr>
-              {editExpenseMode && (
+              {editCategoryMode && (
                 <th>
                   <Form.Check
                     aria-label="select all"
                     className={styles.customCheck}
-                    checked={selectedExpenses.length === userExpenses.length}
+                    checked={
+                      selectedCategories.length === userCategories.length
+                    }
                     onChange={handleSelectAll}
                   />
                 </th>
               )}
               <th>Name</th>
               <th>Icon</th>
-              <th>Custom?</th>
-              {editExpenseMode && <th>Action</th>}
+              {editCategoryMode && <th>Action</th>}
             </tr>
           </thead>
           <tbody>
-            {/* {sortedExpenses?.map((expense) => (
-              <ExpenseRow
-                key={expense._id}
-                expense={expense}
-                isEditing={editingExpense._id === expense._id}
-                editExpenseMode={editExpenseMode}
-                selectedExpenses={selectedExpenses}
-                userCategories={userCategories}
-                setEditingExpense={setEditingExpense}
+            {userCategories?.map((category) => (
+              <CategoryRow
+                key={category._id}
+                category={category}
+                isEditing={editingCategory._id === category._id}
+                editCategoryMode={editCategoryMode}
+                selectedCategories={selectedCategories}
+                setEditingCategory={setEditingCategory}
                 handleDelete={handleDelete}
                 handleSelect={handleSelect}
-                handleEditExpense={handleEditExpense} // Pass handleAddExpense for ExpenseForm
+                handleEditCategory={handleEditCategory} // Pass handleAddCategory for CategoryForm
               />
-            ))} */}
+            ))}
           </tbody>
         </Table>
       </>
@@ -139,10 +131,10 @@ function ExpensesTable() {
   return (
     <>
       {!isLoading ? (
-        userExpenses.length === 0 ? (
-          renderNoExpenses()
+        userCategories.length === 0 ? (
+          renderNoCategories()
         ) : (
-          renderSortedExpenseRows()
+          renderCategoryRows()
         )
       ) : (
         <div className="mb-4">
@@ -157,4 +149,4 @@ function ExpensesTable() {
   );
 }
 
-export default ExpensesTable;
+export default CategoriesTable;

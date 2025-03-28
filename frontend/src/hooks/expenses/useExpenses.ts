@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getExpenses, getCategories } from '../../services/expenseService';
+import { getExpenses } from '../../services/expenseService';
+import { getCategories } from '../../services/categoryService';
 import { ExpenseItem, Category } from '../../types/types';
 
 export function useExpenses() {
@@ -24,7 +25,7 @@ export function useExpenses() {
       setUserCategories(data);
       setIsLoading(false);
     } catch (error) {
-      console.error('Error retrieving expenses for user:', error);
+      console.error('Error retrieving categories:', error);
     }
   };
 

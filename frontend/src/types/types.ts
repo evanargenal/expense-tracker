@@ -17,7 +17,7 @@ export interface ExpenseItem {
 }
 
 export interface Category {
-  categoryId: string;
+  _id: string;
   categoryName: string;
   icon: string;
   userId: string;

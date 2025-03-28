@@ -91,63 +91,6 @@ router.get(
   }
 );
 
-// Get current user's categories (auth)
-// GET /api/categories
-router.get(
-  '/categories',
-  authenticateToken,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const db = await connectDB();
-      if (!req.user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      const usersCollection = db.collection('users');
-      const categoriesCollection = db.collection('categories');
-
-      const currentUserId = req.user.userId;
-      const currentUser = await usersCollection.findOne(
-        { _id: new ObjectId(currentUserId) },
-        { projection: { hiddenCategories: 1 } }
-      );
-
-      const userHiddenCategories = currentUser.hiddenCategories;
-
-      const result = await categoriesCollection
-        .aggregate([
-          {
-            $match: {
-              $or: [
-                { userId: new ObjectId(currentUserId) },
-                { userId: new ObjectId('000000000000000000000000') },
-              ], // Get user-specific and default categories
-            },
-          },
-          {
-            $match: { _id: { $nin: userHiddenCategories } }, // Exclude hidden ones
-          },
-          {
-            $sort: { userId: -1, categoryName: 1 }, // Prioritize user created categories, then alphabetize
-          },
-          {
-            $project: {
-              _id: 0, // Exclude MongoDB default _id field
-              categoryId: '$_id', // Rename _id to categoryId
-              categoryName: 1,
-              icon: 1,
-              userId: 1, // Include userId to differentiate between user-specific & default categories
-            },
-          },
-        ])
-        .toArray();
-
-      res.status(200).json(result);
-    } catch (err) {
-      res.status(500).json({ error: err });
-    }
-  }
-);
-
 // Add expense to current user (auth)
 // POST /api/expenses
 router.post(
@@ -268,7 +211,7 @@ router.patch(
         delete filteredUpdates.categoryName;
       }
 
-      // Delete expense fields by ID in the database
+      // Update expense fields by ID in the database
       const result = await expensesCollection.updateOne(
         { _id: new ObjectId(expenseId) },
         { $set: filteredUpdates } // Only updates the fields provided
