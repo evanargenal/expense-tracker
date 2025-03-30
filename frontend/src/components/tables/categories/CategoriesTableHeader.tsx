@@ -15,6 +15,7 @@ interface CategoriesTableHeaderProps {
   toggleEditMode: () => void;
   selectedCategories: string[];
   handleDelete: () => void;
+  handleRestoreDefaultCategories: () => void;
   fetchUserCategories: () => void;
 }
 
@@ -25,6 +26,7 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
   toggleEditMode,
   selectedCategories,
   handleDelete,
+  handleRestoreDefaultCategories,
   fetchUserCategories,
 }) => {
   return (
@@ -51,6 +53,15 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
       <Button variant="outline-primary" size="lg" onClick={fetchUserCategories}>
         <ArrowClockwise className="mb-1" />
       </Button>
+      {editCategoryMode && (
+        <Button
+          variant="secondary"
+          size="lg"
+          onClick={handleRestoreDefaultCategories}
+        >
+          Restore Default Categories
+        </Button>
+      )}
       {selectedCategories.length > 0 && (
         <Button variant="danger" size="lg" onClick={handleDelete}>
           Delete Selected ({selectedCategories.length})

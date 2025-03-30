@@ -19,22 +19,23 @@ router.get(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const currentUserId = req.user.userId;
     try {
       const db = await connectDB();
-      if (!req.user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      const usersCollection = db.collection('users');
       const categoriesCollection = db.collection('categories');
+      const expensesCollection = db.collection('expenses');
+      const usersCollection = db.collection('users');
 
-      const currentUserId = req.user.userId;
-      // Only return _id and hiddenCategories from user lookup
+      // Return hiddenCategories from user lookup
       const currentUser = await usersCollection.findOne(
         { _id: new ObjectId(currentUserId) },
         { projection: { hiddenCategories: 1 } }
       );
 
-      const userHiddenCategories = currentUser.hiddenCategories;
+      const userHiddenCategories = currentUser.hiddenCategories || [];
 
       const result = await categoriesCollection
         .aggregate([
@@ -50,7 +51,36 @@ router.get(
             $match: { _id: { $nin: userHiddenCategories } }, // Exclude hidden categories
           },
           {
-            $sort: { categoryName: 1 }, // Alphabetize by category name
+            $lookup: {
+              from: 'expenses',
+              let: { categoryId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$categoryId', '$$categoryId'] }, // Match expenses by categoryId
+                    userId: new ObjectId(currentUserId), // Ensure expenses belong to the current user
+                  },
+                },
+                {
+                  $count: 'numExpenses',
+                },
+              ],
+              as: 'expensesCount',
+            },
+          },
+          {
+            $addFields: {
+              categoryNameLower: { $toLower: '$categoryName' }, // Normalize name to alphabetize properly
+              numExpenses: {
+                $ifNull: [
+                  { $arrayElemAt: ['$expensesCount.numExpenses', 0] },
+                  0,
+                ],
+              },
+            },
+          },
+          {
+            $sort: { categoryNameLower: 1 }, // Alphabetize by category name
           },
           {
             $project: {
@@ -58,6 +88,7 @@ router.get(
               categoryName: 1,
               icon: 1,
               userId: 1, // Include userId to differentiate between user-specific & default categories
+              numExpenses: 1,
             },
           },
         ])
@@ -300,7 +331,43 @@ router.post(
       );
 
       res.status(200).json({
-        message: `Deleted categories successfully`,
+        message: 'Deleted categories successfully',
+      });
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  }
+);
+
+// Restore default categories (auth)
+// POST /api/categories/restore
+router.post(
+  '/restore',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const currentUserId = req.user.userId;
+
+    try {
+      const db = await connectDB();
+      const usersCollection = db.collection('users');
+
+      // Set hiddenCategories to an empty array to "restore defaults"
+      const result = await usersCollection.updateOne(
+        { _id: new ObjectId(currentUserId) },
+        { $set: { hiddenCategories: [] } }
+      );
+
+      if (result.modifiedCount === 0) {
+        return res
+          .status(304)
+          .json({ message: 'Default categories already restored' });
+      }
+
+      res.status(200).json({
+        message: 'Default categories restored successfully',
       });
     } catch (err) {
       res.status(500).json({ error: err });

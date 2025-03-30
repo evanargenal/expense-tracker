@@ -33,17 +33,15 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <ExpenseForm
-            expense={newExpense}
-            userCategories={userCategories}
-            onSave={handleAddExpense}
-            onCancel={toggleNewExpenseMode}
-            isEditing={false}
-            selectedExpenses={selectedExpenses}
-            onSelect={handleSelect}
-          />
-        </tr>
+        <ExpenseForm
+          expense={newExpense}
+          userCategories={userCategories}
+          onSave={handleAddExpense}
+          onCancel={toggleNewExpenseMode}
+          isEditing={false}
+          selectedExpenses={selectedExpenses}
+          onSelect={handleSelect}
+        />
       </tbody>
     </Table>
   );

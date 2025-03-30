@@ -18,6 +18,13 @@
   gap: 10px;
 }
 
+.centeredButtons {
+  display: flex;
+  justify-content: center;
+  padding: 25px;
+  gap: 10px;
+}
+
 .customCheck {
   margin: 0;
 }

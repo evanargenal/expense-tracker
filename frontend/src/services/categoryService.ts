@@ -51,6 +51,22 @@ export const editCategory = async (
   }
 };
 
+export const restoreDefaultCategories = async () => {
+  try {
+    const response = await axios.post(`${API_URL}/restore`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: any) {
+    // Expected case: Default categories are already present
+    if (error.response?.status === 304) {
+      return null;
+    }
+    console.error('Error restoring default categories:', error);
+    throw error; // Re-throw if it's another error
+  }
+};
+
 export const deleteCategories = async (ids: string[]) => {
   try {
     const response = await axios.post(

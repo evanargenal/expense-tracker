@@ -28,16 +28,14 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <CategoryForm
-            category={newCategory}
-            onSave={handleAddCategory}
-            onCancel={toggleNewCategoryMode}
-            isEditing={false}
-            selectedCategories={selectedCategories}
-            onSelect={handleSelect}
-          />
-        </tr>
+        <CategoryForm
+          category={newCategory}
+          onSave={handleAddCategory}
+          onCancel={toggleNewCategoryMode}
+          isEditing={false}
+          selectedCategories={selectedCategories}
+          onSelect={handleSelect}
+        />
       </tbody>
     </Table>
   );

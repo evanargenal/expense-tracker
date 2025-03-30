@@ -28,7 +28,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const fetchUser = useCallback(async () => {
     try {
       const data = await validateUser();
-      setUser(data);
+      if (data !== null) {
+        setUser(data);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
       setUser(null);
     } finally {

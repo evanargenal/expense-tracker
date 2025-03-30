@@ -26,6 +26,17 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<Category>(category);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevents unwanted default behavior
+      handleSubmit();
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onCancel();
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -44,7 +55,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   };
 
   return (
-    <>
+    <tr onKeyDown={handleKeyDown}>
       {isEditing && (
         <td>
           <Form.Check
@@ -55,14 +66,14 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         </td>
       )}
-      <td>
+      <td colSpan={isEditing ? 3 : 1}>
         <Form.Control
           type="text"
           name="categoryName"
           placeholder="Name"
           value={formData.categoryName}
           onChange={handleInputChange}
-          autoFocus={!isEditing}
+          autoFocus
         />
       </td>
       <td>
@@ -84,7 +95,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           </Button>
         </div>
       </td>
-    </>
+    </tr>
   );
 };
 

@@ -11,7 +11,7 @@ export const validateUser = async () => {
   } catch (error: any) {
     // Expected case: User is not logged in (no token)
     if (error.response?.status === 401) {
-      console.error('Expected error (user is not authenticated)');
+      return null;
     } else {
       console.error('Error with token check', error);
       throw error; // Re-throw so the component can handle it

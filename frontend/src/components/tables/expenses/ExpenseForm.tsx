@@ -28,6 +28,17 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<ExpenseItem>(expense);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevents unwanted default behavior
+      handleSubmit();
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      onCancel();
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
 
@@ -60,7 +71,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
   };
 
   return (
-    <>
+    <tr onKeyDown={handleKeyDown}>
       {isEditing && (
         <td>
           <Form.Check
@@ -90,7 +101,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           placeholder="Name"
           value={formData.name}
           onChange={handleInputChange}
-          autoFocus={!isEditing}
+          autoFocus
         />
       </td>
       <td>
@@ -135,7 +146,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           </Button>
         </div>
       </td>
-    </>
+    </tr>
   );
 };
 

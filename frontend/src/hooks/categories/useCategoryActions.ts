@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   addCategory,
   editCategory,
+  restoreDefaultCategories,
   deleteCategories,
 } from '../../services/categoryService';
 import { Category } from '../../types/types';
@@ -49,12 +50,31 @@ export function useCategoryActions(fetchUserCategories: () => void) {
     }
   };
 
+  const handleRestoreDefaultCategories = async () => {
+    if (
+      !window.confirm(
+        'Are you sure you want to restore the default categories?'
+      )
+    )
+      return;
+    try {
+      const data = await restoreDefaultCategories();
+      if (data !== null) {
+        fetchUserCategories();
+      }
+    } catch (error) {
+      console.error('Error updating category:', error);
+    }
+  };
+
   const handleDelete = async (ids: string | string[]) => {
     const idsArray = Array.isArray(ids) ? ids : [ids];
 
     if (
       !window.confirm(
-        `Are you sure you want to delete ${idsArray.length} category(ies)?`
+        `Are you sure you want to delete ${idsArray.length} categor${
+          idsArray.length === 1 ? 'y' : 'ies'
+        }?`
       )
     )
       return;
@@ -83,6 +103,7 @@ export function useCategoryActions(fetchUserCategories: () => void) {
     setSelectedCategories,
     handleAddCategory,
     handleEditCategory,
+    handleRestoreDefaultCategories,
     handleDelete,
   };
 }

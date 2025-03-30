@@ -1,5 +1,5 @@
 import { Button, Form } from 'react-bootstrap';
-import { Trash, Pencil } from 'react-bootstrap-icons';
+import { Trash, Pencil, CheckLg, XLg } from 'react-bootstrap-icons';
 import { Category } from '../../../types/types';
 import { getEmptyCategoryItem } from '../../../utils/categoryUtils';
 import CategoryForm from '../categories/CategoryForm';
@@ -28,7 +28,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
 }) => {
   const emptyCategoryForm = getEmptyCategoryItem();
   return (
-    <tr>
+    <>
       {isEditing ? (
         <CategoryForm
           category={category}
@@ -39,7 +39,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           onSelect={handleSelect}
         />
       ) : (
-        <>
+        <tr>
           {editCategoryMode && (
             <td>
               <Form.Check
@@ -52,29 +52,39 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           )}
           <td>{category.categoryName}</td>
           <td>{category.icon}</td>
+          <td>{category.numExpenses}</td>
           {editCategoryMode && (
-            <td>
-              <div className={styles.actionItems}>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setEditingCategory(category)}
-                >
-                  <Pencil />
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(category._id)}
-                >
-                  <Trash />
-                </Button>
-              </div>
-            </td>
+            <>
+              <td>
+                {category.userId === '000000000000000000000000' ? (
+                  <XLg />
+                ) : (
+                  <CheckLg />
+                )}
+              </td>
+              <td>
+                <div className={styles.actionItems}>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setEditingCategory(category)}
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(category._id)}
+                  >
+                    <Trash />
+                  </Button>
+                </div>
+              </td>
+            </>
           )}
-        </>
+        </tr>
       )}
-    </tr>
+    </>
   );
 };
 

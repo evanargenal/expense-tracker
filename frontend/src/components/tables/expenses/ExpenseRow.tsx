@@ -30,7 +30,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
 }) => {
   const emptyExpenseForm = getEmptyExpenseItem();
   return (
-    <tr>
+    <>
       {isEditing ? (
         <ExpenseForm
           expense={expense}
@@ -42,7 +42,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
           onSelect={handleSelect}
         />
       ) : (
-        <>
+        <tr>
           {editExpenseMode && (
             <td>
               <Form.Check
@@ -86,9 +86,9 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
               </div>
             </td>
           )}
-        </>
+        </tr>
       )}
-    </tr>
+    </>
   );
 };
 

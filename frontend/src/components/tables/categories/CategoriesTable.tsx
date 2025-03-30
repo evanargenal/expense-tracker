@@ -25,6 +25,7 @@ function CategoriesTable() {
     setSelectedCategories,
     handleAddCategory,
     handleEditCategory,
+    handleRestoreDefaultCategories,
     handleDelete,
   } = useCategoryActions(fetchUserCategories);
 
@@ -48,6 +49,7 @@ function CategoriesTable() {
         <NoCategoriesMessage
           newCategoryMode={newCategoryMode}
           toggleNewCategoryMode={toggleNewCategoryMode}
+          handleRestoreDefaultCategories={handleRestoreDefaultCategories}
         />
         {newCategoryMode && (
           <NewCategoryTableForm
@@ -72,6 +74,7 @@ function CategoriesTable() {
           toggleEditMode={toggleEditMode}
           selectedCategories={selectedCategories}
           handleDelete={() => handleDelete(selectedCategories)}
+          handleRestoreDefaultCategories={handleRestoreDefaultCategories}
           fetchUserCategories={fetchUserCategories}
         />
         {newCategoryMode && ( // Add new category form
@@ -105,7 +108,13 @@ function CategoriesTable() {
               )}
               <th>Name</th>
               <th>Icon</th>
-              {editCategoryMode && <th>Action</th>}
+              <th>Expenses</th>
+              {editCategoryMode && (
+                <>
+                  <th>Custom?</th>
+                  <th>Action</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>

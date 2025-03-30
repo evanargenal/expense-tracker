@@ -5,4 +5,5 @@ export const getEmptyCategoryItem = (): Category => ({
   categoryName: '',
   icon: '',
   userId: '',
+  numExpenses: '',
 });
