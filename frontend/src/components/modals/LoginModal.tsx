@@ -1,12 +1,4 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import {
-  loginUser,
-  registerUser,
-  logoutUser,
-} from '../../services/authService';
-import { FormData } from '../../types/types';
+import { useAuthForm } from '../../hooks/auth/useAuthForm';
 
 import Button from 'react-bootstrap/Button';
 import CloseButton from 'react-bootstrap/CloseButton';
@@ -15,130 +7,51 @@ import Modal from 'react-bootstrap/Modal';
 
 import styles from './LoginModal.module.css';
 
-function LoginModal() {
-  const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+interface LoginModalProps {
+  show: boolean;
+  handleClose: () => void;
+}
 
-  const [validated, setValidated] = useState(false);
-  const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
-  const [formErrorMessage, setFormErrorMessage] = useState('');
-
-  const [isLoginPage, setIsLoginPage] = useState(true);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-
-  const emptyFormData: FormData = { fullName: '', email: '', password: '' };
-  const [formData, setFormData] = useState<FormData>(emptyFormData);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setIsInvalidCredentials(false);
-  };
-
-  const toggleLoginPage = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    clearForm();
-    setIsLoginPage(!isLoginPage);
-  };
-  const handleClose = () => {
-    setShowLoginModal(false);
-  };
-  const handleShow = () => {
-    clearForm();
-    setIsLoginPage(true);
-    setShowLoginModal(true);
-  };
-  const clearForm = () => {
-    setValidated(false);
-    setIsInvalidCredentials(false);
-    setFormErrorMessage('');
-    setFormData(emptyFormData);
-  };
-
-  const handleLoginOrRegister = async (
-    formData: FormData,
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    const form = event.currentTarget;
-    event.preventDefault();
-    if (form.checkValidity() === false) {
-      setValidated(true);
-      event.stopPropagation();
-      return;
-    }
-    try {
-      const response = isLoginPage
-        ? await loginUser(formData.email, formData.password)
-        : await registerUser(
-            formData.fullName,
-            formData.email,
-            formData.password
-          );
-      console.log(
-        isLoginPage
-          ? 'User logged in successfully'
-          : 'User registered successfully'
-      );
-      setUser(response.data);
-      handleClose();
-      navigate('/dashboard');
-    } catch (error: any) {
-      console.error(
-        `Error ${isLoginPage ? 'logging in' : 'signing up'}:`,
-        error
-      );
-      switch (error.response?.data?.message) {
-        case 'User does not exist':
-          setFormErrorMessage(
-            'No email found. Please check your email or sign up.'
-          );
-          break;
-        case 'Invalid credentials':
-          setFormErrorMessage('Incorrect email or password. Please try again.');
-          break;
-        case 'User already exists':
-          setFormErrorMessage(
-            'An account with this email already exists. Try logging in.'
-          );
-          break;
-        default:
-          setFormErrorMessage(
-            'An unexpected error occurred. Please try again later.'
-          );
-      }
-      setValidated(false);
-      setIsInvalidCredentials(true);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-      console.log('User logged out successfully');
-      setUser(null);
-      navigate('/');
-    } catch (error) {
-      console.error('Error logging user out:', error);
-    }
-  };
+const LoginModal: React.FC<LoginModalProps> = ({ show, handleClose }) => {
+  const {
+    formData,
+    validated,
+    isInvalidCredentials,
+    formErrorMessage,
+    isLoginPage,
+    handleChange,
+    toggleLoginPage,
+    handleLoginOrRegister,
+    clearForm,
+    setIsLoginPage,
+  } = useAuthForm();
 
   return (
     <>
-      <Button variant="primary" onClick={!user ? handleShow : handleLogout}>
-        {!user ? 'Log In' : 'Log Out'}
-      </Button>
-      <Modal show={showLoginModal} onHide={handleClose}>
+      <Modal
+        show={show}
+        onHide={() => {
+          handleClose();
+          clearForm();
+          setIsLoginPage(true);
+        }}
+      >
         <Modal.Header className={styles.modalHeader}>
           <Modal.Title>{isLoginPage ? 'Log In' : 'Sign Up'}</Modal.Title>
           <CloseButton
             className={styles.modalXButton}
-            onClick={handleClose}
+            onClick={() => {
+              handleClose();
+              clearForm();
+              setIsLoginPage(true);
+            }}
           ></CloseButton>
         </Modal.Header>
         <Modal.Body>
           <Form
             noValidate
             validated={validated}
-            onSubmit={(event) => handleLoginOrRegister(formData, event)}
+            onSubmit={handleLoginOrRegister}
           >
             {!isLoginPage && (
               <Form.Group style={{ paddingBottom: '10px' }}>
@@ -225,6 +138,6 @@ function LoginModal() {
       </Modal>
     </>
   );
-}
+};
 
 export default LoginModal;

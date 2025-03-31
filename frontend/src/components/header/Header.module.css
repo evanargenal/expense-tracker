@@ -11,12 +11,20 @@
   font-size: calc(6px + 1.5vmin);
 }
 
-.logInLogOutButtonContainer {
-  position: relative;
+.ProfileButtonContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: calc(50px + 5vmin);
+  justify-content: right;
+  width: auto;
+  min-height: inherit;
+}
+
+.logInButtonContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+  width: 80px;
+  min-height: inherit;
 }
