@@ -32,10 +32,10 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
       {isEditing ? (
         <CategoryForm
           category={category}
-          onSave={handleEditCategory}
-          onCancel={() => setEditingCategory(emptyCategoryForm)}
           isEditing
           selectedCategories={selectedCategories}
+          onSave={handleEditCategory}
+          onCancel={() => setEditingCategory(emptyCategoryForm)}
           onSelect={handleSelect}
         />
       ) : (

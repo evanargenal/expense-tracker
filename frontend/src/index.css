@@ -28,3 +28,8 @@ code {
 .nav-underline .show > .nav-link {
   color: white !important;
 }
+
+/* Globally remove dropdown toggle carets */
+.dropdown-toggle::after {
+  display: none !important;
+}

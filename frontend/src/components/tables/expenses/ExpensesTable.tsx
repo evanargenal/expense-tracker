@@ -16,16 +16,17 @@ function ExpensesTable() {
     useExpenses();
   const {
     newExpenseMode,
-    toggleNewExpenseMode,
     newExpense,
     editExpenseMode,
-    toggleEditMode,
     editingExpense,
-    setEditingExpense,
     selectedExpenses,
+    toggleNewExpenseMode,
+    toggleEditMode,
+    setEditingExpense,
     setSelectedExpenses,
     handleAddExpense,
     handleEditExpense,
+    handleUpdateMultipleExpenseCategories,
     handleDelete,
   } = useExpenseActions(fetchUserExpenses);
 
@@ -54,9 +55,9 @@ function ExpensesTable() {
           <ExpenseTableNewForm
             newExpense={newExpense}
             userCategories={userCategories}
+            selectedExpenses={selectedExpenses}
             handleAddExpense={handleAddExpense}
             toggleNewExpenseMode={toggleNewExpenseMode}
-            selectedExpenses={selectedExpenses}
             handleSelect={handleSelect}
           />
         )}
@@ -74,20 +75,24 @@ function ExpensesTable() {
       <>
         <ExpensesTableHeader
           newExpenseMode={newExpenseMode}
-          toggleNewExpenseMode={toggleNewExpenseMode}
           editExpenseMode={editExpenseMode}
-          toggleEditMode={toggleEditMode}
           selectedExpenses={selectedExpenses}
+          userCategories={userCategories}
+          toggleNewExpenseMode={toggleNewExpenseMode}
+          toggleEditMode={toggleEditMode}
           handleDelete={() => handleDelete(selectedExpenses)}
+          handleUpdateMultipleExpenseCategories={
+            handleUpdateMultipleExpenseCategories
+          }
           fetchUserExpenses={fetchUserExpenses}
         />
         {newExpenseMode && ( // Add new expense form
           <ExpenseTableNewForm
             newExpense={newExpense}
             userCategories={userCategories}
+            selectedExpenses={selectedExpenses}
             handleAddExpense={handleAddExpense}
             toggleNewExpenseMode={toggleNewExpenseMode}
-            selectedExpenses={selectedExpenses}
             handleSelect={handleSelect}
           />
         )}

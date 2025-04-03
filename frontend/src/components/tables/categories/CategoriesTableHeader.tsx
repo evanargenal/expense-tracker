@@ -4,16 +4,17 @@ import {
   PlusLg,
   PencilFill,
   ArrowClockwise,
+  Trash,
 } from 'react-bootstrap-icons';
 
 import styles from '../TableStyle.module.css';
 
 interface CategoriesTableHeaderProps {
   newCategoryMode: boolean;
-  toggleNewCategoryMode: () => void;
   editCategoryMode: boolean;
-  toggleEditMode: () => void;
   selectedCategories: string[];
+  toggleNewCategoryMode: () => void;
+  toggleEditMode: () => void;
   handleDelete: () => void;
   handleRestoreDefaultCategories: () => void;
   fetchUserCategories: () => void;
@@ -21,10 +22,10 @@ interface CategoriesTableHeaderProps {
 
 const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
   newCategoryMode,
-  toggleNewCategoryMode,
   editCategoryMode,
-  toggleEditMode,
   selectedCategories,
+  toggleNewCategoryMode,
+  toggleEditMode,
   handleDelete,
   handleRestoreDefaultCategories,
   fetchUserCategories,
@@ -33,7 +34,6 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
     <div className={styles.tableHeader}>
       <Button
         variant={newCategoryMode ? 'secondary' : 'success'}
-        size="lg"
         onClick={toggleNewCategoryMode}
       >
         {newCategoryMode ? (
@@ -44,28 +44,28 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
       </Button>
       <Button
         variant={editCategoryMode ? 'warning' : 'secondary'}
-        size="lg"
         onClick={toggleEditMode}
       >
         <PencilFill className="mb-1" />
       </Button>
       {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
-      <Button variant="outline-primary" size="lg" onClick={fetchUserCategories}>
+      <Button variant="outline-primary" onClick={fetchUserCategories}>
         <ArrowClockwise className="mb-1" />
       </Button>
       {editCategoryMode && (
-        <Button
-          variant="secondary"
-          size="lg"
-          onClick={handleRestoreDefaultCategories}
-        >
-          Restore Default Categories
-        </Button>
-      )}
-      {selectedCategories.length > 0 && (
-        <Button variant="danger" size="lg" onClick={handleDelete}>
-          Delete Selected ({selectedCategories.length})
-        </Button>
+        <>
+          <Button variant="secondary" onClick={handleRestoreDefaultCategories}>
+            Restore Default Categories
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleDelete}
+            disabled={selectedCategories.length === 0}
+          >
+            <Trash />
+            {selectedCategories.length > 0 && ` (${selectedCategories.length})`}
+          </Button>
+        </>
       )}
     </div>
   );

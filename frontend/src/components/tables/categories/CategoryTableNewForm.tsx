@@ -5,17 +5,17 @@ import styles from '../TableStyle.module.css';
 
 interface NewCategoryTableFormProps {
   newCategory: Category;
+  selectedCategories: string[];
   handleAddCategory: (category: Category) => void;
   toggleNewCategoryMode: () => void;
-  selectedCategories: string[];
   handleSelect: (id: string) => void;
 }
 
 const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
   newCategory,
+  selectedCategories,
   handleAddCategory,
   toggleNewCategoryMode,
-  selectedCategories,
   handleSelect,
 }) => {
   return (
@@ -30,10 +30,10 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
       <tbody>
         <CategoryForm
           category={newCategory}
-          onSave={handleAddCategory}
-          onCancel={toggleNewCategoryMode}
           isEditing={false}
           selectedCategories={selectedCategories}
+          onSave={handleAddCategory}
+          onCancel={toggleNewCategoryMode}
           onSelect={handleSelect}
         />
       </tbody>

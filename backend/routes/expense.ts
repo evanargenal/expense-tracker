@@ -140,6 +140,61 @@ router.post(
   }
 );
 
+// Update multiple expense categories (auth)
+// PATCH /api/expenses/update-categories
+router.patch(
+  '/update-categories',
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const currentUserId = req.user.userId;
+    const { ids, newCategoryId } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res
+        .status(400)
+        .json({ error: 'Invalid request: provide an array of expense IDs' });
+    }
+    if (!newCategoryId || !ObjectId.isValid(newCategoryId)) {
+      return res.status(400).json({ error: 'Invalid category ID format' });
+    }
+
+    try {
+      const db = await connectDB();
+      const expensesCollection = db.collection('expenses');
+      const categoriesCollection = db.collection('categories');
+
+      // Check if the new category exists
+      const categoryExists = await categoriesCollection.findOne({
+        _id: new ObjectId(newCategoryId),
+      });
+      if (!categoryExists) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
+
+      // Map ids to ObjectIds and update their category in the db
+      const expenseObjectIds = ids.map((id) => new ObjectId(id));
+      const result = await expensesCollection.updateMany(
+        { _id: { $in: expenseObjectIds }, userId: new ObjectId(currentUserId) }, // Ensure the user owns the expenses
+        { $set: { categoryId: new ObjectId(newCategoryId) } }
+      );
+
+      // If no expenses exist in database
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ error: 'No matching expenses found' });
+      }
+
+      res.status(200).json({
+        message: `Updated ${result.modifiedCount} expense(s) successfully`,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  }
+);
+
 // Update expense field(s) by ID (auth)
 // PATCH /api/expenses/:id
 router.patch(

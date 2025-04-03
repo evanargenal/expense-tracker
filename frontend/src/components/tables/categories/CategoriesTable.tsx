@@ -15,13 +15,13 @@ function CategoriesTable() {
   const { userCategories, isLoading, fetchUserCategories } = useCategories();
   const {
     newCategoryMode,
-    toggleNewCategoryMode,
     newCategory,
     editCategoryMode,
-    toggleEditMode,
     editingCategory,
-    setEditingCategory,
     selectedCategories,
+    toggleNewCategoryMode,
+    toggleEditMode,
+    setEditingCategory,
     setSelectedCategories,
     handleAddCategory,
     handleEditCategory,
@@ -54,9 +54,9 @@ function CategoriesTable() {
         {newCategoryMode && (
           <NewCategoryTableForm
             newCategory={newCategory}
+            selectedCategories={selectedCategories}
             handleAddCategory={handleAddCategory}
             toggleNewCategoryMode={toggleNewCategoryMode}
-            selectedCategories={selectedCategories}
             handleSelect={handleSelect}
           />
         )}
@@ -69,20 +69,20 @@ function CategoriesTable() {
       <>
         <CategoriesTableHeader
           newCategoryMode={newCategoryMode}
-          toggleNewCategoryMode={toggleNewCategoryMode}
           editCategoryMode={editCategoryMode}
-          toggleEditMode={toggleEditMode}
           selectedCategories={selectedCategories}
           handleDelete={() => handleDelete(selectedCategories)}
+          toggleNewCategoryMode={toggleNewCategoryMode}
+          toggleEditMode={toggleEditMode}
           handleRestoreDefaultCategories={handleRestoreDefaultCategories}
           fetchUserCategories={fetchUserCategories}
         />
         {newCategoryMode && ( // Add new category form
           <NewCategoryTableForm
             newCategory={newCategory}
+            selectedCategories={selectedCategories}
             handleAddCategory={handleAddCategory}
             toggleNewCategoryMode={toggleNewCategoryMode}
-            selectedCategories={selectedCategories}
             handleSelect={handleSelect}
           />
         )}

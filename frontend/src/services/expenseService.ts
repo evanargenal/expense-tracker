@@ -42,6 +42,25 @@ export const addExpense = async (
   }
 };
 
+export const editMultipleExpenseCategories = async (
+  ids: string[],
+  newCategoryId: string
+) => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}/update-categories`,
+      { ids, newCategoryId },
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error editing expense categories:', error);
+    throw error; // Re-throw so the component can handle it
+  }
+};
+
 export const editExpense = async (
   id: string,
   updates: Partial<{

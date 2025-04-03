@@ -6,18 +6,18 @@ import styles from '../TableStyle.module.css';
 interface ExpenseTableNewFormProps {
   newExpense: ExpenseItem;
   userCategories: Category[];
+  selectedExpenses: string[];
   handleAddExpense: (expense: ExpenseItem) => void;
   toggleNewExpenseMode: () => void;
-  selectedExpenses: string[];
   handleSelect: (id: string) => void;
 }
 
 const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
   newExpense,
   userCategories,
+  selectedExpenses,
   handleAddExpense,
   toggleNewExpenseMode,
-  selectedExpenses,
   handleSelect,
 }) => {
   return (
@@ -36,10 +36,10 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
         <ExpenseForm
           expense={newExpense}
           userCategories={userCategories}
-          onSave={handleAddExpense}
-          onCancel={toggleNewExpenseMode}
           isEditing={false}
           selectedExpenses={selectedExpenses}
+          onSave={handleAddExpense}
+          onCancel={toggleNewExpenseMode}
           onSelect={handleSelect}
         />
       </tbody>

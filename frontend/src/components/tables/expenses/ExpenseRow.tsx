@@ -35,10 +35,10 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
         <ExpenseForm
           expense={expense}
           userCategories={userCategories}
-          onSave={handleEditExpense}
-          onCancel={() => setEditingExpense(emptyExpenseForm)}
           isEditing
           selectedExpenses={selectedExpenses}
+          onSave={handleEditExpense}
+          onCancel={() => setEditingExpense(emptyExpenseForm)}
           onSelect={handleSelect}
         />
       ) : (

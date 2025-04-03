@@ -8,7 +8,7 @@ import TabNavigation from '../tabs/TabNavigation';
 
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { ShieldCheck } from 'react-bootstrap-icons';
+import { ShieldCheck, CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
 import styles from './Header.module.css';
 
@@ -17,6 +17,11 @@ function Header() {
   const handleLogout = useLogout();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showDropdownMenu, setShowDropdownMenu] = useState(false);
+
+  const toggleShowDropdownMenu = () => {
+    setShowDropdownMenu(!showDropdownMenu);
+  };
 
   const handleShow = () => setShowLoginModal(true);
   const handleClose = () => setShowLoginModal(false);
@@ -34,9 +39,18 @@ function Header() {
       </div>
       {user ? (
         <div className={styles.ProfileButtonContainer}>
-          <Dropdown data-bs-theme="dark">
+          <Dropdown
+            data-bs-theme="dark"
+            align="end"
+            onToggle={toggleShowDropdownMenu}
+          >
             <Dropdown.Toggle id="profileDropdown">
               {user.isAdmin && <ShieldCheck className="mb-1" />} {user.fullName}{' '}
+              {showDropdownMenu ? (
+                <CaretUpFill className="mb-1" />
+              ) : (
+                <CaretDownFill className="mb-1" />
+              )}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>

@@ -10,20 +10,20 @@ import styles from '../TableStyle.module.css';
 interface ExpenseFormProps {
   expense: ExpenseItem;
   userCategories: Category[];
-  onSave: (expense: ExpenseItem) => void;
-  onCancel: () => void;
   isEditing: boolean;
   selectedExpenses: string[];
+  onSave: (expense: ExpenseItem) => void;
+  onCancel: () => void;
   onSelect: (id: string) => void;
 }
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
   expense,
   userCategories,
-  onSave,
-  onCancel,
   isEditing,
   selectedExpenses,
+  onSave,
+  onCancel,
   onSelect,
 }) => {
   const [formData, setFormData] = useState<ExpenseItem>(expense);

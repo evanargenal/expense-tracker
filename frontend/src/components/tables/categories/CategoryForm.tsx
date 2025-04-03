@@ -9,19 +9,19 @@ import styles from '../TableStyle.module.css';
 
 interface CategoryFormProps {
   category: Category;
-  onSave: (category: Category) => void;
-  onCancel: () => void;
   isEditing: boolean;
   selectedCategories: string[];
+  onSave: (category: Category) => void;
+  onCancel: () => void;
   onSelect: (id: string) => void;
 }
 
 const CategoryForm: React.FC<CategoryFormProps> = ({
   category,
-  onSave,
-  onCancel,
   isEditing,
   selectedCategories,
+  onSave,
+  onCancel,
   onSelect,
 }) => {
   const [formData, setFormData] = useState<Category>(category);

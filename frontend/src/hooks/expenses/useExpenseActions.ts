@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   addExpense,
   editExpense,
+  editMultipleExpenseCategories,
   deleteExpenses,
 } from '../../services/expenseService';
 import { ExpenseItem } from '../../types/types';
@@ -57,6 +58,30 @@ export function useExpenseActions(fetchUserExpenses: () => void) {
     }
   };
 
+  const handleUpdateMultipleExpenseCategories = async (
+    ids: string | string[],
+    newCategoryId: string
+  ) => {
+    const idsArray = Array.isArray(ids) ? ids : [ids];
+
+    if (
+      !window.confirm(
+        `Are you sure you want to update ${idsArray.length} expense(s) categories?`
+      )
+    )
+      return;
+
+    try {
+      await editMultipleExpenseCategories(idsArray, newCategoryId);
+      setSelectedExpenses((prev) =>
+        prev.filter((id) => !idsArray.includes(id))
+      );
+      fetchUserExpenses();
+    } catch (error) {
+      console.error('Failed to update expense(s) categories:', error);
+    }
+  };
+
   const handleDelete = async (ids: string | string[]) => {
     const idsArray = Array.isArray(ids) ? ids : [ids];
 
@@ -80,17 +105,18 @@ export function useExpenseActions(fetchUserExpenses: () => void) {
 
   return {
     newExpenseMode,
-    toggleNewExpenseMode,
     newExpense,
-    setNewExpense,
     editExpenseMode,
-    toggleEditMode,
     editingExpense,
-    setEditingExpense,
     selectedExpenses,
+    toggleNewExpenseMode,
+    setNewExpense,
+    toggleEditMode,
+    setEditingExpense,
     setSelectedExpenses,
     handleAddExpense,
     handleEditExpense,
+    handleUpdateMultipleExpenseCategories,
     handleDelete,
   };
 }

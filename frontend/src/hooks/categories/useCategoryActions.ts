@@ -92,14 +92,14 @@ export function useCategoryActions(fetchUserCategories: () => void) {
 
   return {
     newCategoryMode,
-    toggleNewCategoryMode,
     newCategory,
-    setNewCategory,
     editCategoryMode,
-    toggleEditMode,
     editingCategory,
-    setEditingCategory,
     selectedCategories,
+    toggleNewCategoryMode,
+    setNewCategory,
+    toggleEditMode,
+    setEditingCategory,
     setSelectedCategories,
     handleAddCategory,
     handleEditCategory,
