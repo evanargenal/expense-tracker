@@ -12,6 +12,9 @@ const connectDB = require('../database/db');
 
 const authenticateToken = require('../middleware/authMiddleware');
 
+const jwt_secret = process.env.JWT_SECRET!;
+const jwt_refresh_secret = process.env.JWT_REFRESH_SECRET!;
+
 import { AuthenticatedUser } from '../types/types';
 
 interface AuthenticatedRequest extends Request {
@@ -44,6 +47,39 @@ router.get(
   }
 );
 
+// Refresh access token
+// POST /api/auth/refresh
+router.post('/refresh', async (req: Request, res: Response) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh token missing' });
+  }
+
+  jwt.verify(
+    refreshToken,
+    jwt_refresh_secret,
+    (err: Error, user: AuthenticatedUser) => {
+      if (err)
+        return res.status(403).json({ message: 'Invalid refresh token' });
+
+      const newAccessToken = jwt.sign(
+        { userId: user.userId, email: user.email },
+        jwt_secret,
+        { expiresIn: '1h' }
+      );
+
+      res.cookie('token', newAccessToken, {
+        httpOnly: true, // Prevent access from JavaScript (XSS protection)
+        secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
+        sameSite: 'strict', // Prevent CSRF attacks
+        maxAge: 60 * 60 * 1000, // 1 hour
+      });
+
+      res.json({ message: 'Token refreshed successfully' });
+    }
+  );
+});
+
 // Authenticate user
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
@@ -71,19 +107,34 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT token
+    // Generate JWT tokens
     const tokenPayload = {
       userId: user._id,
       email: user.email,
     };
-    const tokenOptions = { expiresIn: '1h' };
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions);
 
-    res.cookie('token', token, {
+    const accessTokenOptions = { expiresIn: '1h' };
+    const refreshTokenOptions = { expiresIn: '7d' };
+
+    const accessToken = jwt.sign(tokenPayload, jwt_secret, accessTokenOptions);
+    const refreshToken = jwt.sign(
+      tokenPayload,
+      jwt_refresh_secret,
+      refreshTokenOptions
+    );
+
+    res.cookie('token', accessToken, {
       httpOnly: true, // Prevent access from JavaScript (XSS protection)
       secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
       sameSite: 'strict', // Prevent CSRF attacks
-      maxAge: 3600000, // 1 hour
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true, // Prevent access from JavaScript (XSS protection)
+      secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
+      sameSite: 'strict', // Prevent CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(200).json({
@@ -135,19 +186,34 @@ router.post('/register', async (req: Request, res: Response) => {
     // Insert user into the database
     const result = await usersCollection.insertOne(newUser);
 
-    // Generate JWT token
+    // Generate JWT tokens
     const tokenPayload = {
       userId: result.insertedId,
       email: newUser.email,
     };
-    const tokenOptions = { expiresIn: '1h' };
-    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, tokenOptions);
 
-    res.cookie('token', token, {
+    const accessTokenOptions = { expiresIn: '1h' };
+    const refreshTokenOptions = { expiresIn: '7d' };
+
+    const accessToken = jwt.sign(tokenPayload, jwt_secret, accessTokenOptions);
+    const refreshToken = jwt.sign(
+      tokenPayload,
+      jwt_refresh_secret,
+      refreshTokenOptions
+    );
+
+    res.cookie('token', accessToken, {
       httpOnly: true, // Prevent access from JavaScript (XSS protection)
       secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
       sameSite: 'strict', // Prevent CSRF attacks
-      maxAge: 3600000, // 1 hour
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true, // Prevent access from JavaScript (XSS protection)
+      secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
+      sameSite: 'strict', // Prevent CSRF attacks
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(201).json({
@@ -166,6 +232,7 @@ router.post('/register', async (req: Request, res: Response) => {
 // GET /api/auth/logout
 router.get('/logout', (req: Request, res: Response) => {
   res.clearCookie('token');
+  res.clearCookie('refreshToken');
   res.json({ message: 'Logged out successfully' });
 });
 

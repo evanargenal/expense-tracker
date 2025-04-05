@@ -60,6 +60,16 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.landingPage {
+  background-color: #444d62;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
 
 @keyframes App-logo-spin {
   from {

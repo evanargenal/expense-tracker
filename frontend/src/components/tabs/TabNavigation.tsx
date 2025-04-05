@@ -6,12 +6,12 @@ import Tabs from 'react-bootstrap/Tabs';
 function TabNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [tabKey, setTabKey] = useState('dashboard');
+  const [tabKey, setTabKey] = useState('expenses-list');
 
   useEffect(() => {
     // Map URL path to corresponding tab key
-    if (location.pathname === '/dashboard') {
-      setTabKey('dashboard');
+    if (location.pathname === '/expenses-list') {
+      setTabKey('expenses-list');
     } else if (location.pathname === '/categories') {
       setTabKey('categories');
     }
@@ -26,13 +26,13 @@ function TabNavigation() {
 
   return (
     <Tabs
-      defaultActiveKey={'dashboard'}
+      defaultActiveKey={'expenses-list'}
       id="headerNavigationTabs"
       activeKey={tabKey}
       onSelect={handleSelect}
       variant="underline"
     >
-      <Tab eventKey="dashboard" title="Dashboard"></Tab>
+      <Tab eventKey="expenses-list" title="Expenses"></Tab>
       <Tab eventKey="categories" title="Categories"></Tab>
     </Tabs>
   );

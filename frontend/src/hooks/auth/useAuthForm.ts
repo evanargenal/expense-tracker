@@ -56,7 +56,7 @@ export function useAuthForm() {
           );
 
       setUser(response.data);
-      navigate('/dashboard');
+      navigate('/expenses-list');
     } catch (error: any) {
       setFormErrorMessage(
         error.response?.data?.message === 'User does not exist'

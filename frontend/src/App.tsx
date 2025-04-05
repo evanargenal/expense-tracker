@@ -6,7 +6,7 @@ import './index.css';
 import Spinner from 'react-bootstrap/Spinner';
 
 import LandingPage from './pages/LandingPage';
-import Dashboard from './pages/Dashboard';
+import ExpensesList from './pages/ExpensesList';
 import NoMatch from './pages/NoMatch';
 import Categories from './pages/Categories';
 
@@ -25,11 +25,11 @@ function App() {
     <Routes>
       <Route
         path="/"
-        element={!user ? <LandingPage /> : <Navigate to="/dashboard" />}
+        element={!user ? <LandingPage /> : <Navigate to="/expenses-list" />}
       />
       <Route
-        path="/dashboard"
-        element={user ? <Dashboard /> : <Navigate to="/" />}
+        path="/expenses-list"
+        element={user ? <ExpensesList /> : <Navigate to="/" />}
       />
       <Route
         path="/categories"

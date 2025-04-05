@@ -39,7 +39,7 @@ function authenticateToken(
     req.user = result.data;
     next();
   } else {
-    return res.status(401).json({ error: 'Unauthorized' }); // fallback - token is undefined/missing (401)
+    return res.status(401).json({ error: 'Access token missing' }); // fallback - token is undefined/missing (401)
   }
 }
 

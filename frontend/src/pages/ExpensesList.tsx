@@ -1,9 +1,9 @@
 import './pages.css';
-import styles from './Dashboard.module.css';
+import styles from './ExpensesList.module.css';
 import Header from '../components/header/Header';
 import ExpensesTable from '../components/tables/expenses/ExpensesTable';
 
-function Dashboard() {
+function ExpensesList() {
   return (
     <>
       <div className="App">
@@ -20,4 +20,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default ExpensesList;

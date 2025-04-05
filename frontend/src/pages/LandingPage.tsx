@@ -9,7 +9,7 @@ function LandingPage() {
         <div className="App-header">
           <Header />
         </div>
-        <div className="App-body">
+        <div className="landingPage">
           <img src={LoginLogo} className="App-logo mb-5" alt="logo" />
           <p className="mt-5">Log in to see your expenses!</p>
         </div>

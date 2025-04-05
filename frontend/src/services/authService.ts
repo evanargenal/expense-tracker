@@ -9,9 +9,24 @@ export const validateUser = async () => {
     });
     return response.data;
   } catch (error: any) {
-    // Expected case: User is not logged in (no token)
-    if (error.response?.status === 401) {
-      return null;
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      try {
+        // Try to refresh the access token
+        const refreshResponse = await axios.post(`${API_URL}/refresh`, {
+          withCredentials: true,
+        });
+
+        if (refreshResponse.status === 200) {
+          // Retry original request after refreshing
+          const retryResponse = await axios.get(`${API_URL}/validate`, {
+            withCredentials: true,
+          });
+          return retryResponse.data;
+        }
+      } catch (refreshError) {
+        console.error('Refresh token failed', refreshError);
+        return null;
+      }
     } else {
       console.error('Error with token check', error);
       throw error; // Re-throw so the component can handle it
