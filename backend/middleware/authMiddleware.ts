@@ -28,12 +28,12 @@ function authenticateToken(
   res: Response,
   next: NextFunction
 ) {
-  const token = req.cookies.token;
-  if (token) {
-    const result = verifyAccessToken(token);
+  const accessToken = req.cookies.token;
+  if (accessToken) {
+    const result = verifyAccessToken(accessToken);
 
     if (!result.success) {
-      return res.status(403).json({ error: result.error });
+      return res.status(401).json({ error: result.error }); // Token expired or invalid
     }
 
     req.user = result.data;

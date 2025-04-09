@@ -29,12 +29,12 @@ router.get(
   async (req: AuthenticatedRequest, res: Response) => {
     const db = await connectDB();
     const usersCollection = db.collection('users');
-    // Retrieve most up to date user info
+
     const user = await usersCollection.findOne({
       _id: new ObjectId(req.user?.userId),
     });
     if (!user) {
-      return res.status(401).json({ message: 'User not found - unauthorized' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     res.json({
@@ -55,29 +55,37 @@ router.post('/refresh', async (req: Request, res: Response) => {
     return res.status(401).json({ message: 'Refresh token missing' });
   }
 
-  jwt.verify(
-    refreshToken,
-    jwt_refresh_secret,
-    (err: Error, user: AuthenticatedUser) => {
-      if (err)
-        return res.status(403).json({ message: 'Invalid refresh token' });
+  try {
+    const user = jwt.verify(
+      refreshToken,
+      jwt_refresh_secret
+    ) as AuthenticatedUser;
 
-      const newAccessToken = jwt.sign(
-        { userId: user.userId, email: user.email },
-        jwt_secret,
-        { expiresIn: '1h' }
-      );
+    const tokenPayload = {
+      userId: user.userId,
+      email: user.email,
+    };
 
-      res.cookie('token', newAccessToken, {
-        httpOnly: true, // Prevent access from JavaScript (XSS protection)
-        secure: process.env.NODE_ENV === 'production', // Send only over HTTPS in production
-        sameSite: 'strict', // Prevent CSRF attacks
-        maxAge: 60 * 60 * 1000, // 1 hour
-      });
+    const accessTokenOptions = { expiresIn: '1h' };
 
-      res.json({ message: 'Token refreshed successfully' });
-    }
-  );
+    const newAccessToken = jwt.sign(
+      tokenPayload,
+      jwt_secret,
+      accessTokenOptions
+    );
+
+    res.cookie('token', newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.json({ message: 'Token refreshed successfully' });
+  } catch (err) {
+    // expected: invalid or expired refresh token
+    return res.status(401).json({ message: 'Error refreshing token' });
+  }
 });
 
 // Authenticate user

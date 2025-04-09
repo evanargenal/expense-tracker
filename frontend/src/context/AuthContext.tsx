@@ -7,6 +7,7 @@ import {
   useCallback,
 } from 'react';
 import { validateUser } from '../services/authService';
+import { logoutUser } from '../services/authService';
 import { User } from '../types/types';
 
 interface AuthContextType {
@@ -28,21 +29,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const fetchUser = useCallback(async () => {
     try {
       const data = await validateUser();
-      if (data !== null) {
+      if (data) {
         setUser(data);
       } else {
+        await logoutUser();
         setUser(null);
       }
     } catch (error) {
+      await logoutUser();
       setUser(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // Only call fetchUser when the user is null or has changed
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    if (user === null) {
+      fetchUser();
+    }
+  }, [fetchUser, user]); // Run the effect only when user state changes
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading }}>

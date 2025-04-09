@@ -23,8 +23,17 @@ export const validateUser = async () => {
           });
           return retryResponse.data;
         }
-      } catch (refreshError) {
-        console.error('Refresh token failed', refreshError);
+      } catch (refreshError: any) {
+        if (
+          refreshError.response?.status === 401 ||
+          refreshError.response?.status === 403
+        ) {
+          // Suppress expected refresh failure silently
+          return null;
+        }
+
+        // Log only unexpected refresh errors
+        console.error('Unexpected error during refresh', refreshError);
         return null;
       }
     } else {

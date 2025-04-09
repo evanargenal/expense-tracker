@@ -1,12 +1,10 @@
-import axios from 'axios';
+import axios from '../api/axios';
 
-const API_URL = '/api/categories'; // Base API URL
+const API_URL = '/categories'; // Base API URL
 
 export const getCategories = async () => {
   try {
-    const response = await axios.get(API_URL, {
-      withCredentials: true,
-    });
+    const response = await axios.get(API_URL);
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -16,16 +14,10 @@ export const getCategories = async () => {
 
 export const addCategory = async (categoryName: string, icon: string) => {
   try {
-    const response = await axios.post(
-      API_URL,
-      {
-        categoryName,
-        icon,
-      },
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post(API_URL, {
+      categoryName,
+      icon,
+    });
     return response.data;
   } catch (error) {
     console.error('Error adding category:', error);
@@ -41,9 +33,7 @@ export const editCategory = async (
   }>
 ) => {
   try {
-    const response = await axios.patch(`${API_URL}/${id}`, updates, {
-      withCredentials: true,
-    });
+    const response = await axios.patch(`${API_URL}/${id}`, updates);
     return response.data;
   } catch (error) {
     console.error('Error editing category:', error);
@@ -53,9 +43,7 @@ export const editCategory = async (
 
 export const restoreDefaultCategories = async () => {
   try {
-    const response = await axios.post(`${API_URL}/restore`, {
-      withCredentials: true,
-    });
+    const response = await axios.post(`${API_URL}/restore`);
     return response.data;
   } catch (error: any) {
     // Expected case: Default categories are already present
@@ -69,13 +57,7 @@ export const restoreDefaultCategories = async () => {
 
 export const deleteCategories = async (ids: string[]) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/delete`,
-      { ids },
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post(`${API_URL}/delete`, { ids });
     return response.data;
   } catch (error) {
     console.error('Failed to delete one or more categories:', error);

@@ -9,7 +9,6 @@ export function useLogout() {
   const handleLogout = async () => {
     try {
       await logoutUser();
-      console.log('User logged out successfully');
       setUser(null);
       navigate('/');
     } catch (error) {
