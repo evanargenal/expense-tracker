@@ -24,7 +24,7 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
         <tr>
           <th>Name</th>
           <th>Icon</th>
-          <th>Confirm?</th>
+          <th className="text-center">Confirm?</th>
         </tr>
       </thead>
       <tbody>

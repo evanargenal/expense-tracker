@@ -30,6 +30,23 @@ code {
   color: white !important;
 }
 
+/* Globally change sizes of forms */
+.form-control {
+  padding: 0.1rem 0.4rem !important;
+  font-size: calc(8px + 1vmin) !important;
+}
+
+.form-select {
+  padding: 0.1rem 2.25rem 0.1rem 0.4rem !important;
+  font-size: calc(8px + 1vmin) !important;
+}
+
+/* Globally make small buttons a little bit smaller */
+.btn-sm,
+.btn-group-sm > .btn {
+  --bs-btn-font-size: calc(5px + 1vmin) !important;
+}
+
 /* Globally remove dropdown toggle carets */
 .dropdown-toggle::after {
   display: none !important;

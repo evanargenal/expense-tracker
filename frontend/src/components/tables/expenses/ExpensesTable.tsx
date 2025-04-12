@@ -105,7 +105,7 @@ function ExpensesTable() {
           <thead>
             <tr>
               {editExpenseMode && (
-                <th>
+                <th style={{ width: '5%' }}>
                   <Form.Check
                     aria-label="select all"
                     className={styles.customCheck}
@@ -114,12 +114,16 @@ function ExpensesTable() {
                   />
                 </th>
               )}
-              <th>Date</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Category</th>
-              <th>Cost</th>
-              {editExpenseMode && <th>Action</th>}
+              <th style={{ width: '20%' }}>Date</th>
+              <th style={{ width: '15%' }}>Name</th>
+              <th style={{ width: '15%' }}>Description</th>
+              <th style={{ width: '20%' }}>Category</th>
+              <th style={{ width: '10%' }}>Cost</th>
+              {editExpenseMode && (
+                <th className="text-center" style={{ width: '10%' }}>
+                  Action
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -139,7 +143,7 @@ function ExpensesTable() {
             ))}
             <tr>
               <th colSpan={editExpenseMode ? 5 : 4}>Total</th>
-              <th colSpan={editExpenseMode ? 2 : 1} className="text-end">
+              <th colSpan={editExpenseMode ? 2 : 1}>
                 $
                 {userExpenses
                   .reduce((total, item) => total + Number(item.cost), 0)

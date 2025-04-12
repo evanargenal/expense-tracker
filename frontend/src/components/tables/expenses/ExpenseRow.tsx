@@ -65,7 +65,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
           <td>
             {expense.categoryName} {expense.icon}
           </td>
-          <td className="text-end">${Number(expense.cost).toFixed(2)}</td>
+          <td>${Number(expense.cost).toFixed(2)}</td>
           {editExpenseMode && (
             <td>
               <div className={styles.actionItems}>

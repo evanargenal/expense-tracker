@@ -4,11 +4,11 @@
   flex-direction: column;
   align-items: start;
   width: 100%;
-  font-size: calc(7px + 1.5vmin);
+  font-size: calc(12px + 1vmin);
 }
 
 .tabContainer {
-  font-size: calc(6px + 1.5vmin);
+  font-size: calc(10px + 1vmin);
 }
 
 .ProfileButtonContainer {

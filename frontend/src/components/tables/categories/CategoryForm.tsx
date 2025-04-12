@@ -66,7 +66,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         </td>
       )}
-      <td colSpan={isEditing ? 3 : 1}>
+      <td>
         <Form.Control
           type="text"
           name="categoryName"
@@ -85,6 +85,18 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           onChange={handleInputChange}
         />
       </td>
+      {isEditing && (
+        <>
+          <td>{category.numExpenses}</td>
+          <td>
+            {category.userId === '000000000000000000000000' ? (
+              <XLg />
+            ) : (
+              <CheckLg />
+            )}
+          </td>
+        </>
+      )}
       <td>
         <div className={styles.actionItems}>
           <Button variant="success" size="sm" onClick={handleSubmit}>

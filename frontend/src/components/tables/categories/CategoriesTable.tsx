@@ -95,7 +95,7 @@ function CategoriesTable() {
           <thead>
             <tr>
               {editCategoryMode && (
-                <th>
+                <th style={{ width: '5%' }}>
                   <Form.Check
                     aria-label="select all"
                     className={styles.customCheck}
@@ -106,13 +106,15 @@ function CategoriesTable() {
                   />
                 </th>
               )}
-              <th>Name</th>
-              <th>Icon</th>
-              <th>Expenses</th>
+              <th style={{ width: '45%' }}>Name</th>
+              <th style={{ width: '10%' }}>Icon</th>
+              <th style={{ width: '15%' }}>Expenses</th>
               {editCategoryMode && (
                 <>
-                  <th>Custom?</th>
-                  <th>Action</th>
+                  <th style={{ width: '10%' }}>Custom?</th>
+                  <th className="text-center" style={{ width: '10%' }}>
+                    Action
+                  </th>
                 </>
               )}
             </tr>

@@ -1,11 +1,15 @@
 .expensesTable th {
+  text-align: left;
   vertical-align: middle;
-  font-size: calc(10px + 1.5vmin);
+  padding: 10px;
+  font-size: calc(16px + 1vmin);
 }
 
 .expensesTable td {
+  text-align: left;
   vertical-align: middle;
-  font-size: calc(6px + 1.5vmin);
+  padding: 10px;
+  font-size: calc(12px + 1vmin);
 }
 
 .tableHeader {
@@ -21,11 +25,11 @@
 .centeredButtons {
   display: flex;
   justify-content: center;
-  padding: 25px;
   gap: 10px;
 }
 
 .customCheck {
+  text-align: center;
   margin: 0;
 }
 

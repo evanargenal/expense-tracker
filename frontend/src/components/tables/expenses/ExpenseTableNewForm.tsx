@@ -29,7 +29,7 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
           <th>Description</th>
           <th>Category</th>
           <th>Cost</th>
-          <th>Confirm?</th>
+          <th className="text-center">Confirm?</th>
         </tr>
       </thead>
       <tbody>
