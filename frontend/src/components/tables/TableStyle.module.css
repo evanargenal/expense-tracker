@@ -13,13 +13,17 @@
 }
 
 .tableHeader {
-  position: relative;
   display: flex;
   flex-direction: row-reverse;
-  padding-right: 5px;
   align-items: center;
-  padding: 15px;
+  padding: 15px 10px 15px 10px;
   gap: 10px;
+}
+
+.itemsWithIcons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .centeredButtons {

@@ -2,9 +2,15 @@ import axios from '../api/axios';
 
 const API_URL = '/expenses'; // Base API URL
 
-export const getExpenses = async () => {
+export const getExpenses = async (
+  page: number,
+  pageSize: number,
+  sort: string
+) => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(API_URL, {
+      params: { page, pageSize, sort },
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching expenses:', error);

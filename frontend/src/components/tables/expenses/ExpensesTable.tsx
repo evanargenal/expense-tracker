@@ -2,18 +2,34 @@ import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 
+import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
+
 import ExpensesTableHeader from './ExpensesTableHeader';
 import NoExpensesMessage from './NoExpensesMessage';
 import ExpenseTableNewForm from './ExpenseTableNewForm';
 import ExpenseRow from './ExpenseRow';
-import { useExpenses } from '../../../hooks/expenses/useExpenses';
 import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
+import { ExpenseItem, Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
-function ExpensesTable() {
-  const { userExpenses, userCategories, isLoading, fetchUserExpenses } =
-    useExpenses();
+interface ExpensesTableProps {
+  userExpenses: ExpenseItem[];
+  userCategories: Category[];
+  isLoading: boolean;
+  sortDirection: string;
+  setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
+  fetchUserExpenses: () => Promise<void>;
+}
+
+function ExpensesTable({
+  userExpenses,
+  userCategories,
+  isLoading,
+  sortDirection,
+  setSortDirection,
+  fetchUserExpenses,
+}: ExpensesTableProps) {
   const {
     newExpenseMode,
     newExpense,
@@ -29,6 +45,9 @@ function ExpensesTable() {
     handleUpdateMultipleExpenseCategories,
     handleDelete,
   } = useExpenseActions(fetchUserExpenses);
+
+  const toggleSortOrder = () =>
+    setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
 
   const handleSelect = (id: string) => {
     setSelectedExpenses((prev) =>
@@ -64,11 +83,6 @@ function ExpensesTable() {
       </>
     );
   };
-
-  const sortedExpenses = userExpenses.sort(
-    (a: { date: Date }, b: { date: Date }): number =>
-      new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
 
   const renderSortedExpenseRows = () => {
     return (
@@ -114,7 +128,19 @@ function ExpensesTable() {
                   />
                 </th>
               )}
-              <th style={{ width: '20%' }}>Date</th>
+              <th
+                style={{ width: '20%', cursor: 'pointer' }}
+                onClick={toggleSortOrder}
+              >
+                <div className={styles.itemsWithIcons}>
+                  <span>Date</span>
+                  {sortDirection === 'desc' ? (
+                    <CaretDownFill />
+                  ) : (
+                    <CaretUpFill />
+                  )}
+                </div>
+              </th>
               <th style={{ width: '15%' }}>Name</th>
               <th style={{ width: '15%' }}>Description</th>
               <th style={{ width: '20%' }}>Category</th>
@@ -127,7 +153,7 @@ function ExpensesTable() {
             </tr>
           </thead>
           <tbody>
-            {sortedExpenses?.map((expense) => (
+            {userExpenses?.map((expense) => (
               <ExpenseRow
                 key={expense._id}
                 expense={expense}

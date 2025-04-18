@@ -1,0 +1,23 @@
+.paginationContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 10px 0px 10px;
+}
+
+.flexRowContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.noGapFlexRowContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  white-space: nowrap;
+}

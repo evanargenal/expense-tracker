@@ -10,7 +10,7 @@ function Categories() {
         <div className="App-header">
           <Header />
         </div>
-        <div className="App-body" style={{ justifyContent: 'unset' }}>
+        <div className="App-body">
           <div className={styles.tableExpenses}>
             <CategoriesTable></CategoriesTable>
           </div>

@@ -29,6 +29,16 @@ router.get(
       const expensesCollection = db.collection('expenses');
 
       const currentUserId = req.user.userId;
+
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 25;
+      const rawSort = req.query.sort;
+      const sortDirection =
+        rawSort === 'asc' || rawSort === 'desc' ? rawSort : 'desc';
+
+      const skip = (page - 1) * pageSize;
+      const sort = sortDirection === 'asc' ? 1 : -1;
+
       const result = await expensesCollection
         .aggregate([
           {
@@ -70,21 +80,39 @@ router.get(
               icon: { $ifNull: ['$lookup.icon', ''] }, // Set empty string if null
             },
           },
+          {
+            $sort: { date: sort },
+          },
+          {
+            $facet: {
+              expenses: [{ $skip: skip }, { $limit: pageSize }],
+              totalCount: [{ $count: 'count' }],
+            },
+          },
         ])
         .toArray();
 
-      res.status(200).json(
-        result.map((expense: ExpenseItem) => ({
-          _id: expense._id,
-          name: expense.name,
-          description: expense.description,
-          cost: expense.cost,
-          date: expense.date,
-          userId: expense.userId,
-          categoryName: expense.categoryName,
-          icon: expense.icon,
-        }))
-      );
+      const expenses = result[0].expenses;
+      const total = result[0].totalCount[0]?.count || 0;
+
+      const mappedExpenses = expenses.map((expense: ExpenseItem) => ({
+        _id: expense._id,
+        name: expense.name,
+        description: expense.description,
+        cost: expense.cost,
+        date: expense.date,
+        userId: expense.userId,
+        categoryName: expense.categoryName,
+        icon: expense.icon,
+      }));
+
+      res.status(200).json({
+        expenseList: mappedExpenses,
+        total,
+        currentPage: page,
+        totalPages: Math.ceil(total / pageSize),
+        sortOrder: sortDirection,
+      });
     } catch (err) {
       res.status(500).json({ error: err });
     }
