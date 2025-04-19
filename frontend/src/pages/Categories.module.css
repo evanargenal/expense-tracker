@@ -2,3 +2,8 @@
   text-align: center;
   width: 95%;
 }
+
+.paginationContainer {
+  width: 95%;
+  font-size: calc(10px + 1vmin);
+}

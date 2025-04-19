@@ -1,24 +1,24 @@
 import Pagination from 'react-bootstrap/Pagination';
 import Form from 'react-bootstrap/Form';
 
-import styles from './PaginationStyle.module.css';
+import styles from './PageControlsStyle.module.css';
 
-function ExpensePagination({
-  userExpenseTotal,
+function PageControls({
+  itemTotal,
   pageNumber,
   itemsPerPage,
   setPageNumber,
   setItemsPerPage,
 }: {
-  userExpenseTotal: number;
+  itemTotal: number;
   pageNumber: number;
   itemsPerPage: number;
   setPageNumber: (page: number) => void;
   setItemsPerPage: (size: number) => void;
 }) {
-  const totalPages = Math.ceil(userExpenseTotal / itemsPerPage);
+  const totalPages = Math.ceil(itemTotal / itemsPerPage);
   const start = (pageNumber - 1) * itemsPerPage + 1;
-  const end = Math.min(pageNumber * itemsPerPage, userExpenseTotal);
+  const end = Math.min(pageNumber * itemsPerPage, itemTotal);
 
   const handlePageClick = (page: number) => {
     if (page >= 1 && page <= totalPages) setPageNumber(page);
@@ -82,7 +82,7 @@ function ExpensePagination({
           <b>
             {start} - {end}
           </b>{' '}
-          of <b>{userExpenseTotal}</b>
+          of <b>{itemTotal}</b>
         </span>
         <div className={styles.noGapFlexRowContainer}>
           <Form.Select
@@ -90,11 +90,6 @@ function ExpensePagination({
             value={itemsPerPage}
             onChange={handleDropdownChange}
           >
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
             <option value="25">25</option>
             <option value="50">50</option>
             <option value="100">100</option>
@@ -125,4 +120,4 @@ function ExpensePagination({
   );
 }
 
-export default ExpensePagination;
+export default PageControls;

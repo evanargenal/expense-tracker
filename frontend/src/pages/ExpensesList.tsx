@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Header from '../components/header/Header';
 import ExpensesTable from '../components/tables/expenses/ExpensesTable';
-import ExpensePagination from '../components/pagination/ExpensePagination';
+import PageControls from '../components/pagination/PageControls';
 
 import { useExpenses } from '../hooks/expenses/useExpenses';
 
@@ -31,15 +31,17 @@ function ExpensesList() {
               fetchUserExpenses={expenses.fetchUserExpenses}
             ></ExpensesTable>
           </div>
-          <div className={styles.paginationContainer}>
-            <ExpensePagination
-              userExpenseTotal={expenses.userExpenseTotal}
-              pageNumber={pageNumber}
-              itemsPerPage={itemsPerPage}
-              setPageNumber={setPageNumber}
-              setItemsPerPage={setItemsPerPage}
-            ></ExpensePagination>
-          </div>
+          {expenses.userExpenses.length !== 0 && (
+            <div className={styles.paginationContainer}>
+              <PageControls
+                itemTotal={expenses.userExpenseTotal}
+                pageNumber={pageNumber}
+                itemsPerPage={itemsPerPage}
+                setPageNumber={setPageNumber}
+                setItemsPerPage={setItemsPerPage}
+              ></PageControls>
+            </div>
+          )}
         </div>
       </div>
     </>

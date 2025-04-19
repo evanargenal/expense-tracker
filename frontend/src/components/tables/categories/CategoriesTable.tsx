@@ -2,17 +2,32 @@ import Table from 'react-bootstrap/Table';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 
+import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
+
 import CategoriesTableHeader from '../categories/CategoriesTableHeader';
 import NoCategoriesMessage from '../categories/NoCategoriesMessage';
 import NewCategoryTableForm from './CategoryTableNewForm';
 import CategoryRow from '../categories/CategoryRow';
-import { useCategories } from '../../../hooks/categories/useCategories';
 import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
+import { Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
-function CategoriesTable() {
-  const { userCategories, isLoading, fetchUserCategories } = useCategories();
+interface CategoriesTableProps {
+  userCategories: Category[];
+  isLoading: boolean;
+  sortDirection: string;
+  setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
+  fetchUserCategories: () => Promise<void>;
+}
+
+function CategoriesTable({
+  userCategories,
+  isLoading,
+  sortDirection,
+  setSortDirection,
+  fetchUserCategories,
+}: CategoriesTableProps) {
   const {
     newCategoryMode,
     newCategory,
@@ -28,6 +43,9 @@ function CategoriesTable() {
     handleRestoreDefaultCategories,
     handleDelete,
   } = useCategoryActions(fetchUserCategories);
+
+  const toggleSortOrder = () =>
+    setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
 
   const handleSelect = (id: string) => {
     setSelectedCategories((prev) =>
@@ -106,7 +124,19 @@ function CategoriesTable() {
                   />
                 </th>
               )}
-              <th style={{ width: '45%' }}>Name</th>
+              <th
+                style={{ width: '45%', cursor: 'pointer' }}
+                onClick={toggleSortOrder}
+              >
+                <div className={styles.itemsWithIcons}>
+                  <span>Name</span>
+                  {sortDirection === 'asc' ? (
+                    <CaretDownFill />
+                  ) : (
+                    <CaretUpFill />
+                  )}
+                </div>
+              </th>
               <th style={{ width: '10%' }}>Icon</th>
               <th style={{ width: '15%' }}>Expenses</th>
               {editCategoryMode && (

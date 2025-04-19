@@ -21,14 +21,13 @@ router.get(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const currentUserId = req.user.userId;
     try {
       const db = await connectDB();
-      if (!req.user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
       const expensesCollection = db.collection('expenses');
-
-      const currentUserId = req.user.userId;
 
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 25;
@@ -69,6 +68,9 @@ router.get(
             },
           },
           {
+            $sort: { date: sort },
+          },
+          {
             $project: {
               _id: 1,
               name: 1,
@@ -79,9 +81,6 @@ router.get(
               categoryName: { $ifNull: ['$lookup.categoryName', ''] }, // Set empty string if null
               icon: { $ifNull: ['$lookup.icon', ''] }, // Set empty string if null
             },
-          },
-          {
-            $sort: { date: sort },
           },
           {
             $facet: {

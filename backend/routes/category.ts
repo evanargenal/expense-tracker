@@ -26,8 +26,16 @@ router.get(
     try {
       const db = await connectDB();
       const categoriesCollection = db.collection('categories');
-      const expensesCollection = db.collection('expenses');
       const usersCollection = db.collection('users');
+
+      const page = parseInt(req.query.page as string) || 1;
+      const pageSize = parseInt(req.query.pageSize as string) || 25;
+      const rawSort = req.query.sort;
+      const sortDirection =
+        rawSort === 'asc' || rawSort === 'desc' ? rawSort : 'asc';
+
+      const skip = (page - 1) * pageSize;
+      const sort = sortDirection === 'desc' ? -1 : 1;
 
       // Return hiddenCategories from user lookup
       const currentUser = await usersCollection.findOne(
@@ -80,7 +88,7 @@ router.get(
             },
           },
           {
-            $sort: { categoryNameLower: 1 }, // Alphabetize by category name
+            $sort: { categoryNameLower: sort }, // Alphabetize by category name
           },
           {
             $project: {
@@ -91,10 +99,33 @@ router.get(
               numExpenses: 1,
             },
           },
+          {
+            $facet: {
+              categories: [{ $skip: skip }, { $limit: pageSize }],
+              totalCount: [{ $count: 'count' }],
+            },
+          },
         ])
         .toArray();
 
-      res.status(200).json(result);
+      const categories = result[0].categories;
+      const total = result[0].totalCount[0]?.count || 0;
+
+      const mappedCategories = categories.map((category: Category) => ({
+        _id: category._id,
+        categoryName: category.categoryName,
+        icon: category.icon,
+        userId: category.userId,
+        numExpenses: category.numExpenses,
+      }));
+
+      res.status(200).json({
+        categoryList: mappedCategories,
+        total,
+        currentPage: page,
+        totalPages: Math.ceil(total / pageSize),
+        sortOrder: sortDirection,
+      });
     } catch (err) {
       res.status(500).json({ error: err });
     }
