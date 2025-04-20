@@ -6,7 +6,6 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const connectDB = require('../database/db');
 import { validateDate, validateCost } from '../utils/validators';
-import { getCategoryIdByName } from '../utils/dbUtils';
 import { AuthenticatedUser, ExpenseItem } from '../types/types';
 
 const authenticateToken = require('../middleware/authMiddleware');
@@ -78,6 +77,7 @@ router.get(
               cost: 1,
               date: 1,
               userId: 1,
+              categoryId: 1,
               categoryName: { $ifNull: ['$lookup.categoryName', ''] }, // Set empty string if null
               icon: { $ifNull: ['$lookup.icon', ''] }, // Set empty string if null
             },
@@ -101,6 +101,7 @@ router.get(
         cost: expense.cost,
         date: expense.date,
         userId: expense.userId,
+        categoryId: expense.categoryId,
         categoryName: expense.categoryName,
         icon: expense.icon,
       }));
@@ -128,22 +129,27 @@ router.post(
       return res.status(404).json({ error: 'User not found' });
     }
     const currentUserId = req.user.userId;
-    const { name, description, cost, date, categoryName } = req.body;
+    const { name, description, cost, date, categoryId } = req.body;
     if (!name || (cost === '' && cost !== '0') || !date) {
       return res.status(400).json({
-        error: 'All fields are required (name, cost, date)',
+        error: 'Name, cost, and date fields are required',
       });
+    }
+    if (!ObjectId.isValid(categoryId)) {
+      return res.status(400).json({ error: 'Invalid category ID format' });
     }
     try {
       const db = await connectDB();
       const expensesCollection = db.collection('expenses');
       const categoriesCollection = db.collection('categories');
 
-      // Find the category ID by category name
-      const categoryId = await getCategoryIdByName(
-        categoryName,
-        categoriesCollection
-      );
+      // Check if the updating category exists
+      const categoryExists = await categoriesCollection.findOne({
+        _id: new ObjectId(categoryId),
+      });
+      if (!categoryExists) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
 
       // Create new expense object
       const newExpense = {
@@ -152,7 +158,7 @@ router.post(
         cost: new Double(cost), // Ensure cost is always a double
         date: new Date(date),
         userId: new ObjectId(currentUserId),
-        categoryId: categoryId,
+        categoryId: new ObjectId(categoryId),
       };
 
       // Insert user into the database
@@ -236,13 +242,7 @@ router.patch(
     }
 
     // Define the allowed fields for update
-    const allowedFields = [
-      'date',
-      'name',
-      'description',
-      'categoryName',
-      'cost',
-    ];
+    const allowedFields = ['date', 'name', 'description', 'categoryId', 'cost'];
 
     // Filter out any fields that are not part of the schema
     const filteredUpdates = Object.fromEntries(
@@ -259,19 +259,18 @@ router.patch(
       const validatedDate = validateDate(filteredUpdates.date);
       if (validatedDate === null) {
         return res.status(400).json({
-          error: 'Invalid value for date. It must be a valid date string.',
+          error: 'Invalid value for date - must be a valid date string.',
         });
       }
       filteredUpdates.date = validatedDate;
     }
-
     // Validate 'cost' field if it exists
     if (filteredUpdates.cost !== undefined) {
       const validatedCost = validateCost(filteredUpdates.cost);
       if (validatedCost === null) {
         return res
           .status(400)
-          .json({ error: 'Invalid value for cost. It must be a number.' });
+          .json({ error: 'Invalid value for cost - must be a number.' });
       }
       filteredUpdates.cost = validatedCost;
     }
@@ -280,17 +279,18 @@ router.patch(
       const expensesCollection = db.collection('expenses');
       const categoriesCollection = db.collection('categories');
 
-      // Validate 'categoryName' field if it exists
-      if (filteredUpdates.categoryName !== undefined) {
-        const validatedCategoryId = await getCategoryIdByName(
-          String(filteredUpdates.categoryName),
-          categoriesCollection
-        );
-        // Assign the retrieved categoryId to filteredUpdates
-        filteredUpdates.categoryId = validatedCategoryId;
-
-        // Remove the original categoryName since it's no longer needed
-        delete filteredUpdates.categoryName;
+      // Validate 'categoryId' field if it exists
+      if (filteredUpdates.categoryId !== undefined) {
+        if (!ObjectId.isValid(filteredUpdates.categoryId)) {
+          return res.status(400).json({ error: 'Invalid category ID format' });
+        }
+        const categoryExists = await categoriesCollection.findOne({
+          _id: new ObjectId(filteredUpdates.categoryId),
+        });
+        if (!categoryExists) {
+          return res.status(404).json({ error: 'Category not found' });
+        }
+        filteredUpdates.categoryId = new ObjectId(filteredUpdates.categoryId);
       }
 
       // Update expense fields by ID in the database

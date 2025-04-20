@@ -23,7 +23,7 @@ export const addExpense = async (
   description: string,
   cost: number,
   date: Date,
-  categoryName: string
+  categoryId: string
 ) => {
   try {
     const response = await axios.post(API_URL, {
@@ -31,7 +31,7 @@ export const addExpense = async (
       description,
       cost,
       date,
-      categoryName,
+      categoryId,
     });
     return response.data;
   } catch (error) {
@@ -63,7 +63,7 @@ export const editExpense = async (
     description: string;
     cost: number | undefined;
     date: Date | undefined;
-    categoryName: string;
+    categoryId: string;
   }>
 ) => {
   try {

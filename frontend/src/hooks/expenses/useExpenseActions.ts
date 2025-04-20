@@ -35,7 +35,7 @@ export function useExpenseActions(fetchUserExpenses: () => void) {
         expense.description,
         Number(expense.cost),
         expense.date,
-        expense.categoryName
+        expense.categoryId
       );
       toggleNewExpenseMode();
       fetchUserExpenses();

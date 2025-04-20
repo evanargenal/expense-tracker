@@ -115,13 +115,13 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
       </td>
       <td>
         <Form.Select
-          name="categoryName"
-          value={formData.categoryName}
+          name="categoryId"
+          value={formData.categoryId}
           onChange={handleDropdownChange}
         >
           <option value="">Category (None)</option>
           {userCategories.map((category) => (
-            <option key={category._id} value={category.categoryName}>
+            <option key={category._id} value={category._id}>
               {category.icon} {category.categoryName}
             </option>
           ))}

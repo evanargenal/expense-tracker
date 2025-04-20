@@ -7,13 +7,14 @@ export interface User {
 
 export interface ExpenseItem {
   _id: string;
-  categoryName: string;
+  name: string;
+  description: string;
   cost: string;
   date: Date;
-  description: string;
-  icon: string;
-  name: string;
   userId: string;
+  categoryId: string;
+  categoryName: string;
+  icon: string;
 }
 
 export interface Category {
