@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import Header from '../components/header/Header';
-import ExpensesTable from '../components/tables/expenses/ExpensesTable';
-import PageControls from '../components/pagination/PageControls';
+import Header from '../../components/header/Header';
+import ExpensesTable from '../../components/tables/expenses/ExpensesTable';
+import PageControls from '../../components/pagination/PageControls';
 
-import { useExpenses } from '../hooks/expenses/useExpenses';
+import { useExpenses } from '../../hooks/expenses/useExpenses';
 
-import './pages.css';
+import './../../styles/shared.css';
 import styles from './ExpensesList.module.css';
 
 function ExpensesList() {

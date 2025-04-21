@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import Header from '../components/header/Header';
-import CategoriesTable from '../components/tables/categories/CategoriesTable';
-import PageControls from '../components/pagination/PageControls';
+import Header from '../../components/header/Header';
+import CategoriesTable from '../../components/tables/categories/CategoriesTable';
+import PageControls from '../../components/pagination/PageControls';
 
-import { useCategories } from '../hooks/categories/useCategories';
+import { useCategories } from '../../hooks/categories/useCategories';
 
-import './pages.css';
+import './../../styles/shared.css';
 import styles from './Categories.module.css';
 
 function Categories() {

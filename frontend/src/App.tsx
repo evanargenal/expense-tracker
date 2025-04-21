@@ -5,10 +5,10 @@ import './index.css';
 
 import Spinner from 'react-bootstrap/Spinner';
 
-import LandingPage from './pages/LandingPage';
-import ExpensesList from './pages/ExpensesList';
-import NoMatch from './pages/NoMatch';
-import Categories from './pages/Categories';
+import LandingPage from './pages/LandingPage/LandingPage';
+import ExpensesList from './pages/ExpensesList/ExpensesList';
+import NoMatchPage from './pages/NoMatchPage/NoMatchPage';
+import Categories from './pages/Categories/Categories';
 
 function App() {
   const { user, loading } = useAuth();
@@ -35,7 +35,7 @@ function App() {
         path="/categories"
         element={user ? <Categories /> : <Navigate to="/" />}
       />
-      <Route path="*" element={<NoMatch />} />
+      <Route path="*" element={<NoMatchPage />} />
     </Routes>
   );
 }

@@ -1,4 +1,7 @@
-body {
+html,
+body,
+#root {
+  height: 100%;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -35,7 +38,6 @@ code {
   padding: 0.1rem 0.4rem !important;
   font-size: calc(8px + 1vmin) !important;
 }
-
 .form-select {
   padding: 0.1rem 2.25rem 0.1rem 0.4rem !important;
   font-size: calc(8px + 1vmin) !important;
