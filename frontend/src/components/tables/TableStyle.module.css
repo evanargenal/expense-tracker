@@ -1,11 +1,11 @@
-.expensesTable th {
+.tableStyling th {
   text-align: left;
   vertical-align: middle;
   padding: 10px;
   font-size: calc(16px + 1vmin);
 }
 
-.expensesTable td {
+.tableStyling td {
   text-align: left;
   vertical-align: middle;
   padding: 10px;

@@ -7,7 +7,7 @@ const { ObjectId } = require('mongodb');
 const connectDB = require('../database/db');
 import { verifyCategoryId } from '../utils/dbUtils';
 import { validateDate, validateNumber } from '../utils/validators';
-import { AuthenticatedUser, ExpenseItem } from '../types/types';
+import { AuthenticatedUser, IncomeItem } from '../types/types';
 
 const authenticateToken = require('../middleware/authMiddleware');
 
@@ -15,8 +15,8 @@ interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
 }
 
-// Get current user's expenses (auth)
-// GET /api/expenses
+// Get current user's income items (auth)
+// GET /api/income
 router.get(
   '/',
   authenticateToken,
@@ -27,7 +27,7 @@ router.get(
     const currentUserId = req.user.userId;
     try {
       const db = await connectDB();
-      const expensesCollection = db.collection('expenses');
+      const incomeCollection = db.collection('income');
 
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 25;
@@ -38,7 +38,7 @@ router.get(
       const skip = (page - 1) * pageSize;
       const sort = sortDirection === 'asc' ? 1 : -1;
 
-      const result = await expensesCollection
+      const result = await incomeCollection
         .aggregate([
           {
             $match: { userId: new ObjectId(currentUserId) }, // Filter by userId before lookup
@@ -75,7 +75,7 @@ router.get(
               _id: 1,
               name: 1,
               description: 1,
-              cost: 1,
+              amount: 1,
               date: 1,
               userId: 1,
               categoryId: 1,
@@ -85,30 +85,30 @@ router.get(
           },
           {
             $facet: {
-              expenses: [{ $skip: skip }, { $limit: pageSize }],
+              incomeItems: [{ $skip: skip }, { $limit: pageSize }],
               totalCount: [{ $count: 'count' }],
             },
           },
         ])
         .toArray();
 
-      const expenses = result[0].expenses;
+      const incomeItems = result[0].incomeItems;
       const total = result[0].totalCount[0]?.count || 0;
 
-      const mappedExpenses = expenses.map((expense: ExpenseItem) => ({
-        _id: expense._id,
-        name: expense.name,
-        description: expense.description,
-        cost: expense.cost,
-        date: expense.date,
-        userId: expense.userId,
-        categoryId: expense.categoryId,
-        categoryName: expense.categoryName,
-        icon: expense.icon,
+      const mappedIncome = incomeItems.map((incomeItem: IncomeItem) => ({
+        _id: incomeItem._id,
+        name: incomeItem.name,
+        description: incomeItem.description,
+        amount: incomeItem.amount,
+        date: incomeItem.date,
+        userId: incomeItem.userId,
+        categoryId: incomeItem.categoryId,
+        categoryName: incomeItem.categoryName,
+        icon: incomeItem.icon,
       }));
 
       res.status(200).json({
-        expenseList: mappedExpenses,
+        incomeList: mappedIncome,
         total,
         currentPage: page,
         totalPages: Math.ceil(total / pageSize),
@@ -120,8 +120,8 @@ router.get(
   }
 );
 
-// Add expense to current user (auth)
-// POST /api/expenses
+// Add income item to current user (auth)
+// POST /api/income
 router.post(
   '/',
   authenticateToken,
@@ -130,15 +130,15 @@ router.post(
       return res.status(404).json({ error: 'User not found' });
     }
     const currentUserId = req.user.userId;
-    const { name, description, cost, date, categoryId } = req.body;
-    if (!name || (cost === '' && cost !== '0') || !date) {
+    const { name, description, amount, date, categoryId } = req.body;
+    if (!name || (amount === '' && amount !== '0') || !date) {
       return res.status(400).json({
-        error: 'Name, cost, and date fields are required',
+        error: 'Name, amount, and date fields are required',
       });
     }
     try {
       const db = await connectDB();
-      const expensesCollection = db.collection('expenses');
+      const incomeCollection = db.collection('income');
       const categoriesCollection = db.collection('categories');
 
       // Verify the category
@@ -147,21 +147,21 @@ router.post(
         categoriesCollection
       );
 
-      // Create new expense object
-      const newExpense = {
+      // Create new income object
+      const newIncomeItem = {
         name,
         description,
-        cost: new Double(cost), // Ensure cost is always a double
+        amount: new Double(amount), // Ensure amount is always a double
         date: new Date(date),
         userId: new ObjectId(currentUserId),
         categoryId: verifiedCategory,
       };
 
       // Insert user into the database
-      const result = await expensesCollection.insertOne(newExpense);
+      const result = await incomeCollection.insertOne(newIncomeItem);
 
       res.status(201).json({
-        message: 'Expense added successfully',
+        message: 'Income item added successfully',
         id: result.insertedId,
       });
     } catch (err) {
@@ -170,8 +170,8 @@ router.post(
   }
 );
 
-// Update multiple expense categories (auth)
-// PATCH /api/expenses/update-categories
+// Update multiple income categories (auth)
+// PATCH /api/income/update-categories
 router.patch(
   '/update-categories',
   authenticateToken,
@@ -189,7 +189,7 @@ router.patch(
       !ids.every((id) => ObjectId.isValid(id))
     ) {
       return res.status(400).json({
-        error: 'Provide an array of valid expense IDs',
+        error: 'Provide an array of valid income item IDs',
       });
     }
     if (newCategoryId !== '' && !ObjectId.isValid(newCategoryId)) {
@@ -199,7 +199,7 @@ router.patch(
     }
     try {
       const db = await connectDB();
-      const expensesCollection = db.collection('expenses');
+      const incomeCollection = db.collection('income');
       const categoriesCollection = db.collection('categories');
 
       // Verify the new category
@@ -209,19 +209,21 @@ router.patch(
       );
 
       // Map ids to ObjectIds and update their category in the db
-      const expenseObjectIds = ids.map((id) => new ObjectId(id));
-      const result = await expensesCollection.updateMany(
-        { _id: { $in: expenseObjectIds }, userId: new ObjectId(currentUserId) }, // Ensure the user owns the expenses
+      const incomeObjectIds = ids.map((id) => new ObjectId(id));
+      const result = await incomeCollection.updateMany(
+        { _id: { $in: incomeObjectIds }, userId: new ObjectId(currentUserId) }, // Ensure the user owns the income item
         { $set: { categoryId: verifiedCategory } }
       );
 
-      // If no expenses exist in database
+      // If no income items exist in database
       if (result.matchedCount === 0) {
-        return res.status(404).json({ error: 'No matching expenses found' });
+        return res
+          .status(404)
+          .json({ error: 'No matching income items found' });
       }
 
       res.status(200).json({
-        message: `Updated ${result.modifiedCount} expense(s) successfully`,
+        message: `Updated ${result.modifiedCount} income item(s) successfully`,
       });
     } catch (err) {
       res.status(500).json({ error: err });
@@ -229,21 +231,27 @@ router.patch(
   }
 );
 
-// Update expense field(s) by ID (auth)
-// PATCH /api/expenses/:id
+// Update income item field(s) by ID (auth)
+// PATCH /api/income/:id
 router.patch(
   '/:id',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    const expenseId = req.params.id;
+    const incomeId = req.params.id;
     const updateFields = req.body; // Only include fields that need updating
 
-    if (!ObjectId.isValid(expenseId)) {
+    if (!ObjectId.isValid(incomeId)) {
       return res.status(400).json({ error: 'Invalid ID format' });
     }
 
     // Define the allowed fields for update
-    const allowedFields = ['date', 'name', 'description', 'categoryId', 'cost'];
+    const allowedFields = [
+      'date',
+      'name',
+      'description',
+      'categoryId',
+      'amount',
+    ];
 
     // Filter out any fields that are not part of the schema
     const filteredUpdates = Object.fromEntries(
@@ -265,19 +273,19 @@ router.patch(
       }
       filteredUpdates.date = validatedDate;
     }
-    // Validate 'cost' field if it exists
-    if (filteredUpdates.cost !== undefined) {
-      const validatedCost = validateNumber(filteredUpdates.cost);
-      if (validatedCost === null) {
+    // Validate 'amount' field if it exists
+    if (filteredUpdates.amount !== undefined) {
+      const validatedAmount = validateNumber(filteredUpdates.amount);
+      if (validatedAmount === null) {
         return res
           .status(400)
-          .json({ error: 'Invalid value for cost - must be a number.' });
+          .json({ error: 'Invalid value for amount - must be a number.' });
       }
-      filteredUpdates.cost = validatedCost;
+      filteredUpdates.amount = validatedAmount;
     }
     try {
       const db = await connectDB();
-      const expensesCollection = db.collection('expenses');
+      const incomeCollection = db.collection('income');
       const categoriesCollection = db.collection('categories');
 
       // Validate 'categoryId' field if it exists
@@ -288,19 +296,19 @@ router.patch(
       );
       filteredUpdates.categoryId = verifiedCategory;
 
-      // Update expense fields by ID in the database
-      const result = await expensesCollection.updateOne(
-        { _id: new ObjectId(expenseId) },
+      // Update income item field(s) by ID in the database
+      const result = await incomeCollection.updateOne(
+        { _id: new ObjectId(incomeId) },
         { $set: filteredUpdates } // Only updates the fields provided
       );
 
-      // If expense doesn't exist in database
+      // If income item doesn't exist in database
       if (result.matchedCount === 0) {
-        return res.status(404).json({ error: 'Expense not found' });
+        return res.status(404).json({ error: 'Income item not found' });
       }
 
       res.status(200).json({
-        message: 'Expense updated successfully',
+        message: 'Income item updated successfully',
       });
     } catch (err) {
       res.status(500).json({ error: err });
@@ -308,8 +316,8 @@ router.patch(
   }
 );
 
-// Delete multiple expenses (auth)
-// POST /api/expenses/delete
+// Delete multiple income items (auth)
+// POST /api/income/delete
 router.post(
   '/delete',
   authenticateToken,
@@ -322,27 +330,29 @@ router.post(
       !ids.every((id) => ObjectId.isValid(id))
     ) {
       return res.status(400).json({
-        error: 'Provide an array of valid expense IDs',
+        error: 'Provide an array of valid income item IDs',
       });
     }
 
     try {
       const db = await connectDB();
-      const expensesCollection = db.collection('expenses');
+      const incomeCollection = db.collection('income');
 
       // Map ids to ObjectIds and delete them from the db
-      const expenseObjectIds = ids.map((id) => new ObjectId(id));
-      const result = await expensesCollection.deleteMany({
-        _id: { $in: expenseObjectIds },
+      const incomeObjectIds = ids.map((id) => new ObjectId(id));
+      const result = await incomeCollection.deleteMany({
+        _id: { $in: incomeObjectIds },
       });
 
-      // If no expenses exist in database
+      // If no income items exist in database
       if (result.deletedCount === 0) {
-        return res.status(404).json({ error: 'No matching expenses found' });
+        return res
+          .status(404)
+          .json({ error: 'No matching income items found' });
       }
 
       res.status(200).json({
-        message: `Deleted ${result.deletedCount} expense(s) successfully`,
+        message: `Deleted ${result.deletedCount} income item(s) successfully`,
       });
     } catch (err) {
       res.status(500).json({ error: err });
@@ -350,29 +360,29 @@ router.post(
   }
 );
 
-// Delete expense by ID (auth)
-// DELETE /api/expenses/:id
+// Delete income item by ID (auth)
+// DELETE /api/income/:id
 router.delete('/:id', async (req: Request, res: Response) => {
-  const expenseId = req.params.id;
-  if (!ObjectId.isValid(expenseId)) {
+  const incomeId = req.params.id;
+  if (!ObjectId.isValid(incomeId)) {
     return res.status(400).json({ error: 'Invalid ID format' });
   }
   try {
     const db = await connectDB();
-    const expensesCollection = db.collection('expenses');
+    const incomeCollection = db.collection('income');
 
-    // Delete expense by ID in the database
-    const result = await expensesCollection.deleteOne({
-      _id: new ObjectId(expenseId),
+    // Delete income item by ID in the database
+    const result = await incomeCollection.deleteOne({
+      _id: new ObjectId(incomeId),
     });
 
-    // If expense doesn't exist in database
+    // If income item doesn't exist in database
     if (result.deletedCount === 0) {
-      return res.status(404).json({ error: 'Expense not found' });
+      return res.status(404).json({ error: 'Income item not found' });
     }
 
     res.status(200).json({
-      message: 'Expense deleted successfully',
+      message: 'Income item deleted successfully',
     });
   } catch (err) {
     res.status(500).json({ error: err });

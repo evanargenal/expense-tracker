@@ -17,10 +17,23 @@ export interface ExpenseItem {
   icon: string;
 }
 
+export interface IncomeItem {
+  _id: string;
+  name: string;
+  description: string;
+  amount: string;
+  date: Date;
+  userId: string;
+  categoryId: string;
+  categoryName: string;
+  icon: string;
+}
+
 export interface Category {
   _id: string;
   categoryName: string;
   icon: string;
+  categoryType: string;
   userId: string;
   numExpenses: string;
 }

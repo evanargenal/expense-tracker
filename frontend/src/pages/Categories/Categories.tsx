@@ -12,7 +12,18 @@ function Categories() {
   const [pageNumber, setPageNumber] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const categories = useCategories(pageNumber, itemsPerPage, sortDirection);
+  const expenseCategories = useCategories(
+    pageNumber,
+    itemsPerPage,
+    sortDirection,
+    'expense'
+  );
+  // const incomeCategories = useCategories(
+  //   pageNumber,
+  //   itemsPerPage,
+  //   sortDirection,
+  //   'income'
+  // );
   return (
     <>
       <div className="App">
@@ -22,17 +33,17 @@ function Categories() {
         <div className="App-body">
           <div className={styles.tableExpenses}>
             <CategoriesTable
-              userCategories={categories.userCategories}
-              isLoading={categories.isLoading}
+              userCategories={expenseCategories.userCategories}
+              isLoading={expenseCategories.isLoading}
               sortDirection={sortDirection}
               setSortDirection={setSortDirection}
-              fetchUserCategories={categories.fetchUserCategories}
+              fetchUserCategories={expenseCategories.fetchUserCategories}
             ></CategoriesTable>
           </div>
-          {categories.userCategories.length !== 0 && (
+          {expenseCategories.userCategories.length !== 0 && (
             <div className={styles.paginationContainer}>
               <PageControls
-                itemTotal={categories.userCategoryTotal}
+                itemTotal={expenseCategories.userCategoryTotal}
                 pageNumber={pageNumber}
                 itemsPerPage={itemsPerPage}
                 setPageNumber={setPageNumber}

@@ -17,11 +17,11 @@ export const validateDate = (date: any): Date | null => {
   return new Date(date); // Valid date
 };
 
-export const validateCost = (cost: any): number | null => {
-  if (typeof cost !== 'number' || isNaN(cost)) {
-    return null; // Invalid number
+export const validateNumber = (inputNumber: any): number | null => {
+  if (typeof inputNumber !== 'number' || isNaN(inputNumber)) {
+    return null; // Invalid input number
   }
-  return cost;
+  return inputNumber;
 };
 
 export const validateSingleEmoji = (icon: string): boolean => {

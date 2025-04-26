@@ -5,11 +5,12 @@ const API_URL = '/categories'; // Base API URL
 export const getCategories = async (
   page: number,
   pageSize: number,
-  sort: string
+  sort: string,
+  categoryType: string
 ) => {
   try {
     const response = await axios.get(API_URL, {
-      params: { page, pageSize, sort },
+      params: { page, pageSize, sort, categoryType },
     });
     return response.data;
   } catch (error) {

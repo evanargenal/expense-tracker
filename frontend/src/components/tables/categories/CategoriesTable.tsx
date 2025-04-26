@@ -105,7 +105,7 @@ function CategoriesTable({
           />
         )}
         <Table
-          className={styles.expensesTable}
+          className={styles.tableStyling}
           striped
           responsive
           variant="dark"

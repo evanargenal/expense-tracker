@@ -10,6 +10,31 @@
   pointer-events: none;
 }
 
+.App-header {
+  background-color: #282c34;
+  min-height: calc(50px + 2vmin);
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  color: white;
+}
+
+.App-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .App-header {
+    min-height: 10vh;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -22,36 +47,5 @@
   }
   to {
     transform: rotate(360deg);
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: calc(50px + 2vmin);
-  padding-left: 2.5%;
-  padding-right: 2.5%;
-  display: flex;
-  flex-direction: row;
-  align-items: end;
-  color: white;
-}
-
-/* @media (max-width: 768px) {
-  .App-header {
-    min-height: 8vh;
-  }
-} */
-
-.App-body {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .App-body {
-    min-height: 90vh;
   }
 }

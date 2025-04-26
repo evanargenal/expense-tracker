@@ -5,7 +5,8 @@ import { Category } from '../../types/types';
 export function useCategories(
   pageNumber: number,
   itemsPerPage: number,
-  sortDirection: string
+  sortDirection: string,
+  categoryType: string
 ) {
   const [userCategories, setUserCategories] = useState<Category[]>([]);
   const [userCategoryTotal, setUserCategoryTotal] = useState(0);
@@ -13,14 +14,19 @@ export function useCategories(
 
   const fetchUserCategories = useCallback(async () => {
     try {
-      const data = await getCategories(pageNumber, itemsPerPage, sortDirection);
+      const data = await getCategories(
+        pageNumber,
+        itemsPerPage,
+        sortDirection,
+        categoryType
+      );
       setUserCategories(data.categoryList);
       setUserCategoryTotal(data.total);
       setIsLoading(false);
     } catch (error) {
       console.error('Error retrieving categories:', error);
     }
-  }, [pageNumber, itemsPerPage, sortDirection]);
+  }, [pageNumber, itemsPerPage, sortDirection, categoryType]);
 
   useEffect(() => {
     fetchUserCategories();

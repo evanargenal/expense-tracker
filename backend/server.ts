@@ -8,6 +8,7 @@ const server = express();
 const connectDB = require('./database/db');
 
 const authRoutes = require('./routes/auth');
+const incomeRoutes = require('./routes/income');
 const expenseRoutes = require('./routes/expense');
 const categoryRoutes = require('./routes/category');
 const userRoutes = require('./routes/user');
@@ -20,6 +21,7 @@ server.use(cookieParser()); // To parse cookies
 
 // Mount routes
 server.use('/api/auth', authRoutes);
+server.use('/api/income', incomeRoutes);
 server.use('/api/expenses', expenseRoutes);
 server.use('/api/categories', categoryRoutes);
 server.use('/api/users', userRoutes);

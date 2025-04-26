@@ -30,6 +30,11 @@ router.get(
 
       const page = parseInt(req.query.page as string) || 1;
       const pageSize = parseInt(req.query.pageSize as string) || 25;
+      const rawCategoryType = req.query.categoryType as string;
+      const categoryTypeFilter = ['expense', 'income'].includes(rawCategoryType)
+        ? { categoryType: rawCategoryType }
+        : {};
+
       const rawSort = req.query.sort;
       const sortDirection =
         rawSort === 'asc' || rawSort === 'desc' ? rawSort : 'asc';
@@ -49,10 +54,16 @@ router.get(
         .aggregate([
           {
             $match: {
-              $or: [
-                { userId: new ObjectId(currentUserId) },
-                { userId: new ObjectId('000000000000000000000000') },
-              ], // Get user-specific and default categories
+              $and: [
+                {
+                  $or: [
+                    // Filter by user's categories and include default categories
+                    { userId: new ObjectId(currentUserId) },
+                    { userId: new ObjectId('000000000000000000000000') },
+                  ],
+                },
+                categoryTypeFilter, // Filter by categoryType
+              ],
             },
           },
           {
@@ -95,6 +106,7 @@ router.get(
               _id: 1,
               categoryName: 1,
               icon: 1,
+              categoryType: 1,
               userId: 1, // Include userId to differentiate between user-specific & default categories
               numExpenses: 1,
             },
@@ -115,6 +127,7 @@ router.get(
         _id: category._id,
         categoryName: category.categoryName,
         icon: category.icon,
+        categoryType: category.categoryType,
         userId: category.userId,
         numExpenses: category.numExpenses,
       }));
@@ -142,7 +155,15 @@ router.post(
       return res.status(404).json({ error: 'User not found' });
     }
     const currentUserId = req.user.userId;
-    const { categoryName, icon } = req.body;
+    const { categoryName, icon, categoryType } = req.body;
+    if (
+      !categoryType ||
+      (categoryType !== 'expense' && categoryType !== 'income')
+    ) {
+      return res.status(400).json({
+        error: 'Category type must be either "expense" or "income"',
+      });
+    }
     if (!categoryName) {
       return res.status(400).json({
         error: 'Category name is required',
@@ -161,6 +182,7 @@ router.post(
       const newCategory = {
         categoryName,
         icon,
+        categoryType,
         userId: new ObjectId(currentUserId),
       };
 
@@ -293,10 +315,15 @@ router.post(
     }
     const currentUserId = req.user.userId;
     const { ids } = req.body;
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    if (
+      !ids ||
+      !Array.isArray(ids) ||
+      ids.length === 0 ||
+      !ids.every((id) => ObjectId.isValid(id))
+    ) {
       return res
         .status(400)
-        .json({ error: 'Invalid request: provide an array of category IDs' });
+        .json({ error: 'Provide an array of valid category IDs' });
     }
 
     try {

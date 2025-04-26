@@ -15,31 +15,31 @@ import { Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
-interface ExpensesTableHeaderProps {
-  newExpenseMode: boolean;
-  editExpenseMode: boolean;
-  selectedExpenses: string[];
+interface IncomeItemsTableHeaderProps {
+  newIncomeItemMode: boolean;
+  editIncomeItemMode: boolean;
+  selectedIncomeItems: string[];
   userCategories: Category[];
-  toggleNewExpenseMode: () => void;
+  toggleNewIncomeItemMode: () => void;
   toggleEditMode: () => void;
   handleDelete: () => void;
-  handleUpdateMultipleExpenseCategories: (
+  handleUpdateMultipleIncomeItemCategories: (
     ids: string[],
     newCategoryId: string
   ) => void;
-  fetchUserExpenses: () => void;
+  fetchUserIncomeItems: () => void;
 }
 
-const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
-  newExpenseMode,
-  editExpenseMode,
-  selectedExpenses,
+const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
+  newIncomeItemMode,
+  editIncomeItemMode,
+  selectedIncomeItems,
   userCategories,
-  toggleNewExpenseMode,
+  toggleNewIncomeItemMode,
   toggleEditMode,
   handleDelete,
-  handleUpdateMultipleExpenseCategories,
-  fetchUserExpenses,
+  handleUpdateMultipleIncomeItemCategories,
+  fetchUserIncomeItems,
 }) => {
   const [showCategories, setShowCategories] = useState(false);
 
@@ -50,26 +50,26 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
   return (
     <div className={styles.tableHeader}>
       <Button
-        variant={newExpenseMode ? 'secondary' : 'success'}
-        onClick={toggleNewExpenseMode}
+        variant={newIncomeItemMode ? 'secondary' : 'success'}
+        onClick={toggleNewIncomeItemMode}
       >
-        {newExpenseMode ? (
+        {newIncomeItemMode ? (
           <DashLg className="mb-1" />
         ) : (
           <PlusLg className="mb-1" />
         )}
       </Button>
       <Button
-        variant={editExpenseMode ? 'warning' : 'secondary'}
+        variant={editIncomeItemMode ? 'warning' : 'secondary'}
         onClick={toggleEditMode}
       >
         <PencilFill className="mb-1" />
       </Button>
       {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
-      <Button variant="outline-primary" onClick={fetchUserExpenses}>
+      <Button variant="outline-primary" onClick={fetchUserIncomeItems}>
         <ArrowClockwise className="mb-1" />
       </Button>
-      {editExpenseMode && (
+      {editIncomeItemMode && (
         <Dropdown
           data-bs-theme="dark"
           align="end"
@@ -80,15 +80,18 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
           <Dropdown.Toggle
             id="selectedDropdown"
             variant="secondary"
-            disabled={selectedExpenses.length === 0}
+            disabled={selectedIncomeItems.length === 0}
           >
             <ListCheck />
-            {selectedExpenses.length > 0 && ` (${selectedExpenses.length})`}
+            {selectedIncomeItems.length > 0 &&
+              ` (${selectedIncomeItems.length})`}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item onClick={handleDelete}>
-              Delete {selectedExpenses.length}{' '}
-              {selectedExpenses.length === 1 ? 'Expense' : 'Expenses'}
+              Delete {selectedIncomeItems.length}{' '}
+              {selectedIncomeItems.length === 1
+                ? 'Income Item'
+                : 'Income Items'}
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item
@@ -97,8 +100,8 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
                 toggleShowCategories();
               }}
             >
-              Update {selectedExpenses.length}{' '}
-              {selectedExpenses.length === 1 ? 'Category' : 'Categories'}{' '}
+              Update {selectedIncomeItems.length}{' '}
+              {selectedIncomeItems.length === 1 ? 'Category' : 'Categories'}{' '}
               {showCategories ? <CaretUpFill /> : <CaretDownFill />}
             </Dropdown.Item>
             {showCategories && (
@@ -106,7 +109,10 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
                 <Dropdown.Item
                   key={''}
                   onClick={() => {
-                    handleUpdateMultipleExpenseCategories(selectedExpenses, '');
+                    handleUpdateMultipleIncomeItemCategories(
+                      selectedIncomeItems,
+                      ''
+                    );
                   }}
                 >
                   No Category
@@ -116,8 +122,8 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
                   <Dropdown.Item
                     key={category._id}
                     onClick={() => {
-                      handleUpdateMultipleExpenseCategories(
-                        selectedExpenses,
+                      handleUpdateMultipleIncomeItemCategories(
+                        selectedIncomeItems,
                         category._id
                       );
                     }}
@@ -134,4 +140,4 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
   );
 };
 
-export default ExpensesTableHeader;
+export default IncomeItemsTableHeader;

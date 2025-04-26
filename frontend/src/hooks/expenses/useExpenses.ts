@@ -27,7 +27,7 @@ export function useExpenses(
 
   const getUserCategories = async () => {
     try {
-      const data = await getCategories(1, 1000, 'asc');
+      const data = await getCategories(1, 1000, 'asc', 'expense');
       setUserCategories(data.categoryList);
       setIsLoading(false);
     } catch (error) {
