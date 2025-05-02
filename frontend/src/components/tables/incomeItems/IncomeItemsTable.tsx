@@ -4,7 +4,6 @@ import Form from 'react-bootstrap/Form';
 
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
-import IncomeItemsTableHeader from './IncomeItemsTableHeader';
 import NoIncomeItemsMessage from './NoIncomeItemsMessage';
 import IncomeItemTableNewForm from './IncomeItemTableNewForm';
 import IncomeItemRow from './IncomeItemRow';
@@ -15,20 +14,20 @@ import styles from '../TableStyle.module.css';
 
 interface IncomeItemsTableProps {
   userIncomeItems: IncomeItem[];
-  userCategories: Category[];
+  userIncomeCategories: Category[];
   isLoading: boolean;
   sortDirection: string;
+  incomeItemActions: ReturnType<typeof useIncomeItemActions>;
   setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
-  fetchUserIncomeItems: () => Promise<void>;
 }
 
 function IncomeItemsTable({
   userIncomeItems,
-  userCategories,
+  userIncomeCategories,
   isLoading,
   sortDirection,
+  incomeItemActions,
   setSortDirection,
-  fetchUserIncomeItems,
 }: IncomeItemsTableProps) {
   const {
     newIncomeItemMode,
@@ -37,14 +36,12 @@ function IncomeItemsTable({
     editingIncomeItem,
     selectedIncomeItems,
     toggleNewIncomeItemMode,
-    toggleEditMode,
     setEditingIncomeItem,
     setSelectedIncomeItems,
     handleAddIncomeItem,
     handleEditIncomeItem,
-    handleUpdateMultipleIncomeItemCategories,
     handleDelete,
-  } = useIncomeItemActions(fetchUserIncomeItems);
+  } = incomeItemActions;
 
   const toggleSortOrder = () =>
     setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
@@ -75,7 +72,7 @@ function IncomeItemsTable({
         {newIncomeItemMode && (
           <IncomeItemTableNewForm
             newIncomeItem={newIncomeItem}
-            userCategories={userCategories}
+            userIncomeCategories={userIncomeCategories}
             selectedIncomeItems={selectedIncomeItems}
             handleAddIncomeItem={handleAddIncomeItem}
             toggleNewIncomeItemMode={toggleNewIncomeItemMode}
@@ -89,23 +86,10 @@ function IncomeItemsTable({
   const renderSortedIncomeItemRows = () => {
     return (
       <>
-        <IncomeItemsTableHeader
-          newIncomeItemMode={newIncomeItemMode}
-          editIncomeItemMode={editIncomeItemMode}
-          selectedIncomeItems={selectedIncomeItems}
-          userCategories={userCategories}
-          toggleNewIncomeItemMode={toggleNewIncomeItemMode}
-          toggleEditMode={toggleEditMode}
-          handleDelete={() => handleDelete(selectedIncomeItems)}
-          handleUpdateMultipleIncomeItemCategories={
-            handleUpdateMultipleIncomeItemCategories
-          }
-          fetchUserIncomeItems={fetchUserIncomeItems}
-        />
         {newIncomeItemMode && ( // Add new income item form
           <IncomeItemTableNewForm
             newIncomeItem={newIncomeItem}
-            userCategories={userCategories}
+            userIncomeCategories={userIncomeCategories}
             selectedIncomeItems={selectedIncomeItems}
             handleAddIncomeItem={handleAddIncomeItem}
             toggleNewIncomeItemMode={toggleNewIncomeItemMode}
@@ -164,7 +148,7 @@ function IncomeItemsTable({
                 isEditing={editingIncomeItem._id === incomeItem._id}
                 editIncomeItemMode={editIncomeItemMode}
                 selectedIncomeItems={selectedIncomeItems}
-                userCategories={userCategories}
+                userIncomeCategories={userIncomeCategories}
                 setEditingIncomeItem={setEditingIncomeItem}
                 handleDelete={handleDelete}
                 handleSelect={handleSelect}
@@ -197,9 +181,10 @@ function IncomeItemsTable({
       ) : (
         <div className="mb-4">
           <Placeholder as="p" animation="wave">
-            <Placeholder xs={12} />
-            <Placeholder xs={12} />
-            <Placeholder xs={12} />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
           </Placeholder>
         </div>
       )}

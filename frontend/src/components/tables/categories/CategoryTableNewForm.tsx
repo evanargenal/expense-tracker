@@ -19,11 +19,17 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
   handleSelect,
 }) => {
   return (
-    <Table className={styles.tableStyling} responsive striped variant="dark">
+    <Table
+      className={`${styles.tableStyling} ${styles.tableMarginBottom}`}
+      responsive
+      striped
+      variant="dark"
+    >
       <thead>
         <tr>
           <th>Name</th>
           <th>Icon</th>
+          <th>Category Type</th>
           <th className="text-center">Confirm?</th>
         </tr>
       </thead>

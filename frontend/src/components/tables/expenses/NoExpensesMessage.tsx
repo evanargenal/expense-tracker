@@ -11,7 +11,7 @@ const NoExpensesMessage: React.FC<NoExpensesMessageProps> = ({
   toggleNewExpenseMode,
 }) => {
   return (
-    <p className="mb-4 mt-5">
+    <h3 className="mb-4 mt-5">
       No expenses found for your account. <br />
       Either you're a liar or you need to add some! <br /> <br />
       <Button
@@ -26,7 +26,7 @@ const NoExpensesMessage: React.FC<NoExpensesMessageProps> = ({
           <PlusLg className="mb-1" />
         )}
       </Button>
-    </p>
+    </h3>
   );
 };
 

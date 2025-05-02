@@ -11,36 +11,32 @@ import {
   CaretUpFill,
 } from 'react-bootstrap-icons';
 
+import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
 import { Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
 interface ExpensesTableHeaderProps {
-  newExpenseMode: boolean;
-  editExpenseMode: boolean;
-  selectedExpenses: string[];
-  userCategories: Category[];
-  toggleNewExpenseMode: () => void;
-  toggleEditMode: () => void;
-  handleDelete: () => void;
-  handleUpdateMultipleExpenseCategories: (
-    ids: string[],
-    newCategoryId: string
-  ) => void;
-  fetchUserExpenses: () => void;
+  userExpenseCategories: Category[];
+  expenseActions: ReturnType<typeof useExpenseActions>;
+  fetchUserExpenses: () => Promise<void>;
 }
 
 const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
-  newExpenseMode,
-  editExpenseMode,
-  selectedExpenses,
-  userCategories,
-  toggleNewExpenseMode,
-  toggleEditMode,
-  handleDelete,
-  handleUpdateMultipleExpenseCategories,
+  userExpenseCategories,
+  expenseActions,
   fetchUserExpenses,
 }) => {
+  const {
+    newExpenseMode,
+    editExpenseMode,
+    selectedExpenses,
+    toggleNewExpenseMode,
+    toggleEditMode,
+    handleDelete,
+    handleUpdateMultipleExpenseCategories,
+  } = expenseActions;
+
   const [showCategories, setShowCategories] = useState(false);
 
   const toggleShowCategories = () => {
@@ -86,7 +82,7 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
             {selectedExpenses.length > 0 && ` (${selectedExpenses.length})`}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={handleDelete}>
+            <Dropdown.Item onClick={() => handleDelete(selectedExpenses)}>
               Delete {selectedExpenses.length}{' '}
               {selectedExpenses.length === 1 ? 'Expense' : 'Expenses'}
             </Dropdown.Item>
@@ -112,7 +108,7 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
                   No Category
                 </Dropdown.Item>
 
-                {userCategories?.map((category) => (
+                {userExpenseCategories?.map((category) => (
                   <Dropdown.Item
                     key={category._id}
                     onClick={() => {

@@ -5,7 +5,7 @@ import styles from '../TableStyle.module.css';
 
 interface IncomeItemTableNewFormProps {
   newIncomeItem: IncomeItem;
-  userCategories: Category[];
+  userIncomeCategories: Category[];
   selectedIncomeItems: string[];
   handleAddIncomeItem: (incomeItem: IncomeItem) => void;
   toggleNewIncomeItemMode: () => void;
@@ -14,14 +14,19 @@ interface IncomeItemTableNewFormProps {
 
 const IncomeItemTableNewForm: React.FC<IncomeItemTableNewFormProps> = ({
   newIncomeItem,
-  userCategories,
+  userIncomeCategories,
   selectedIncomeItems,
   handleAddIncomeItem,
   toggleNewIncomeItemMode,
   handleSelect,
 }) => {
   return (
-    <Table className={styles.tableStyling} responsive striped variant="dark">
+    <Table
+      className={`${styles.tableStyling} ${styles.tableMarginBottom}`}
+      responsive
+      striped
+      variant="dark"
+    >
       <thead>
         <tr>
           <th>Date</th>
@@ -35,7 +40,7 @@ const IncomeItemTableNewForm: React.FC<IncomeItemTableNewFormProps> = ({
       <tbody>
         <IncomeItemForm
           incomeItem={newIncomeItem}
-          userCategories={userCategories}
+          userIncomeCategories={userIncomeCategories}
           isEditing={false}
           selectedIncomeItems={selectedIncomeItems}
           onSave={handleAddIncomeItem}

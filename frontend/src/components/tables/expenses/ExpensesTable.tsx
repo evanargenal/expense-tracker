@@ -4,7 +4,6 @@ import Form from 'react-bootstrap/Form';
 
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
-import ExpensesTableHeader from './ExpensesTableHeader';
 import NoExpensesMessage from './NoExpensesMessage';
 import ExpenseTableNewForm from './ExpenseTableNewForm';
 import ExpenseRow from './ExpenseRow';
@@ -15,20 +14,20 @@ import styles from '../TableStyle.module.css';
 
 interface ExpensesTableProps {
   userExpenses: ExpenseItem[];
-  userCategories: Category[];
+  userExpenseCategories: Category[];
   isLoading: boolean;
   sortDirection: string;
+  expenseActions: ReturnType<typeof useExpenseActions>;
   setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
-  fetchUserExpenses: () => Promise<void>;
 }
 
 function ExpensesTable({
   userExpenses,
-  userCategories,
+  userExpenseCategories,
   isLoading,
   sortDirection,
+  expenseActions,
   setSortDirection,
-  fetchUserExpenses,
 }: ExpensesTableProps) {
   const {
     newExpenseMode,
@@ -37,14 +36,12 @@ function ExpensesTable({
     editingExpense,
     selectedExpenses,
     toggleNewExpenseMode,
-    toggleEditMode,
     setEditingExpense,
     setSelectedExpenses,
     handleAddExpense,
     handleEditExpense,
-    handleUpdateMultipleExpenseCategories,
     handleDelete,
-  } = useExpenseActions(fetchUserExpenses);
+  } = expenseActions;
 
   const toggleSortOrder = () =>
     setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
@@ -73,7 +70,7 @@ function ExpensesTable({
         {newExpenseMode && (
           <ExpenseTableNewForm
             newExpense={newExpense}
-            userCategories={userCategories}
+            userExpenseCategories={userExpenseCategories}
             selectedExpenses={selectedExpenses}
             handleAddExpense={handleAddExpense}
             toggleNewExpenseMode={toggleNewExpenseMode}
@@ -87,23 +84,10 @@ function ExpensesTable({
   const renderSortedExpenseRows = () => {
     return (
       <>
-        <ExpensesTableHeader
-          newExpenseMode={newExpenseMode}
-          editExpenseMode={editExpenseMode}
-          selectedExpenses={selectedExpenses}
-          userCategories={userCategories}
-          toggleNewExpenseMode={toggleNewExpenseMode}
-          toggleEditMode={toggleEditMode}
-          handleDelete={() => handleDelete(selectedExpenses)}
-          handleUpdateMultipleExpenseCategories={
-            handleUpdateMultipleExpenseCategories
-          }
-          fetchUserExpenses={fetchUserExpenses}
-        />
         {newExpenseMode && ( // Add new expense form
           <ExpenseTableNewForm
             newExpense={newExpense}
-            userCategories={userCategories}
+            userExpenseCategories={userExpenseCategories}
             selectedExpenses={selectedExpenses}
             handleAddExpense={handleAddExpense}
             toggleNewExpenseMode={toggleNewExpenseMode}
@@ -160,7 +144,7 @@ function ExpensesTable({
                 isEditing={editingExpense._id === expense._id}
                 editExpenseMode={editExpenseMode}
                 selectedExpenses={selectedExpenses}
-                userCategories={userCategories}
+                userExpenseCategories={userExpenseCategories}
                 setEditingExpense={setEditingExpense}
                 handleDelete={handleDelete}
                 handleSelect={handleSelect}
@@ -193,9 +177,10 @@ function ExpensesTable({
       ) : (
         <div className="mb-4">
           <Placeholder as="p" animation="wave">
-            <Placeholder xs={12} />
-            <Placeholder xs={12} />
-            <Placeholder xs={12} />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
           </Placeholder>
         </div>
       )}

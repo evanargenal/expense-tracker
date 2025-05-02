@@ -10,13 +10,15 @@ export function useExpenses(
 ) {
   const [userExpenses, setUserExpenses] = useState<ExpenseItem[]>([]);
   const [userExpenseTotal, setUserExpenseTotal] = useState(0);
-  const [userCategories, setUserCategories] = useState<Category[]>([]);
+  const [userExpenseCategories, setUserExpenseCategories] = useState<
+    Category[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserExpenses = useCallback(async () => {
     try {
       const data = await getExpenses(pageNumber, itemsPerPage, sortDirection);
-      getUserCategories();
+      getUserExpenseCategories();
       setUserExpenses(data.expenseList);
       setUserExpenseTotal(data.total);
       setIsLoading(false);
@@ -25,11 +27,10 @@ export function useExpenses(
     }
   }, [pageNumber, itemsPerPage, sortDirection]);
 
-  const getUserCategories = async () => {
+  const getUserExpenseCategories = async () => {
     try {
       const data = await getCategories(1, 1000, 'asc', 'expense');
-      setUserCategories(data.categoryList);
-      setIsLoading(false);
+      setUserExpenseCategories(data.categoryList);
     } catch (error) {
       console.error('Error retrieving categories:', error);
     }
@@ -42,9 +43,9 @@ export function useExpenses(
   return {
     userExpenses,
     userExpenseTotal,
-    userCategories,
+    userExpenseCategories,
     isLoading,
     fetchUserExpenses,
-    getUserCategories,
+    getUserExpenseCategories,
   };
 }

@@ -10,7 +10,7 @@ interface IncomeItemRowProps {
   isEditing: boolean;
   editIncomeItemMode: boolean;
   selectedIncomeItems: string[];
-  userCategories: Category[];
+  userIncomeCategories: Category[];
   setEditingIncomeItem: (incomeItem: IncomeItem) => void;
   handleDelete: (id: string) => void;
   handleSelect: (id: string) => void;
@@ -22,7 +22,7 @@ const IncomeItemRow: React.FC<IncomeItemRowProps> = ({
   isEditing,
   editIncomeItemMode,
   selectedIncomeItems,
-  userCategories,
+  userIncomeCategories,
   setEditingIncomeItem,
   handleDelete,
   handleSelect,
@@ -34,7 +34,7 @@ const IncomeItemRow: React.FC<IncomeItemRowProps> = ({
       {isEditing ? (
         <IncomeItemForm
           incomeItem={incomeItem}
-          userCategories={userCategories}
+          userIncomeCategories={userIncomeCategories}
           isEditing
           selectedIncomeItems={selectedIncomeItems}
           onSave={handleEditIncomeItem}

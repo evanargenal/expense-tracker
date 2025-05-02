@@ -4,7 +4,6 @@ import Form from 'react-bootstrap/Form';
 
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
-import CategoriesTableHeader from '../categories/CategoriesTableHeader';
 import NoCategoriesMessage from '../categories/NoCategoriesMessage';
 import NewCategoryTableForm from './CategoryTableNewForm';
 import CategoryRow from '../categories/CategoryRow';
@@ -17,16 +16,16 @@ interface CategoriesTableProps {
   userCategories: Category[];
   isLoading: boolean;
   sortDirection: string;
+  categoryActions: ReturnType<typeof useCategoryActions>;
   setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
-  fetchUserCategories: () => Promise<void>;
 }
 
 function CategoriesTable({
   userCategories,
   isLoading,
   sortDirection,
+  categoryActions,
   setSortDirection,
-  fetchUserCategories,
 }: CategoriesTableProps) {
   const {
     newCategoryMode,
@@ -35,14 +34,13 @@ function CategoriesTable({
     editingCategory,
     selectedCategories,
     toggleNewCategoryMode,
-    toggleEditMode,
     setEditingCategory,
     setSelectedCategories,
     handleAddCategory,
     handleEditCategory,
     handleRestoreDefaultCategories,
     handleDelete,
-  } = useCategoryActions(fetchUserCategories);
+  } = categoryActions;
 
   const toggleSortOrder = () =>
     setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
@@ -85,16 +83,6 @@ function CategoriesTable({
   const renderCategoryRows = () => {
     return (
       <>
-        <CategoriesTableHeader
-          newCategoryMode={newCategoryMode}
-          editCategoryMode={editCategoryMode}
-          selectedCategories={selectedCategories}
-          handleDelete={() => handleDelete(selectedCategories)}
-          toggleNewCategoryMode={toggleNewCategoryMode}
-          toggleEditMode={toggleEditMode}
-          handleRestoreDefaultCategories={handleRestoreDefaultCategories}
-          fetchUserCategories={fetchUserCategories}
-        />
         {newCategoryMode && ( // Add new category form
           <NewCategoryTableForm
             newCategory={newCategory}
@@ -180,9 +168,10 @@ function CategoriesTable({
       ) : (
         <div className="mb-4">
           <Placeholder as="p" animation="wave">
-            <Placeholder xs={12} />
-            <Placeholder xs={12} />
-            <Placeholder xs={12} />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
+            <Placeholder xs={12} bg="dark" />
           </Placeholder>
         </div>
       )}

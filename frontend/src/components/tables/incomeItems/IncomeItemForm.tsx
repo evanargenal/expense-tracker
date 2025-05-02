@@ -9,7 +9,7 @@ import styles from '../TableStyle.module.css';
 
 interface IncomeItemFormProps {
   incomeItem: IncomeItem;
-  userCategories: Category[];
+  userIncomeCategories: Category[];
   isEditing: boolean;
   selectedIncomeItems: string[];
   onSave: (incomeItem: IncomeItem) => void;
@@ -19,7 +19,7 @@ interface IncomeItemFormProps {
 
 const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
   incomeItem,
-  userCategories,
+  userIncomeCategories,
   isEditing,
   selectedIncomeItems,
   onSave,
@@ -98,7 +98,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
         <Form.Control
           type="text"
           name="name"
-          placeholder="Name"
+          placeholder="Name (Required)"
           value={formData.name}
           onChange={handleInputChange}
           autoFocus
@@ -120,7 +120,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           onChange={handleDropdownChange}
         >
           <option value="">Category (None)</option>
-          {userCategories.map((category) => (
+          {userIncomeCategories.map((category) => (
             <option key={category._id} value={category._id}>
               {category.icon} {category.categoryName}
             </option>
@@ -131,7 +131,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
         <Form.Control
           type="number"
           name="amount"
-          placeholder="Amount"
+          placeholder="Amount (Required)"
           value={formData.amount}
           onChange={handleInputChange}
         />

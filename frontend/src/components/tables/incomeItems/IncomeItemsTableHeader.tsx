@@ -11,36 +11,32 @@ import {
   CaretUpFill,
 } from 'react-bootstrap-icons';
 
+import { useIncomeItemActions } from '../../../hooks/incomeItems/useIncomeItemActions';
 import { Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
 interface IncomeItemsTableHeaderProps {
-  newIncomeItemMode: boolean;
-  editIncomeItemMode: boolean;
-  selectedIncomeItems: string[];
-  userCategories: Category[];
-  toggleNewIncomeItemMode: () => void;
-  toggleEditMode: () => void;
-  handleDelete: () => void;
-  handleUpdateMultipleIncomeItemCategories: (
-    ids: string[],
-    newCategoryId: string
-  ) => void;
-  fetchUserIncomeItems: () => void;
+  userIncomeCategories: Category[];
+  incomeItemActions: ReturnType<typeof useIncomeItemActions>;
+  fetchUserIncomeItems: () => Promise<void>;
 }
 
 const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
-  newIncomeItemMode,
-  editIncomeItemMode,
-  selectedIncomeItems,
-  userCategories,
-  toggleNewIncomeItemMode,
-  toggleEditMode,
-  handleDelete,
-  handleUpdateMultipleIncomeItemCategories,
+  userIncomeCategories,
+  incomeItemActions,
   fetchUserIncomeItems,
 }) => {
+  const {
+    newIncomeItemMode,
+    editIncomeItemMode,
+    selectedIncomeItems,
+    toggleNewIncomeItemMode,
+    toggleEditMode,
+    handleDelete,
+    handleUpdateMultipleIncomeItemCategories,
+  } = incomeItemActions;
+
   const [showCategories, setShowCategories] = useState(false);
 
   const toggleShowCategories = () => {
@@ -87,7 +83,7 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
               ` (${selectedIncomeItems.length})`}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={handleDelete}>
+            <Dropdown.Item onClick={() => handleDelete(selectedIncomeItems)}>
               Delete {selectedIncomeItems.length}{' '}
               {selectedIncomeItems.length === 1
                 ? 'Income Item'
@@ -118,7 +114,7 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
                   No Category
                 </Dropdown.Item>
 
-                {userCategories?.map((category) => (
+                {userIncomeCategories?.map((category) => (
                   <Dropdown.Item
                     key={category._id}
                     onClick={() => {

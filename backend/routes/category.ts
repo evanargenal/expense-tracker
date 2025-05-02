@@ -50,25 +50,46 @@ router.get(
 
       const userHiddenCategories = currentUser.hiddenCategories || [];
 
-      const result = await categoriesCollection
-        .aggregate([
-          {
-            $match: {
-              $and: [
-                {
-                  $or: [
-                    // Filter by user's categories and include default categories
-                    { userId: new ObjectId(currentUserId) },
-                    { userId: new ObjectId('000000000000000000000000') },
-                  ],
+      // Lookup stages based on category type
+      let lookupStages: any[] = [];
+
+      if (rawCategoryType === 'expense') {
+        lookupStages.push({
+          $lookup: {
+            from: 'expenses',
+            let: { categoryId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$categoryId', '$$categoryId'] },
+                  userId: new ObjectId(currentUserId),
                 },
-                categoryTypeFilter, // Filter by categoryType
-              ],
-            },
+              },
+              { $count: 'numMatchedItems' },
+            ],
+            as: 'itemCount',
           },
-          {
-            $match: { _id: { $nin: userHiddenCategories } }, // Exclude hidden categories
+        });
+      } else if (rawCategoryType === 'income') {
+        lookupStages.push({
+          $lookup: {
+            from: 'income',
+            let: { categoryId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$categoryId', '$$categoryId'] },
+                  userId: new ObjectId(currentUserId),
+                },
+              },
+              { $count: 'numMatchedItems' },
+            ],
+            as: 'itemCount',
           },
+        });
+      } else {
+        // No categoryType specified – look up both expenses and incomes and sum them
+        lookupStages.push(
           {
             $lookup: {
               from: 'expenses',
@@ -76,30 +97,82 @@ router.get(
               pipeline: [
                 {
                   $match: {
-                    $expr: { $eq: ['$categoryId', '$$categoryId'] }, // Match expenses by categoryId
-                    userId: new ObjectId(currentUserId), // Ensure expenses belong to the current user
+                    $expr: { $eq: ['$categoryId', '$$categoryId'] },
+                    userId: new ObjectId(currentUserId),
                   },
                 },
-                {
-                  $count: 'numExpenses',
-                },
+                { $count: 'count' },
               ],
-              as: 'expensesCount',
+              as: 'expenseCount',
+            },
+          },
+          {
+            $lookup: {
+              from: 'income',
+              let: { categoryId: '$_id' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: { $eq: ['$categoryId', '$$categoryId'] },
+                    userId: new ObjectId(currentUserId),
+                  },
+                },
+                { $count: 'count' },
+              ],
+              as: 'incomeCount',
             },
           },
           {
             $addFields: {
-              categoryNameLower: { $toLower: '$categoryName' }, // Normalize name to alphabetize properly
-              numExpenses: {
-                $ifNull: [
-                  { $arrayElemAt: ['$expensesCount.numExpenses', 0] },
-                  0,
+              numMatchedItems: {
+                $add: [
+                  {
+                    $ifNull: [{ $arrayElemAt: ['$expenseCount.count', 0] }, 0],
+                  },
+                  { $ifNull: [{ $arrayElemAt: ['$incomeCount.count', 0] }, 0] },
                 ],
               },
             },
+          }
+        );
+      }
+
+      const result = await categoriesCollection
+        .aggregate([
+          {
+            $match: {
+              $and: [
+                {
+                  $or: [
+                    { userId: new ObjectId(currentUserId) },
+                    { userId: new ObjectId('000000000000000000000000') },
+                  ],
+                },
+                categoryTypeFilter,
+              ],
+            },
           },
           {
-            $sort: { categoryNameLower: sort }, // Alphabetize by category name
+            $match: { _id: { $nin: userHiddenCategories } },
+          },
+          ...lookupStages,
+          {
+            $addFields: {
+              categoryNameLower: { $toLower: '$categoryName' },
+              ...(rawCategoryType
+                ? {
+                    numMatchedItems: {
+                      $ifNull: [
+                        { $arrayElemAt: ['$itemCount.numMatchedItems', 0] },
+                        0,
+                      ],
+                    },
+                  }
+                : {}),
+            },
+          },
+          {
+            $sort: { categoryNameLower: sort },
           },
           {
             $project: {
@@ -107,8 +180,8 @@ router.get(
               categoryName: 1,
               icon: 1,
               categoryType: 1,
-              userId: 1, // Include userId to differentiate between user-specific & default categories
-              numExpenses: 1,
+              userId: 1,
+              numMatchedItems: 1,
             },
           },
           {
@@ -129,7 +202,7 @@ router.get(
         icon: category.icon,
         categoryType: category.categoryType,
         userId: category.userId,
-        numExpenses: category.numExpenses,
+        numMatchedItems: category.numMatchedItems,
       }));
 
       res.status(200).json({

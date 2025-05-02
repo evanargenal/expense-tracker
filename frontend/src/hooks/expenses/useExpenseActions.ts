@@ -8,7 +8,7 @@ import {
 import { ExpenseItem } from '../../types/types';
 import { getEmptyExpenseItem } from '../../utils/expenseUtils';
 
-export function useExpenseActions(fetchUserExpenses: () => void) {
+export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
   const emptyExpenseForm = getEmptyExpenseItem();
   const [newExpenseMode, setNewExpenseMode] = useState(false);
   const [newExpense, setNewExpense] = useState<ExpenseItem>(emptyExpenseForm);

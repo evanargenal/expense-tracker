@@ -7,29 +7,28 @@ import {
   Trash,
 } from 'react-bootstrap-icons';
 
+import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
+
 import styles from '../TableStyle.module.css';
 
 interface CategoriesTableHeaderProps {
-  newCategoryMode: boolean;
-  editCategoryMode: boolean;
-  selectedCategories: string[];
-  toggleNewCategoryMode: () => void;
-  toggleEditMode: () => void;
-  handleDelete: () => void;
-  handleRestoreDefaultCategories: () => void;
-  fetchUserCategories: () => void;
+  categoryActions: ReturnType<typeof useCategoryActions>;
+  fetchUserCategories: () => Promise<void>;
 }
 
 const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
-  newCategoryMode,
-  editCategoryMode,
-  selectedCategories,
-  toggleNewCategoryMode,
-  toggleEditMode,
-  handleDelete,
-  handleRestoreDefaultCategories,
+  categoryActions,
   fetchUserCategories,
 }) => {
+  const {
+    newCategoryMode,
+    editCategoryMode,
+    selectedCategories,
+    toggleNewCategoryMode,
+    toggleEditMode,
+    handleDelete,
+    handleRestoreDefaultCategories,
+  } = categoryActions;
   return (
     <div className={styles.tableHeader}>
       <Button
@@ -59,7 +58,7 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
           </Button>
           <Button
             variant="danger"
-            onClick={handleDelete}
+            onClick={() => handleDelete(selectedCategories)}
             disabled={selectedCategories.length === 0}
           >
             <Trash />

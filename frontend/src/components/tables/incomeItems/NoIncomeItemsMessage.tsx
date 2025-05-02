@@ -11,7 +11,7 @@ const NoIncomeItemsMessage: React.FC<NoIncomeItemsMessageProps> = ({
   toggleNewIncomeItemMode,
 }) => {
   return (
-    <p className="mb-4 mt-5">
+    <h3 className="mb-4 mt-5">
       No income items found for your account. <br />
       Either you're broke or you need to add some! <br /> <br />
       <Button
@@ -26,7 +26,7 @@ const NoIncomeItemsMessage: React.FC<NoIncomeItemsMessageProps> = ({
           <PlusLg className="mb-1" />
         )}
       </Button>
-    </p>
+    </h3>
   );
 };
 

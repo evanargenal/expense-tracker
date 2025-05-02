@@ -8,7 +8,7 @@ import {
 import { Category } from '../../types/types';
 import { getEmptyCategoryItem } from '../../utils/categoryUtils';
 
-export function useCategoryActions(fetchUserCategories: () => void) {
+export function useCategoryActions(fetchUserCategories: () => Promise<void>) {
   const emptyCategoryForm = getEmptyCategoryItem();
   const [newCategoryMode, setNewCategoryMode] = useState(false);
   const [newCategory, setNewCategory] = useState<Category>(emptyCategoryForm);
@@ -30,7 +30,11 @@ export function useCategoryActions(fetchUserCategories: () => void) {
 
   const handleAddCategory = async (category: Category) => {
     try {
-      await addCategory(category.categoryName, category.icon);
+      await addCategory(
+        category.categoryName,
+        category.icon,
+        category.categoryType
+      );
       toggleNewCategoryMode();
       fetchUserCategories();
     } catch (error) {

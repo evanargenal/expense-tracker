@@ -3,7 +3,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0px 10px 0px 10px;
+  padding: 0.5rem;
+  height: 55px;
 }
 
 .flexRowContainer {

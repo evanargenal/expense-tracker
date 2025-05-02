@@ -1,8 +1,33 @@
-.tableExpenses {
-  width: 95%;
+.expenseCategoriesParentContainer {
+  width: 97%;
+  height: 50%;
+  background-color: #3b4357;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.tableExpenseCategoriesContainer {
+  height: calc(100% - 55px - 55px);
+  overflow-y: auto;
+}
+
+.incomeCategoriesParentContainer {
+  width: 97%;
+  height: 50%;
+  background-color: #3b4357;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.tableIncomeCategoriesContainer {
+  height: calc(100% - 55px - 55px);
+  overflow-y: auto;
 }
 
 .paginationContainer {
-  width: 95%;
   font-size: calc(10px + 1vmin);
 }

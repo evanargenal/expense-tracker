@@ -8,7 +8,9 @@ import {
 import { IncomeItem } from '../../types/types';
 import { getEmptyIncomeItem } from '../../utils/incomeItemUtils';
 
-export function useIncomeItemActions(fetchUserIncomeItems: () => void) {
+export function useIncomeItemActions(
+  fetchUserIncomeItems: () => Promise<void>
+) {
   const emptyIncomeItemForm = getEmptyIncomeItem();
   const [newIncomeItemMode, setNewIncomeItemMode] = useState(false);
   const [newIncomeItem, setNewIncomeItem] =

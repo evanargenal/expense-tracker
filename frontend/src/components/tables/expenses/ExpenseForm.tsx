@@ -9,7 +9,7 @@ import styles from '../TableStyle.module.css';
 
 interface ExpenseFormProps {
   expense: ExpenseItem;
-  userCategories: Category[];
+  userExpenseCategories: Category[];
   isEditing: boolean;
   selectedExpenses: string[];
   onSave: (expense: ExpenseItem) => void;
@@ -19,7 +19,7 @@ interface ExpenseFormProps {
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
   expense,
-  userCategories,
+  userExpenseCategories,
   isEditing,
   selectedExpenses,
   onSave,
@@ -98,7 +98,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         <Form.Control
           type="text"
           name="name"
-          placeholder="Name"
+          placeholder="Name (Required)"
           value={formData.name}
           onChange={handleInputChange}
           autoFocus
@@ -120,7 +120,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           onChange={handleDropdownChange}
         >
           <option value="">Category (None)</option>
-          {userCategories.map((category) => (
+          {userExpenseCategories.map((category) => (
             <option key={category._id} value={category._id}>
               {category.icon} {category.categoryName}
             </option>
@@ -131,7 +131,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         <Form.Control
           type="number"
           name="cost"
-          placeholder="Cost"
+          placeholder="Cost (Required)"
           value={formData.cost}
           onChange={handleInputChange}
         />

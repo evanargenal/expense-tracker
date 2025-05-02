@@ -6,5 +6,5 @@ export const getEmptyCategoryItem = (): Category => ({
   icon: '',
   categoryType: '',
   userId: '',
-  numExpenses: '',
+  numMatchedItems: '',
 });

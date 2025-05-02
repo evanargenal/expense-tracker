@@ -1,23 +1,27 @@
 .tableStyling th {
   text-align: left;
   vertical-align: middle;
-  padding: 10px;
-  font-size: calc(16px + 1vmin);
+  padding: 8px;
+  font-size: calc(14px + 1vmin);
 }
 
 .tableStyling td {
   text-align: left;
   vertical-align: middle;
-  padding: 10px;
-  font-size: calc(12px + 1vmin);
+  padding: 8px;
+  font-size: calc(10px + 1vmin);
+}
+.tableMarginBottom {
+  margin-bottom: 1rem !important;
 }
 
 .tableHeader {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  padding: 15px 10px 15px 10px;
+  padding: 0.5rem;
   gap: 10px;
+  height: 55px;
 }
 
 .itemsWithIcons {

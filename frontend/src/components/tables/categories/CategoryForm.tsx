@@ -46,9 +46,22 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     }));
   };
 
+  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = () => {
     if (!formData.categoryName) {
       alert('Category name is required!');
+      return;
+    }
+    if (!formData.categoryType) {
+      alert('Category type is required!');
       return;
     }
     onSave(formData);
@@ -70,7 +83,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         <Form.Control
           type="text"
           name="categoryName"
-          placeholder="Name"
+          placeholder="Name (Required)"
           value={formData.categoryName}
           onChange={handleInputChange}
           autoFocus
@@ -85,9 +98,23 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           onChange={handleInputChange}
         />
       </td>
+      {!isEditing && (
+        <td>
+          <Form.Select
+            name="categoryType"
+            value={formData.categoryType}
+            onChange={handleDropdownChange}
+          >
+            <option>Category Type (Required)</option>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </Form.Select>
+        </td>
+      )}
+
       {isEditing && (
         <>
-          <td>{category.numExpenses}</td>
+          <td>{category.numMatchedItems}</td>
           <td>
             {category.userId === '000000000000000000000000' ? (
               <XLg />

@@ -35,7 +35,7 @@ export interface Category {
   icon: string;
   categoryType: string;
   userId: string;
-  numExpenses: string;
+  numMatchedItems: string;
 }
 
 export interface FormData {

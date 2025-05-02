@@ -5,7 +5,7 @@ import styles from '../TableStyle.module.css';
 
 interface ExpenseTableNewFormProps {
   newExpense: ExpenseItem;
-  userCategories: Category[];
+  userExpenseCategories: Category[];
   selectedExpenses: string[];
   handleAddExpense: (expense: ExpenseItem) => void;
   toggleNewExpenseMode: () => void;
@@ -14,14 +14,19 @@ interface ExpenseTableNewFormProps {
 
 const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
   newExpense,
-  userCategories,
+  userExpenseCategories,
   selectedExpenses,
   handleAddExpense,
   toggleNewExpenseMode,
   handleSelect,
 }) => {
   return (
-    <Table className={styles.tableStyling} responsive striped variant="dark">
+    <Table
+      className={`${styles.tableStyling} ${styles.tableMarginBottom}`}
+      responsive
+      striped
+      variant="dark"
+    >
       <thead>
         <tr>
           <th>Date</th>
@@ -35,7 +40,7 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
       <tbody>
         <ExpenseForm
           expense={newExpense}
-          userCategories={userCategories}
+          userExpenseCategories={userExpenseCategories}
           isEditing={false}
           selectedExpenses={selectedExpenses}
           onSave={handleAddExpense}

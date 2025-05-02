@@ -10,7 +10,7 @@ interface ExpenseRowProps {
   isEditing: boolean;
   editExpenseMode: boolean;
   selectedExpenses: string[];
-  userCategories: Category[];
+  userExpenseCategories: Category[];
   setEditingExpense: (expense: ExpenseItem) => void;
   handleDelete: (id: string) => void;
   handleSelect: (id: string) => void;
@@ -22,7 +22,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
   isEditing,
   editExpenseMode,
   selectedExpenses,
-  userCategories,
+  userExpenseCategories,
   setEditingExpense,
   handleDelete,
   handleSelect,
@@ -34,7 +34,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
       {isEditing ? (
         <ExpenseForm
           expense={expense}
-          userCategories={userCategories}
+          userExpenseCategories={userExpenseCategories}
           isEditing
           selectedExpenses={selectedExpenses}
           onSave={handleEditExpense}

@@ -19,11 +19,16 @@ export const getCategories = async (
   }
 };
 
-export const addCategory = async (categoryName: string, icon: string) => {
+export const addCategory = async (
+  categoryName: string,
+  icon: string,
+  categoryType: string
+) => {
   try {
     const response = await axios.post(API_URL, {
       categoryName,
       icon,
+      categoryType,
     });
     return response.data;
   } catch (error) {

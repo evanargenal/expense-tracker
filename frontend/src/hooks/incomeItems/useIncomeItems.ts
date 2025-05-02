@@ -10,7 +10,9 @@ export function useIncomeItems(
 ) {
   const [userIncomeItems, setUserIncomeItems] = useState<IncomeItem[]>([]);
   const [userIncomeItemTotal, setUserIncomeItemTotal] = useState(0);
-  const [userCategories, setUserCategories] = useState<Category[]>([]);
+  const [userIncomeCategories, setUserIncomeCategories] = useState<Category[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserIncomeItems = useCallback(async () => {
@@ -20,7 +22,7 @@ export function useIncomeItems(
         itemsPerPage,
         sortDirection
       );
-      getUserCategories();
+      getUserIncomeCategories();
       setUserIncomeItems(data.incomeList);
       setUserIncomeItemTotal(data.total);
       setIsLoading(false);
@@ -29,11 +31,10 @@ export function useIncomeItems(
     }
   }, [pageNumber, itemsPerPage, sortDirection]);
 
-  const getUserCategories = async () => {
+  const getUserIncomeCategories = async () => {
     try {
       const data = await getCategories(1, 1000, 'asc', 'income');
-      setUserCategories(data.categoryList);
-      setIsLoading(false);
+      setUserIncomeCategories(data.categoryList);
     } catch (error) {
       console.error('Error retrieving categories:', error);
     }
@@ -46,9 +47,9 @@ export function useIncomeItems(
   return {
     userIncomeItems,
     userIncomeItemTotal,
-    userCategories,
+    userIncomeCategories,
     isLoading,
     fetchUserIncomeItems,
-    getUserCategories,
+    getUserIncomeCategories,
   };
 }

@@ -52,7 +52,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
           )}
           <td>{category.categoryName}</td>
           <td>{category.icon}</td>
-          <td>{category.numExpenses}</td>
+          <td>{category.numMatchedItems}</td>
           {editCategoryMode && (
             <>
               <td>
