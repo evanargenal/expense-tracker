@@ -48,6 +48,7 @@ function ExpensesList() {
                   itemTotal={expenses.userExpenseTotal}
                   pageNumber={pageNumber}
                   itemsPerPage={itemsPerPage}
+                  itemsPerPageArray={[25, 50, 100]}
                   setPageNumber={setPageNumber}
                   setItemsPerPage={setItemsPerPage}
                 ></PageControls>

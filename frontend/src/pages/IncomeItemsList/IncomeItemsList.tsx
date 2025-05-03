@@ -50,6 +50,7 @@ function IncomeItemsList() {
                   itemTotal={incomeItems.userIncomeItemTotal}
                   pageNumber={pageNumber}
                   itemsPerPage={itemsPerPage}
+                  itemsPerPageArray={[25, 50, 100]}
                   setPageNumber={setPageNumber}
                   setItemsPerPage={setItemsPerPage}
                 ></PageControls>

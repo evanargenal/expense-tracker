@@ -12,7 +12,7 @@ import styles from './Categories.module.css';
 
 function Categories() {
   const [expensePageNumber, expenseSetPageNumber] = useState(1);
-  const [expenseItemsPerPage, expenseSetItemsPerPage] = useState(25);
+  const [expenseItemsPerPage, expenseSetItemsPerPage] = useState(10);
   const [expenseSortDirection, expenseSetSortDirection] = useState<
     'asc' | 'desc'
   >('asc');
@@ -27,7 +27,7 @@ function Categories() {
   );
 
   const [incomePageNumber, incomeSetPageNumber] = useState(1);
-  const [incomeItemsPerPage, incomeSetItemsPerPage] = useState(25);
+  const [incomeItemsPerPage, incomeSetItemsPerPage] = useState(10);
   const [incomeSortDirection, incomeSetSortDirection] = useState<
     'asc' | 'desc'
   >('asc');
@@ -70,6 +70,7 @@ function Categories() {
                   itemTotal={expenseCategories.userCategoryTotal}
                   pageNumber={expensePageNumber}
                   itemsPerPage={expenseItemsPerPage}
+                  itemsPerPageArray={[5, 10, 25, 50, 100]}
                   setPageNumber={expenseSetPageNumber}
                   setItemsPerPage={expenseSetItemsPerPage}
                 ></PageControls>
@@ -98,6 +99,7 @@ function Categories() {
                   itemTotal={incomeCategories.userCategoryTotal}
                   pageNumber={incomePageNumber}
                   itemsPerPage={incomeItemsPerPage}
+                  itemsPerPageArray={[5, 10, 25, 50, 100]}
                   setPageNumber={incomeSetPageNumber}
                   setItemsPerPage={incomeSetItemsPerPage}
                 ></PageControls>

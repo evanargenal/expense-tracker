@@ -7,12 +7,14 @@ function PageControls({
   itemTotal,
   pageNumber,
   itemsPerPage,
+  itemsPerPageArray,
   setPageNumber,
   setItemsPerPage,
 }: {
   itemTotal: number;
   pageNumber: number;
   itemsPerPage: number;
+  itemsPerPageArray: number[];
   setPageNumber: (page: number) => void;
   setItemsPerPage: (size: number) => void;
 }) {
@@ -90,9 +92,9 @@ function PageControls({
             value={itemsPerPage}
             onChange={handleDropdownChange}
           >
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
+            {itemsPerPageArray.map((itemPerPageOption) => (
+              <option value={itemPerPageOption}>{itemPerPageOption}</option>
+            ))}
           </Form.Select>
           <p>Per Page</p>
         </div>
