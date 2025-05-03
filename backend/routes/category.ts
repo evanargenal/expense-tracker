@@ -311,8 +311,6 @@ router.patch(
     try {
       const db = await connectDB();
       const categoriesCollection = db.collection('categories');
-      const usersCollection = db.collection('users');
-      const expensesCollection = db.collection('expenses');
 
       // Fetch the current category
       const currentCategory = await categoriesCollection.findOne({
@@ -331,15 +329,17 @@ router.patch(
         const newCategory = {
           categoryName: filteredUpdates.categoryName,
           icon: filteredUpdates.icon,
+          categoryType: currentCategory.categoryType,
           userId: new ObjectId(currentUserId),
         };
 
-        // Insert new category into the database
+        // Insert new category into the categories database table
         const insertedCategory = await categoriesCollection.insertOne(
           newCategory
         );
 
         // Update userId hidden categories (hide old default category that's being updated)
+        const usersCollection = db.collection('users');
         await usersCollection.updateOne(
           { _id: new ObjectId(currentUserId) },
           {
@@ -347,16 +347,30 @@ router.patch(
           }
         );
 
-        // Update all user expenses from the old default categoryId to the new categoryId
-        await expensesCollection.updateMany(
-          {
-            userId: new ObjectId(currentUserId),
-            categoryId: new ObjectId(categoryId), // Update only expenses with the old categoryId
-          },
-          {
-            $set: { categoryId: insertedCategory.insertedId }, // Assign the new categoryId
-          }
-        );
+        // Update all user expenses OR income items from the old default categoryId to the new categoryId
+        if (newCategory.categoryType == 'expense') {
+          const expensesCollection = db.collection('expenses');
+          await expensesCollection.updateMany(
+            {
+              userId: new ObjectId(currentUserId),
+              categoryId: new ObjectId(categoryId), // Update only expenses with the old categoryId
+            },
+            {
+              $set: { categoryId: insertedCategory.insertedId }, // Assign the new categoryId
+            }
+          );
+        } else if (newCategory.categoryType == 'income') {
+          const incomeCollection = db.collection('income');
+          await incomeCollection.updateMany(
+            {
+              userId: new ObjectId(currentUserId),
+              categoryId: new ObjectId(categoryId), // Update only expenses with the old categoryId
+            },
+            {
+              $set: { categoryId: insertedCategory.insertedId }, // Assign the new categoryId
+            }
+          );
+        }
         res.status(200).json({
           message:
             'Category updated successfully (new category created to prevent overwriting default category)',
@@ -402,7 +416,6 @@ router.post(
     try {
       const db = await connectDB();
       const categoriesCollection = db.collection('categories');
-      const expensesCollection = db.collection('expenses');
       const usersCollection = db.collection('users');
 
       // Map ids to ObjectIds and separate them by default and user categories
@@ -450,16 +463,30 @@ router.post(
         });
       }
 
-      // Reset all user expenses with the old categories to "no category"
-      await expensesCollection.updateMany(
-        {
-          userId: new ObjectId(currentUserId),
-          categoryId: { $in: categoryObjectIdMap }, // Update only user expenses with the deleted categoryId(s)
-        },
-        {
-          $set: { categoryId: new ObjectId('000000000000000000000000') }, // Assign the empty categoryId
-        }
-      );
+      // Reset all user expenses OR income items with the old categories to "no category" (based on first category in list)
+      if (categoriesToBeDeleted[0].categoryType == 'expense') {
+        const expensesCollection = db.collection('expenses');
+        await expensesCollection.updateMany(
+          {
+            userId: new ObjectId(currentUserId),
+            categoryId: { $in: categoryObjectIdMap }, // Update only user expenses with the deleted categoryId(s)
+          },
+          {
+            $set: { categoryId: new ObjectId('000000000000000000000000') }, // Assign the empty categoryId
+          }
+        );
+      } else if (categoriesToBeDeleted[0].categoryType == 'income') {
+        const incomeCollection = db.collection('income');
+        await incomeCollection.updateMany(
+          {
+            userId: new ObjectId(currentUserId),
+            categoryId: { $in: categoryObjectIdMap }, // Update only user expenses with the deleted categoryId(s)
+          },
+          {
+            $set: { categoryId: new ObjectId('000000000000000000000000') }, // Assign the empty categoryId
+          }
+        );
+      }
 
       res.status(200).json({
         message: 'Deleted categories successfully',
@@ -506,7 +533,7 @@ router.post(
   }
 );
 
-// Delete category by ID (auth)
+// Delete category by ID (auth) - UNUSED!
 // DELETE /api/categories/:id
 router.delete(
   '/:id',
@@ -523,7 +550,6 @@ router.delete(
     try {
       const db = await connectDB();
       const categoriesCollection = db.collection('categories');
-      const expensesCollection = db.collection('expenses');
       const usersCollection = db.collection('users');
 
       const categoryToDelete = await categoriesCollection.findOne({
@@ -549,16 +575,30 @@ router.delete(
         await categoriesCollection.deleteOne({ _id: new ObjectId(categoryId) });
       }
 
-      // Reset all user expenses with the deleted category to "no category"
-      await expensesCollection.updateMany(
-        {
-          userId: new ObjectId(currentUserId),
-          categoryId: new ObjectId(categoryId),
-        },
-        {
-          $set: { categoryId: new ObjectId('000000000000000000000000') },
-        }
-      );
+      // Reset all user expenses OR income items with the old category to "no category"
+      if (categoryToDelete.categoryType == 'expense') {
+        const expensesCollection = db.collection('expenses');
+        await expensesCollection.updateMany(
+          {
+            userId: new ObjectId(currentUserId),
+            categoryId: new ObjectId(categoryId),
+          },
+          {
+            $set: { categoryId: new ObjectId('000000000000000000000000') },
+          }
+        );
+      } else if (categoryToDelete.categoryType == 'income') {
+        const incomeCollection = db.collection('income');
+        await incomeCollection.updateMany(
+          {
+            userId: new ObjectId(currentUserId),
+            categoryId: new ObjectId(categoryId),
+          },
+          {
+            $set: { categoryId: new ObjectId('000000000000000000000000') },
+          }
+        );
+      }
 
       res.status(200).json({
         message: 'Category deleted successfully',
