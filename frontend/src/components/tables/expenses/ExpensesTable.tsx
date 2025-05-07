@@ -4,10 +4,8 @@ import Form from 'react-bootstrap/Form';
 
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
-import NoExpensesMessage from './NoExpensesMessage';
 import ExpenseTableNewForm from './ExpenseTableNewForm';
 import ExpenseRow from './ExpenseRow';
-import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
 import { ExpenseItem, Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
@@ -16,8 +14,18 @@ interface ExpensesTableProps {
   userExpenses: ExpenseItem[];
   userExpenseCategories: Category[];
   isLoading: boolean;
+  newExpenseMode: boolean;
+  newExpense: ExpenseItem;
+  editExpenseMode: boolean;
+  editingExpense: ExpenseItem;
+  selectedExpenses: string[];
+  toggleNewExpenseMode: () => void;
+  setEditingExpense: (expense: ExpenseItem) => void;
+  setSelectedExpenses: React.Dispatch<React.SetStateAction<string[]>>;
+  handleAddExpense: (expense: ExpenseItem) => Promise<void>;
+  handleEditExpense: (expense: ExpenseItem) => Promise<void>;
+  handleDelete: (expenseId: string | string[]) => Promise<void>;
   sortDirection: string;
-  expenseActions: ReturnType<typeof useExpenseActions>;
   setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
 }
 
@@ -25,24 +33,20 @@ function ExpensesTable({
   userExpenses,
   userExpenseCategories,
   isLoading,
+  newExpenseMode,
+  newExpense,
+  editExpenseMode,
+  editingExpense,
+  selectedExpenses,
+  toggleNewExpenseMode,
+  setEditingExpense,
+  setSelectedExpenses,
+  handleAddExpense,
+  handleEditExpense,
+  handleDelete,
   sortDirection,
-  expenseActions,
   setSortDirection,
 }: ExpensesTableProps) {
-  const {
-    newExpenseMode,
-    newExpense,
-    editExpenseMode,
-    editingExpense,
-    selectedExpenses,
-    toggleNewExpenseMode,
-    setEditingExpense,
-    setSelectedExpenses,
-    handleAddExpense,
-    handleEditExpense,
-    handleDelete,
-  } = expenseActions;
-
   const toggleSortOrder = () =>
     setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
 
@@ -63,10 +67,6 @@ function ExpensesTable({
   const renderNoExpenses = () => {
     return (
       <>
-        <NoExpensesMessage
-          newExpenseMode={newExpenseMode}
-          toggleNewExpenseMode={toggleNewExpenseMode}
-        />
         {newExpenseMode && (
           <ExpenseTableNewForm
             newExpense={newExpense}
@@ -77,6 +77,10 @@ function ExpensesTable({
             handleSelect={handleSelect}
           />
         )}
+        <h3 className={newExpenseMode ? '' : 'mt-2'}>
+          No expenses found for your account. <br />
+          Either you're a liar or you need to add some! <br /> <br />
+        </h3>
       </>
     );
   };

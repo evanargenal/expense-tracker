@@ -8,7 +8,10 @@ import {
 import { ExpenseItem } from '../../types/types';
 import { getEmptyExpenseItem } from '../../utils/expenseUtils';
 
-export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
+export function useExpenseActions(
+  fetchUserExpenses: () => Promise<void>,
+  getCurrentExpenseCount: () => number
+) {
   const emptyExpenseForm = getEmptyExpenseItem();
   const [newExpenseMode, setNewExpenseMode] = useState(false);
   const [newExpense, setNewExpense] = useState<ExpenseItem>(emptyExpenseForm);
@@ -38,7 +41,7 @@ export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
         expense.categoryId
       );
       toggleNewExpenseMode();
-      fetchUserExpenses();
+      await fetchUserExpenses();
     } catch (error) {
       console.error('Error adding expense:', error);
     }
@@ -52,7 +55,7 @@ export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
         date: new Date(expense.date),
       });
       setEditingExpense(emptyExpenseForm);
-      fetchUserExpenses();
+      await fetchUserExpenses();
     } catch (error) {
       console.error('Error updating expense:', error);
     }
@@ -76,7 +79,7 @@ export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
       setSelectedExpenses((prev) =>
         prev.filter((id) => !idsArray.includes(id))
       );
-      fetchUserExpenses();
+      await fetchUserExpenses();
     } catch (error) {
       console.error('Failed to update expense(s) categories:', error);
     }
@@ -92,12 +95,17 @@ export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
     )
       return;
 
+    const wasLastItem = getCurrentExpenseCount() === idsArray.length;
+
     try {
       await deleteExpenses(idsArray);
       setSelectedExpenses((prev) =>
         prev.filter((id) => !idsArray.includes(id))
       );
-      fetchUserExpenses();
+      await fetchUserExpenses();
+      if (wasLastItem) {
+        toggleEditMode();
+      }
     } catch (error) {
       console.error('Failed to delete expense(s):', error);
     }
@@ -110,7 +118,6 @@ export function useExpenseActions(fetchUserExpenses: () => Promise<void>) {
     editingExpense,
     selectedExpenses,
     toggleNewExpenseMode,
-    setNewExpense,
     toggleEditMode,
     setEditingExpense,
     setSelectedExpenses,

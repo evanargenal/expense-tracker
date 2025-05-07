@@ -46,6 +46,5 @@ export function useExpenses(
     userExpenseCategories,
     isLoading,
     fetchUserExpenses,
-    getUserExpenseCategories,
   };
 }

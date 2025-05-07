@@ -7,28 +7,44 @@ import {
   Trash,
 } from 'react-bootstrap-icons';
 
-import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
+// import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
+import { useCategoryType } from '../../../context/CategoryTypeContext';
 
 import styles from '../TableStyle.module.css';
 
 interface CategoriesTableHeaderProps {
-  categoryActions: ReturnType<typeof useCategoryActions>;
+  itemTotal: number;
   fetchUserCategories: () => Promise<void>;
+  newCategoryMode: boolean;
+  editCategoryMode: boolean;
+  selectedCategories: string[];
+  toggleNewCategoryMode: () => void;
+  toggleEditMode: () => void;
+  handleDelete: (selectedCategories: string | string[]) => Promise<void>;
+  handleRestoreDefaultCategories: (categoryType: string) => Promise<void>;
 }
 
 const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
-  categoryActions,
+  itemTotal,
   fetchUserCategories,
+  newCategoryMode,
+  editCategoryMode,
+  selectedCategories,
+  toggleNewCategoryMode,
+  toggleEditMode,
+  handleDelete,
+  handleRestoreDefaultCategories,
 }) => {
-  const {
-    newCategoryMode,
-    editCategoryMode,
-    selectedCategories,
-    toggleNewCategoryMode,
-    toggleEditMode,
-    handleDelete,
-    handleRestoreDefaultCategories,
-  } = categoryActions;
+  const categoryType = useCategoryType();
+  const categoryTypeLabelMap: Record<string, string> = {
+    expense: 'Restore Default Expense Categories',
+    income: 'Restore Default Income Categories',
+    all: 'Restore All Categories',
+  };
+
+  const defaultCategoryButtonLabel =
+    categoryTypeLabelMap[categoryType] ?? 'Restore Default Categories';
+
   return (
     <div className={styles.tableHeader}>
       <Button
@@ -41,29 +57,38 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
           <PlusLg className="mb-1" />
         )}
       </Button>
-      <Button
-        variant={editCategoryMode ? 'warning' : 'secondary'}
-        onClick={toggleEditMode}
-      >
-        <PencilFill className="mb-1" />
-      </Button>
+      {itemTotal !== 0 && (
+        <Button
+          variant={editCategoryMode ? 'warning' : 'secondary'}
+          onClick={toggleEditMode}
+        >
+          <PencilFill className="mb-1" />
+        </Button>
+      )}
+
       {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
       <Button variant="outline-primary" onClick={fetchUserCategories}>
         <ArrowClockwise className="mb-1" />
       </Button>
-      {editCategoryMode && (
+      {(editCategoryMode || itemTotal === 0) && (
         <>
-          <Button variant="secondary" onClick={handleRestoreDefaultCategories}>
-            Restore Default Categories
-          </Button>
           <Button
-            variant="danger"
-            onClick={() => handleDelete(selectedCategories)}
-            disabled={selectedCategories.length === 0}
+            variant="secondary"
+            onClick={() => handleRestoreDefaultCategories(categoryType)}
           >
-            <Trash />
-            {selectedCategories.length > 0 && ` (${selectedCategories.length})`}
+            {defaultCategoryButtonLabel}
           </Button>
+          {itemTotal !== 0 && (
+            <Button
+              variant="danger"
+              onClick={() => handleDelete(selectedCategories)}
+              disabled={selectedCategories.length === 0}
+            >
+              <Trash />
+              {selectedCategories.length > 0 &&
+                ` (${selectedCategories.length})`}
+            </Button>
+          )}
         </>
       )}
     </div>

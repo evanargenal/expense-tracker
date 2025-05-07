@@ -93,7 +93,9 @@ function PageControls({
             onChange={handleDropdownChange}
           >
             {itemsPerPageArray.map((itemPerPageOption) => (
-              <option value={itemPerPageOption}>{itemPerPageOption}</option>
+              <option key={itemPerPageOption} value={itemPerPageOption}>
+                {itemPerPageOption}
+              </option>
             ))}
           </Form.Select>
           <p>Per Page</p>

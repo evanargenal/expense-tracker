@@ -12,7 +12,7 @@ import { AuthenticatedUser, IncomeItem } from '../types/types';
 const authenticateToken = require('../middleware/authMiddleware');
 
 interface AuthenticatedRequest extends Request {
-  user?: AuthenticatedUser;
+  user: AuthenticatedUser;
 }
 
 // Get current user's income items (auth)
@@ -21,9 +21,6 @@ router.get(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     try {
       const db = await connectDB();
@@ -126,9 +123,6 @@ router.post(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     const { name, description, amount, date, categoryId } = req.body;
     if (!name || (amount === '' && amount !== '0') || !date) {
@@ -176,9 +170,6 @@ router.patch(
   '/update-categories',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     const { ids, newCategoryId } = req.body;
 

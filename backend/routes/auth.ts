@@ -18,7 +18,7 @@ const jwt_refresh_secret = process.env.JWT_REFRESH_SECRET!;
 import { AuthenticatedUser } from '../types/types';
 
 interface AuthenticatedRequest extends Request {
-  user?: AuthenticatedUser;
+  user: AuthenticatedUser;
 }
 
 // Validate token
@@ -31,7 +31,7 @@ router.get(
     const usersCollection = db.collection('users');
 
     const user = await usersCollection.findOne({
-      _id: new ObjectId(req.user?.userId),
+      _id: new ObjectId(req.user.userId),
     });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

@@ -10,7 +10,7 @@ import { AuthenticatedUser, Category } from '../types/types';
 const authenticateToken = require('../middleware/authMiddleware');
 
 interface AuthenticatedRequest extends Request {
-  user?: AuthenticatedUser;
+  user: AuthenticatedUser;
 }
 
 // Get current user's categories (auth)
@@ -19,9 +19,6 @@ router.get(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     try {
       const db = await connectDB();
@@ -224,9 +221,6 @@ router.post(
   '/',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     const { categoryName, icon, categoryType } = req.body;
     if (
@@ -277,9 +271,6 @@ router.patch(
   '/:id',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     const categoryId = req.params.id;
     const updateFields = req.body; // Only include fields that need updating
@@ -397,9 +388,6 @@ router.post(
   '/delete',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     const { ids } = req.body;
     if (
@@ -503,19 +491,35 @@ router.post(
   '/restore',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
+    const { categoryType } = req.body;
+    if (
+      !categoryType ||
+      (categoryType !== 'expense' && categoryType !== 'income')
+    ) {
+      return res.status(400).json({
+        error: 'Category type must be either "expense" or "income"',
+      });
+    }
 
     try {
       const db = await connectDB();
+      const categoriesCollection = db.collection('categories');
       const usersCollection = db.collection('users');
 
-      // Set hiddenCategories to an empty array to "restore defaults"
+      // Get category IDs matching the given categoryType
+      const matchingCategories = await categoriesCollection
+        .find({ categoryType })
+        .project({ _id: 1 })
+        .toArray();
+      const matchingCategoryIds = matchingCategories.map(
+        (category: any) => category._id
+      );
+
+      // Pull only matching category IDs from hiddenCategories
       const result = await usersCollection.updateOne(
         { _id: new ObjectId(currentUserId) },
-        { $set: { hiddenCategories: [] } }
+        { $pull: { hiddenCategories: { $in: matchingCategoryIds } } }
       );
 
       if (result.modifiedCount === 0) {
@@ -539,9 +543,6 @@ router.delete(
   '/:id',
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
-    if (!req.user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
     const currentUserId = req.user.userId;
     const categoryId = req.params.id;
     if (!ObjectId.isValid(categoryId)) {

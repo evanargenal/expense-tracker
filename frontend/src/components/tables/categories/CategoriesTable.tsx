@@ -4,43 +4,54 @@ import Form from 'react-bootstrap/Form';
 
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
-import NoCategoriesMessage from '../categories/NoCategoriesMessage';
 import NewCategoryTableForm from './CategoryTableNewForm';
 import CategoryRow from '../categories/CategoryRow';
-import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
 import { Category } from '../../../types/types';
+import { useCategoryType } from '../../../context/CategoryTypeContext';
 
 import styles from '../TableStyle.module.css';
 
 interface CategoriesTableProps {
   userCategories: Category[];
   isLoading: boolean;
+  newCategoryMode: boolean;
+  newCategory: Category;
+  editCategoryMode: boolean;
+  editingCategory: Category;
+  selectedCategories: string[];
+  toggleNewCategoryMode: () => void;
+  setEditingCategory: (category: Category) => void;
+  setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
+  handleAddCategory: (category: Category) => Promise<void>;
+  handleEditCategory: (category: Category) => Promise<void>;
+  handleDelete: (categoryId: string | string[]) => Promise<void>;
   sortDirection: string;
-  categoryActions: ReturnType<typeof useCategoryActions>;
   setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
 }
 
 function CategoriesTable({
   userCategories,
   isLoading,
+  newCategoryMode,
+  newCategory,
+  editCategoryMode,
+  editingCategory,
+  selectedCategories,
+  toggleNewCategoryMode,
+  setEditingCategory,
+  setSelectedCategories,
+  handleAddCategory,
+  handleEditCategory,
+  handleDelete,
   sortDirection,
-  categoryActions,
   setSortDirection,
 }: CategoriesTableProps) {
-  const {
-    newCategoryMode,
-    newCategory,
-    editCategoryMode,
-    editingCategory,
-    selectedCategories,
-    toggleNewCategoryMode,
-    setEditingCategory,
-    setSelectedCategories,
-    handleAddCategory,
-    handleEditCategory,
-    handleRestoreDefaultCategories,
-    handleDelete,
-  } = categoryActions;
+  const categoryType = useCategoryType();
+
+  const categoryTypeTableLabelMap: Record<string, string> = {
+    expense: 'Expenses',
+    income: 'Income',
+  };
 
   const toggleSortOrder = () =>
     setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
@@ -62,11 +73,6 @@ function CategoriesTable({
   const renderNoCategories = () => {
     return (
       <>
-        <NoCategoriesMessage
-          newCategoryMode={newCategoryMode}
-          toggleNewCategoryMode={toggleNewCategoryMode}
-          handleRestoreDefaultCategories={handleRestoreDefaultCategories}
-        />
         {newCategoryMode && (
           <NewCategoryTableForm
             newCategory={newCategory}
@@ -75,6 +81,21 @@ function CategoriesTable({
             toggleNewCategoryMode={toggleNewCategoryMode}
             handleSelect={handleSelect}
           />
+        )}
+        {categoryType == 'expense' ? (
+          <h3 className={newCategoryMode ? '' : 'mt-2'}>
+            No expense categories found for your account. <br />
+            You should add some to keep your expenses organized! <br /> <br />
+            Or you can restore the default expense categories for inspiration
+            😉↑
+          </h3>
+        ) : (
+          <h3 className={newCategoryMode ? '' : 'mt-2'}>
+            No income categories found for your account. <br />
+            You should add some to keep your income items organized! <br />{' '}
+            <br />
+            Or you can restore the default income categories for inspiration 😉↑
+          </h3>
         )}
       </>
     );
@@ -126,10 +147,12 @@ function CategoriesTable({
                 </div>
               </th>
               <th style={{ width: '10%' }}>Icon</th>
-              <th style={{ width: '15%' }}>Expenses</th>
+              <th style={{ width: '15%' }}>
+                {categoryTypeTableLabelMap[categoryType]}
+              </th>
               {editCategoryMode && (
                 <>
-                  <th style={{ width: '10%' }}>Custom?</th>
+                  <th style={{ width: '10%' }}>Custom</th>
                   <th className="text-center" style={{ width: '10%' }}>
                     Action
                   </th>

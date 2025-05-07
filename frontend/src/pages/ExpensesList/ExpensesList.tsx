@@ -4,8 +4,7 @@ import ExpensesTableHeader from '../../components/tables/expenses/ExpensesTableH
 import ExpensesTable from '../../components/tables/expenses/ExpensesTable';
 import PageControls from '../../components/pagination/PageControls';
 
-import { useExpenses } from '../../hooks/expenses/useExpenses';
-import { useExpenseActions } from '../../hooks/expenses/useExpenseActions';
+import { useExpensesWithActions } from '../../hooks/expenses/useExpensesWithActions';
 
 import './../../styles/shared.css';
 import styles from './ExpensesList.module.css';
@@ -14,8 +13,26 @@ function ExpensesList() {
   const [pageNumber, setPageNumber] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const expenses = useExpenses(pageNumber, itemsPerPage, sortDirection);
-  const expenseActions = useExpenseActions(expenses.fetchUserExpenses);
+  const {
+    userExpenses,
+    userExpenseTotal,
+    userExpenseCategories,
+    isLoading,
+    fetchUserExpenses,
+    newExpenseMode,
+    newExpense,
+    editExpenseMode,
+    editingExpense,
+    selectedExpenses,
+    toggleNewExpenseMode,
+    toggleEditMode,
+    setEditingExpense,
+    setSelectedExpenses,
+    handleAddExpense,
+    handleEditExpense,
+    handleUpdateMultipleExpenseCategories,
+    handleDelete,
+  } = useExpensesWithActions(pageNumber, itemsPerPage, sortDirection);
 
   return (
     <>
@@ -25,27 +42,46 @@ function ExpensesList() {
         </div>
         <div className="App-body">
           <div className={styles.expenseParentContainer}>
-            {expenses.userExpenses.length !== 0 && (
+            {!isLoading && (
               <ExpensesTableHeader
-                userExpenseCategories={expenses.userExpenseCategories}
-                expenseActions={expenseActions}
-                fetchUserExpenses={expenses.fetchUserExpenses}
+                itemTotal={userExpenses.length}
+                userExpenseCategories={userExpenseCategories}
+                fetchUserExpenses={fetchUserExpenses}
+                newExpenseMode={newExpenseMode}
+                editExpenseMode={editExpenseMode}
+                selectedExpenses={selectedExpenses}
+                toggleNewExpenseMode={toggleNewExpenseMode}
+                toggleEditMode={toggleEditMode}
+                handleDelete={handleDelete}
+                handleUpdateMultipleExpenseCategories={
+                  handleUpdateMultipleExpenseCategories
+                }
               />
             )}
             <div className={styles.tableExpensesContainer}>
               <ExpensesTable
-                userExpenses={expenses.userExpenses}
-                userExpenseCategories={expenses.userExpenseCategories}
-                isLoading={expenses.isLoading}
+                userExpenses={userExpenses}
+                userExpenseCategories={userExpenseCategories}
+                isLoading={isLoading}
+                newExpenseMode={newExpenseMode}
+                newExpense={newExpense}
+                editExpenseMode={editExpenseMode}
+                editingExpense={editingExpense}
+                selectedExpenses={selectedExpenses}
+                toggleNewExpenseMode={toggleNewExpenseMode}
+                setEditingExpense={setEditingExpense}
+                setSelectedExpenses={setSelectedExpenses}
+                handleAddExpense={handleAddExpense}
+                handleEditExpense={handleEditExpense}
+                handleDelete={handleDelete}
                 sortDirection={sortDirection}
-                expenseActions={expenseActions}
                 setSortDirection={setSortDirection}
               ></ExpensesTable>
             </div>
-            {expenses.userExpenses.length !== 0 && (
+            {userExpenses.length !== 0 && (
               <div className={styles.paginationContainer}>
                 <PageControls
-                  itemTotal={expenses.userExpenseTotal}
+                  itemTotal={userExpenseTotal}
                   pageNumber={pageNumber}
                   itemsPerPage={itemsPerPage}
                   itemsPerPageArray={[25, 50, 100]}

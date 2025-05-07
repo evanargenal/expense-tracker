@@ -9,7 +9,7 @@ import LandingPage from './pages/LandingPage/LandingPage';
 import IncomeItemsList from './pages/IncomeItemsList/IncomeItemsList';
 import ExpensesList from './pages/ExpensesList/ExpensesList';
 import NoMatchPage from './pages/NoMatchPage/NoMatchPage';
-import Categories from './pages/Categories/Categories';
+import CategoriesList from './pages/Categories/CategoriesList';
 
 function App() {
   const { user, loading } = useAuth();
@@ -37,8 +37,8 @@ function App() {
         element={user ? <ExpensesList /> : <Navigate to="/" />}
       />
       <Route
-        path="/categories"
-        element={user ? <Categories /> : <Navigate to="/" />}
+        path="/categories-list"
+        element={user ? <CategoriesList /> : <Navigate to="/" />}
       />
       <Route path="*" element={<NoMatchPage />} />
     </Routes>

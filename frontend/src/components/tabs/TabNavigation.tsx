@@ -12,8 +12,8 @@ function TabNavigation() {
     // Map URL path to corresponding tab key
     if (location.pathname === '/income-list') {
       setTabKey('income-list');
-    } else if (location.pathname === '/categories') {
-      setTabKey('categories');
+    } else if (location.pathname === '/categories-list') {
+      setTabKey('categories-list');
     } else if (location.pathname === '/expenses-list') {
       setTabKey('expenses-list');
     }
@@ -36,7 +36,7 @@ function TabNavigation() {
     >
       <Tab eventKey="income-list" title="Income"></Tab>
       <Tab eventKey="expenses-list" title="Expenses"></Tab>
-      <Tab eventKey="categories" title="Categories"></Tab>
+      <Tab eventKey="categories-list" title="Categories"></Tab>
     </Tabs>
   );
 }

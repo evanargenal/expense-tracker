@@ -4,8 +4,7 @@ import IncomeItemsTableHeader from '../../components/tables/incomeItems/IncomeIt
 import IncomeItemsTable from '../../components/tables/incomeItems/IncomeItemsTable';
 import PageControls from '../../components/pagination/PageControls';
 
-import { useIncomeItems } from '../../hooks/incomeItems/useIncomeItems';
-import { useIncomeItemActions } from '../../hooks/incomeItems/useIncomeItemActions';
+import { useIncomeItemsWithActions } from '../../hooks/incomeItems/useIncomeItemsWithActions';
 
 import './../../styles/shared.css';
 import styles from './IncomeItemsList.module.css';
@@ -14,10 +13,26 @@ function IncomeItemsList() {
   const [pageNumber, setPageNumber] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(25);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const incomeItems = useIncomeItems(pageNumber, itemsPerPage, sortDirection);
-  const incomeItemActions = useIncomeItemActions(
-    incomeItems.fetchUserIncomeItems
-  );
+  const {
+    userIncomeItems,
+    userIncomeItemTotal,
+    userIncomeCategories,
+    isLoading,
+    fetchUserIncomeItems,
+    newIncomeItemMode,
+    newIncomeItem,
+    editIncomeItemMode,
+    editingIncomeItem,
+    selectedIncomeItems,
+    toggleNewIncomeItemMode,
+    toggleEditMode,
+    setEditingIncomeItem,
+    setSelectedIncomeItems,
+    handleAddIncomeItem,
+    handleEditIncomeItem,
+    handleUpdateMultipleIncomeItemCategories,
+    handleDelete,
+  } = useIncomeItemsWithActions(pageNumber, itemsPerPage, sortDirection);
 
   return (
     <>
@@ -27,27 +42,46 @@ function IncomeItemsList() {
         </div>
         <div className="App-body">
           <div className={styles.incomeParentContainer}>
-            {incomeItems.userIncomeItems.length !== 0 && (
+            {!isLoading && (
               <IncomeItemsTableHeader
-                userIncomeCategories={incomeItems.userIncomeCategories}
-                incomeItemActions={incomeItemActions}
-                fetchUserIncomeItems={incomeItems.fetchUserIncomeItems}
+                itemTotal={userIncomeItems.length}
+                userIncomeCategories={userIncomeCategories}
+                fetchUserIncomeItems={fetchUserIncomeItems}
+                newIncomeItemMode={newIncomeItemMode}
+                editIncomeItemMode={editIncomeItemMode}
+                selectedIncomeItems={selectedIncomeItems}
+                toggleNewIncomeItemMode={toggleNewIncomeItemMode}
+                toggleEditMode={toggleEditMode}
+                handleDelete={handleDelete}
+                handleUpdateMultipleIncomeItemCategories={
+                  handleUpdateMultipleIncomeItemCategories
+                }
               />
             )}
             <div className={styles.tableIncomeItemsContainer}>
               <IncomeItemsTable
-                userIncomeItems={incomeItems.userIncomeItems}
-                userIncomeCategories={incomeItems.userIncomeCategories}
-                isLoading={incomeItems.isLoading}
+                userIncomeItems={userIncomeItems}
+                userIncomeCategories={userIncomeCategories}
+                isLoading={isLoading}
+                newIncomeItemMode={newIncomeItemMode}
+                newIncomeItem={newIncomeItem}
+                editIncomeItemMode={editIncomeItemMode}
+                editingIncomeItem={editingIncomeItem}
+                selectedIncomeItems={selectedIncomeItems}
+                toggleNewIncomeItemMode={toggleNewIncomeItemMode}
+                setEditingIncomeItem={setEditingIncomeItem}
+                setSelectedIncomeItems={setSelectedIncomeItems}
+                handleAddIncomeItem={handleAddIncomeItem}
+                handleEditIncomeItem={handleEditIncomeItem}
+                handleDelete={handleDelete}
                 sortDirection={sortDirection}
-                incomeItemActions={incomeItemActions}
                 setSortDirection={setSortDirection}
               ></IncomeItemsTable>
             </div>
-            {incomeItems.userIncomeItems.length !== 0 && (
+            {userIncomeItems.length !== 0 && (
               <div className={styles.paginationContainer}>
                 <PageControls
-                  itemTotal={incomeItems.userIncomeItemTotal}
+                  itemTotal={userIncomeItemTotal}
                   pageNumber={pageNumber}
                   itemsPerPage={itemsPerPage}
                   itemsPerPageArray={[25, 50, 100]}

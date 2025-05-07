@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import { CheckLg, XLg } from 'react-bootstrap-icons';
 
 import { Category } from '../../../types/types';
+import { useCategoryType } from '../../../context/CategoryTypeContext';
 
 import styles from '../TableStyle.module.css';
 
@@ -24,7 +25,11 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   onCancel,
   onSelect,
 }) => {
-  const [formData, setFormData] = useState<Category>(category);
+  const categoryType = useCategoryType();
+  const [formData, setFormData] = useState<Category>({
+    ...category,
+    categoryType,
+  });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -46,22 +51,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
     }));
   };
 
-  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = () => {
     if (!formData.categoryName) {
       alert('Category name is required!');
-      return;
-    }
-    if (!formData.categoryType) {
-      alert('Category type is required!');
       return;
     }
     onSave(formData);
@@ -98,20 +90,6 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           onChange={handleInputChange}
         />
       </td>
-      {!isEditing && (
-        <td>
-          <Form.Select
-            name="categoryType"
-            value={formData.categoryType}
-            onChange={handleDropdownChange}
-          >
-            <option>Category Type (Required)</option>
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </Form.Select>
-        </td>
-      )}
-
       {isEditing && (
         <>
           <td>{category.numMatchedItems}</td>

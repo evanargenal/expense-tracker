@@ -4,10 +4,8 @@ import Form from 'react-bootstrap/Form';
 
 import { CaretDownFill, CaretUpFill } from 'react-bootstrap-icons';
 
-import NoIncomeItemsMessage from './NoIncomeItemsMessage';
 import IncomeItemTableNewForm from './IncomeItemTableNewForm';
 import IncomeItemRow from './IncomeItemRow';
-import { useIncomeItemActions } from '../../../hooks/incomeItems/useIncomeItemActions';
 import { IncomeItem, Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
@@ -16,8 +14,18 @@ interface IncomeItemsTableProps {
   userIncomeItems: IncomeItem[];
   userIncomeCategories: Category[];
   isLoading: boolean;
+  newIncomeItemMode: boolean;
+  newIncomeItem: IncomeItem;
+  editIncomeItemMode: boolean;
+  editingIncomeItem: IncomeItem;
+  selectedIncomeItems: string[];
+  toggleNewIncomeItemMode: () => void;
+  setEditingIncomeItem: (incomeItem: IncomeItem) => void;
+  setSelectedIncomeItems: React.Dispatch<React.SetStateAction<string[]>>;
+  handleAddIncomeItem: (incomeItem: IncomeItem) => Promise<void>;
+  handleEditIncomeItem: (incomeItem: IncomeItem) => Promise<void>;
+  handleDelete: (incomeItemId: string | string[]) => Promise<void>;
   sortDirection: string;
-  incomeItemActions: ReturnType<typeof useIncomeItemActions>;
   setSortDirection: React.Dispatch<React.SetStateAction<'asc' | 'desc'>>;
 }
 
@@ -25,24 +33,20 @@ function IncomeItemsTable({
   userIncomeItems,
   userIncomeCategories,
   isLoading,
+  newIncomeItemMode,
+  newIncomeItem,
+  editIncomeItemMode,
+  editingIncomeItem,
+  selectedIncomeItems,
+  toggleNewIncomeItemMode,
+  setEditingIncomeItem,
+  setSelectedIncomeItems,
+  handleAddIncomeItem,
+  handleEditIncomeItem,
+  handleDelete,
   sortDirection,
-  incomeItemActions,
   setSortDirection,
 }: IncomeItemsTableProps) {
-  const {
-    newIncomeItemMode,
-    newIncomeItem,
-    editIncomeItemMode,
-    editingIncomeItem,
-    selectedIncomeItems,
-    toggleNewIncomeItemMode,
-    setEditingIncomeItem,
-    setSelectedIncomeItems,
-    handleAddIncomeItem,
-    handleEditIncomeItem,
-    handleDelete,
-  } = incomeItemActions;
-
   const toggleSortOrder = () =>
     setSortDirection((prev) => (prev === 'desc' ? 'asc' : 'desc'));
 
@@ -65,10 +69,6 @@ function IncomeItemsTable({
   const renderNoIncomeItems = () => {
     return (
       <>
-        <NoIncomeItemsMessage
-          newIncomeItemMode={newIncomeItemMode}
-          toggleNewIncomeItemMode={toggleNewIncomeItemMode}
-        />
         {newIncomeItemMode && (
           <IncomeItemTableNewForm
             newIncomeItem={newIncomeItem}
@@ -79,6 +79,10 @@ function IncomeItemsTable({
             handleSelect={handleSelect}
           />
         )}
+        <h3 className={newIncomeItemMode ? '' : 'mt-2'}>
+          No income items found for your account. <br />
+          Either you're broke or you need to add some! <br /> <br />
+        </h3>
       </>
     );
   };

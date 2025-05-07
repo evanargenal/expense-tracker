@@ -30,12 +30,6 @@
   align-items: center;
 }
 
-.centeredButtons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
 .customCheck {
   text-align: center;
   margin: 0;

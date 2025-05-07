@@ -50,6 +50,5 @@ export function useIncomeItems(
     userIncomeCategories,
     isLoading,
     fetchUserIncomeItems,
-    getUserIncomeCategories,
   };
 }

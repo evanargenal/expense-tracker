@@ -11,32 +11,38 @@ import {
   CaretUpFill,
 } from 'react-bootstrap-icons';
 
-import { useIncomeItemActions } from '../../../hooks/incomeItems/useIncomeItemActions';
 import { Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
 interface IncomeItemsTableHeaderProps {
+  itemTotal: number;
   userIncomeCategories: Category[];
-  incomeItemActions: ReturnType<typeof useIncomeItemActions>;
   fetchUserIncomeItems: () => Promise<void>;
+  newIncomeItemMode: boolean;
+  editIncomeItemMode: boolean;
+  selectedIncomeItems: string[];
+  toggleNewIncomeItemMode: () => void;
+  toggleEditMode: () => void;
+  handleDelete: (selectedIncomeItems: string | string[]) => Promise<void>;
+  handleUpdateMultipleIncomeItemCategories: (
+    selectedIncomeItems: string | string[],
+    newCategoryId: string
+  ) => Promise<void>;
 }
 
 const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
+  itemTotal,
   userIncomeCategories,
-  incomeItemActions,
   fetchUserIncomeItems,
+  newIncomeItemMode,
+  editIncomeItemMode,
+  selectedIncomeItems,
+  toggleNewIncomeItemMode,
+  toggleEditMode,
+  handleDelete,
+  handleUpdateMultipleIncomeItemCategories,
 }) => {
-  const {
-    newIncomeItemMode,
-    editIncomeItemMode,
-    selectedIncomeItems,
-    toggleNewIncomeItemMode,
-    toggleEditMode,
-    handleDelete,
-    handleUpdateMultipleIncomeItemCategories,
-  } = incomeItemActions;
-
   const [showCategories, setShowCategories] = useState(false);
 
   const toggleShowCategories = () => {
@@ -55,12 +61,14 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
           <PlusLg className="mb-1" />
         )}
       </Button>
-      <Button
-        variant={editIncomeItemMode ? 'warning' : 'secondary'}
-        onClick={toggleEditMode}
-      >
-        <PencilFill className="mb-1" />
-      </Button>
+      {itemTotal !== 0 && (
+        <Button
+          variant={editIncomeItemMode ? 'warning' : 'secondary'}
+          onClick={toggleEditMode}
+        >
+          <PencilFill className="mb-1" />
+        </Button>
+      )}
       {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
       <Button variant="outline-primary" onClick={fetchUserIncomeItems}>
         <ArrowClockwise className="mb-1" />

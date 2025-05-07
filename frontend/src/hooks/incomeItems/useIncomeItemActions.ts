@@ -9,7 +9,8 @@ import { IncomeItem } from '../../types/types';
 import { getEmptyIncomeItem } from '../../utils/incomeItemUtils';
 
 export function useIncomeItemActions(
-  fetchUserIncomeItems: () => Promise<void>
+  fetchUserIncomeItems: () => Promise<void>,
+  getCurrentIncomeItemCount: () => number
 ) {
   const emptyIncomeItemForm = getEmptyIncomeItem();
   const [newIncomeItemMode, setNewIncomeItemMode] = useState(false);
@@ -41,7 +42,7 @@ export function useIncomeItemActions(
         incomeItem.categoryId
       );
       toggleNewIncomeItemMode();
-      fetchUserIncomeItems();
+      await fetchUserIncomeItems();
     } catch (error) {
       console.error('Error adding income item:', error);
     }
@@ -55,7 +56,7 @@ export function useIncomeItemActions(
         date: new Date(incomeItem.date),
       });
       setEditingIncomeItem(emptyIncomeItemForm);
-      fetchUserIncomeItems();
+      await fetchUserIncomeItems();
     } catch (error) {
       console.error('Error updating income item:', error);
     }
@@ -79,7 +80,7 @@ export function useIncomeItemActions(
       setSelectedIncomeItems((prev) =>
         prev.filter((id) => !idsArray.includes(id))
       );
-      fetchUserIncomeItems();
+      await fetchUserIncomeItems();
     } catch (error) {
       console.error('Failed to update income item(s) categories:', error);
     }
@@ -95,12 +96,17 @@ export function useIncomeItemActions(
     )
       return;
 
+    const wasLastItem = getCurrentIncomeItemCount() === idsArray.length;
+
     try {
       await deleteIncomeItems(idsArray);
       setSelectedIncomeItems((prev) =>
         prev.filter((id) => !idsArray.includes(id))
       );
-      fetchUserIncomeItems();
+      await fetchUserIncomeItems();
+      if (wasLastItem) {
+        toggleEditMode();
+      }
     } catch (error) {
       console.error('Failed to delete income item(s):', error);
     }
@@ -113,7 +119,6 @@ export function useIncomeItemActions(
     editingIncomeItem,
     selectedIncomeItems,
     toggleNewIncomeItemMode,
-    setNewIncomeItem,
     toggleEditMode,
     setEditingIncomeItem,
     setSelectedIncomeItems,

@@ -7,7 +7,7 @@ import { AuthenticatedUser } from '../types/types';
 const jwt_secret = process.env.JWT_SECRET!;
 
 interface AuthenticatedRequest extends Request {
-  user?: AuthenticatedUser;
+  user: AuthenticatedUser;
 }
 
 function verifyAccessToken(token: string): {

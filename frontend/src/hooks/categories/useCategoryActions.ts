@@ -8,7 +8,10 @@ import {
 import { Category } from '../../types/types';
 import { getEmptyCategoryItem } from '../../utils/categoryUtils';
 
-export function useCategoryActions(fetchUserCategories: () => Promise<void>) {
+export function useCategoryActions(
+  fetchUserCategories: () => Promise<void>,
+  getCurrentCategoriesCount: () => number
+) {
   const emptyCategoryForm = getEmptyCategoryItem();
   const [newCategoryMode, setNewCategoryMode] = useState(false);
   const [newCategory, setNewCategory] = useState<Category>(emptyCategoryForm);
@@ -54,7 +57,7 @@ export function useCategoryActions(fetchUserCategories: () => Promise<void>) {
     }
   };
 
-  const handleRestoreDefaultCategories = async () => {
+  const handleRestoreDefaultCategories = async (categoryType: string) => {
     if (
       !window.confirm(
         'Are you sure you want to restore the default categories?'
@@ -62,7 +65,7 @@ export function useCategoryActions(fetchUserCategories: () => Promise<void>) {
     )
       return;
     try {
-      const data = await restoreDefaultCategories();
+      const data = await restoreDefaultCategories(categoryType);
       if (data !== null) {
         fetchUserCategories();
       }
@@ -83,12 +86,17 @@ export function useCategoryActions(fetchUserCategories: () => Promise<void>) {
     )
       return;
 
+    const wasLastItem = getCurrentCategoriesCount() === idsArray.length;
+
     try {
       await deleteCategories(idsArray);
       setSelectedCategories((prev) =>
         prev.filter((id) => !idsArray.includes(id))
       );
-      fetchUserCategories();
+      await fetchUserCategories();
+      if (wasLastItem) {
+        toggleEditMode();
+      }
     } catch (error) {
       console.error('Failed to delete category(ies):', error);
     }
@@ -101,7 +109,6 @@ export function useCategoryActions(fetchUserCategories: () => Promise<void>) {
     editingCategory,
     selectedCategories,
     toggleNewCategoryMode,
-    setNewCategory,
     toggleEditMode,
     setEditingCategory,
     setSelectedCategories,

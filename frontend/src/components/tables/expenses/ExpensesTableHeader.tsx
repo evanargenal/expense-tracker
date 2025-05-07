@@ -11,32 +11,38 @@ import {
   CaretUpFill,
 } from 'react-bootstrap-icons';
 
-import { useExpenseActions } from '../../../hooks/expenses/useExpenseActions';
 import { Category } from '../../../types/types';
 
 import styles from '../TableStyle.module.css';
 
 interface ExpensesTableHeaderProps {
+  itemTotal: number;
   userExpenseCategories: Category[];
-  expenseActions: ReturnType<typeof useExpenseActions>;
   fetchUserExpenses: () => Promise<void>;
+  newExpenseMode: boolean;
+  editExpenseMode: boolean;
+  selectedExpenses: string[];
+  toggleNewExpenseMode: () => void;
+  toggleEditMode: () => void;
+  handleDelete: (selectedExpenses: string | string[]) => Promise<void>;
+  handleUpdateMultipleExpenseCategories: (
+    selectedExpenses: string | string[],
+    newCategoryId: string
+  ) => Promise<void>;
 }
 
 const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
+  itemTotal,
   userExpenseCategories,
-  expenseActions,
   fetchUserExpenses,
+  newExpenseMode,
+  editExpenseMode,
+  selectedExpenses,
+  toggleNewExpenseMode,
+  toggleEditMode,
+  handleDelete,
+  handleUpdateMultipleExpenseCategories,
 }) => {
-  const {
-    newExpenseMode,
-    editExpenseMode,
-    selectedExpenses,
-    toggleNewExpenseMode,
-    toggleEditMode,
-    handleDelete,
-    handleUpdateMultipleExpenseCategories,
-  } = expenseActions;
-
   const [showCategories, setShowCategories] = useState(false);
 
   const toggleShowCategories = () => {
@@ -55,12 +61,14 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
           <PlusLg className="mb-1" />
         )}
       </Button>
-      <Button
-        variant={editExpenseMode ? 'warning' : 'secondary'}
-        onClick={toggleEditMode}
-      >
-        <PencilFill className="mb-1" />
-      </Button>
+      {itemTotal !== 0 && (
+        <Button
+          variant={editExpenseMode ? 'warning' : 'secondary'}
+          onClick={toggleEditMode}
+        >
+          <PencilFill className="mb-1" />
+        </Button>
+      )}
       {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
       <Button variant="outline-primary" onClick={fetchUserExpenses}>
         <ArrowClockwise className="mb-1" />
