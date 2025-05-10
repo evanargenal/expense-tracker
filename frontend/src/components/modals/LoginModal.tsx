@@ -36,10 +36,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, handleClose }) => {
           setIsLoginPage(true);
         }}
       >
-        <Modal.Header className={styles.modalHeader}>
+        <Modal.Header className={styles['login-modal__header']}>
           <Modal.Title>{isLoginPage ? 'Log In' : 'Sign Up'}</Modal.Title>
           <CloseButton
-            className={styles.modalXButton}
+            className={styles['login-modal__close-button']}
             onClick={() => {
               handleClose();
               clearForm();
@@ -124,15 +124,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ show, handleClose }) => {
           </Form>
         </Modal.Body>
         <Modal.Footer className="d-grid" style={{ justifyContent: 'unset' }}>
-          <div className={styles.footerText}>
-            <p>
+          <div className={styles['login-modal__footer-text']}>
+            <span>
               {isLoginPage
-                ? "New around here? I think it's time you "
-                : 'Been here before? Maybe you should '}
+                ? "New around here? I think it's time you"
+                : 'Been here before? Maybe you should'}
+            </span>
+            <span>
               <a href="/#" role="button" onClick={toggleLoginPage}>
-                {isLoginPage ? 'sign up!' : 'log in!'}
+                {isLoginPage ? 'sign up!' : ' log in!'}
               </a>
-            </p>
+            </span>
           </div>
         </Modal.Footer>
       </Modal>

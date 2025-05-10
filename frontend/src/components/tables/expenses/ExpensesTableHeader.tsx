@@ -50,7 +50,7 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
   };
 
   return (
-    <div className={styles.tableHeader}>
+    <div className={styles['table__header']}>
       <Button
         variant={newExpenseMode ? 'secondary' : 'success'}
         onClick={toggleNewExpenseMode}

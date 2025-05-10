@@ -36,12 +36,12 @@ function ExpensesList() {
 
   return (
     <>
-      <div className="App">
-        <div className="App-header">
+      <div className="app">
+        <div className="app-header">
           <Header />
         </div>
-        <div className="App-body">
-          <div className={styles.expenseParentContainer}>
+        <div className="app-body">
+          <div className={styles['expenses-list__container']}>
             {!isLoading && (
               <ExpensesTableHeader
                 itemTotal={userExpenses.length}
@@ -58,7 +58,7 @@ function ExpensesList() {
                 }
               />
             )}
-            <div className={styles.tableExpensesContainer}>
+            <div className={styles['expenses-list__table']}>
               <ExpensesTable
                 userExpenses={userExpenses}
                 userExpenseCategories={userExpenseCategories}
@@ -79,7 +79,7 @@ function ExpensesList() {
               ></ExpensesTable>
             </div>
             {userExpenses.length !== 0 && (
-              <div className={styles.paginationContainer}>
+              <div className={styles['expenses-list__pagination']}>
                 <PageControls
                   itemTotal={userExpenseTotal}
                   pageNumber={pageNumber}

@@ -339,7 +339,7 @@ router.patch(
         );
 
         // Update all user expenses OR income items from the old default categoryId to the new categoryId
-        if (newCategory.categoryType == 'expense') {
+        if (newCategory.categoryType === 'expense') {
           const expensesCollection = db.collection('expenses');
           await expensesCollection.updateMany(
             {
@@ -350,7 +350,7 @@ router.patch(
               $set: { categoryId: insertedCategory.insertedId }, // Assign the new categoryId
             }
           );
-        } else if (newCategory.categoryType == 'income') {
+        } else if (newCategory.categoryType === 'income') {
           const incomeCollection = db.collection('income');
           await incomeCollection.updateMany(
             {
@@ -452,7 +452,7 @@ router.post(
       }
 
       // Reset all user expenses OR income items with the old categories to "no category" (based on first category in list)
-      if (categoriesToBeDeleted[0].categoryType == 'expense') {
+      if (categoriesToBeDeleted[0].categoryType === 'expense') {
         const expensesCollection = db.collection('expenses');
         await expensesCollection.updateMany(
           {
@@ -463,7 +463,7 @@ router.post(
             $set: { categoryId: new ObjectId('000000000000000000000000') }, // Assign the empty categoryId
           }
         );
-      } else if (categoriesToBeDeleted[0].categoryType == 'income') {
+      } else if (categoriesToBeDeleted[0].categoryType === 'income') {
         const incomeCollection = db.collection('income');
         await incomeCollection.updateMany(
           {
@@ -577,7 +577,7 @@ router.delete(
       }
 
       // Reset all user expenses OR income items with the old category to "no category"
-      if (categoryToDelete.categoryType == 'expense') {
+      if (categoryToDelete.categoryType === 'expense') {
         const expensesCollection = db.collection('expenses');
         await expensesCollection.updateMany(
           {
@@ -588,7 +588,7 @@ router.delete(
             $set: { categoryId: new ObjectId('000000000000000000000000') },
           }
         );
-      } else if (categoryToDelete.categoryType == 'income') {
+      } else if (categoryToDelete.categoryType === 'income') {
         const incomeCollection = db.collection('income');
         await incomeCollection.updateMany(
           {

@@ -7,13 +7,13 @@ import styles from './LandingPage.module.css';
 function LandingPage() {
   return (
     <>
-      <div className="App">
-        <div className="App-header">
+      <div className="app">
+        <div className="app-header">
           <Header />
         </div>
-        <div className={styles.landingPage}>
-          <img src={LoginLogo} className="App-logo mb-5" alt="logo" />
-          <p className="mt-5">Log in to see your expenses!</p>
+        <div className={styles['landing-page__container']}>
+          <img src={LoginLogo} className="app-logo" alt="logo" />
+          Log in to see your expenses!
         </div>
       </div>
     </>

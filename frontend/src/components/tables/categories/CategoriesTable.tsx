@@ -82,7 +82,7 @@ function CategoriesTable({
             handleSelect={handleSelect}
           />
         )}
-        {categoryType == 'expense' ? (
+        {categoryType === 'expense' ? (
           <h3 className={newCategoryMode ? '' : 'mt-2'}>
             No expense categories found for your account. <br />
             You should add some to keep your expenses organized! <br /> <br />
@@ -114,7 +114,7 @@ function CategoriesTable({
           />
         )}
         <Table
-          className={styles.tableStyling}
+          className={styles['table__layout']}
           striped
           responsive
           variant="dark"
@@ -125,7 +125,7 @@ function CategoriesTable({
                 <th style={{ width: '5%' }}>
                   <Form.Check
                     aria-label="select all"
-                    className={styles.customCheck}
+                    className={styles['table__custom-check']}
                     checked={
                       selectedCategories.length === userCategories.length
                     }
@@ -137,7 +137,7 @@ function CategoriesTable({
                 style={{ width: '45%', cursor: 'pointer' }}
                 onClick={toggleSortOrder}
               >
-                <div className={styles.itemsWithIcons}>
+                <div className={styles['table__items-with-icons']}>
                   <span>Name</span>
                   {sortDirection === 'asc' ? (
                     <CaretDownFill />

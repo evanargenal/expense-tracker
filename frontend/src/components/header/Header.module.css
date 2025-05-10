@@ -1,16 +1,15 @@
-.headerContainer {
+.header__container {
   display: flex;
   flex-direction: column;
   align-items: start;
   width: 100%;
-  font-size: calc(12px + 1vmin);
 }
 
-.tabContainer {
-  font-size: calc(10px + 1vmin);
+.header__tabs {
+  font-size: 1.25rem;
 }
 
-.ProfileButtonContainer {
+.header__profile-button {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -19,7 +18,7 @@
   min-height: inherit;
 }
 
-.logInButtonContainer {
+.header__login-button {
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -18,7 +18,7 @@ code {
     monospace;
 }
 
-.loadingSpinner {
+.loading-spinner {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -38,11 +38,11 @@ code {
 /* Globally change sizes of forms */
 .form-control {
   padding: 0.1rem 0.4rem !important;
-  font-size: calc(8px + 1vmin) !important;
+  font-size: 1rem !important;
 }
 .form-select {
   padding: 0.1rem 2.25rem 0.1rem 0.4rem !important;
-  font-size: calc(8px + 1vmin) !important;
+  font-size: 1rem !important;
 }
 
 /* Globally remove bottom margin for tables (to be added manually instead of automatically) */
@@ -50,10 +50,19 @@ code {
   margin-bottom: 0 !important;
 }
 
+.table-responsive {
+  border-radius: 0.5rem !important;
+}
+
+/* Globally remove all margin from checkboxes */
+.form-check-input {
+  margin: 0 !important;
+}
+
 /* Globally make small buttons a little bit smaller */
 .btn-sm,
 .btn-group-sm > .btn {
-  --bs-btn-font-size: calc(5px + 1vmin) !important;
+  --bs-btn-font-size: 0.875rem !important;
 }
 
 /* Globally remove dropdown toggle carets */

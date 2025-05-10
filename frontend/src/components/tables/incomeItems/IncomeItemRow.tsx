@@ -47,7 +47,7 @@ const IncomeItemRow: React.FC<IncomeItemRowProps> = ({
             <td>
               <Form.Check
                 aria-label="select"
-                className={styles.customCheck}
+                className={styles['table__custom-check']}
                 checked={selectedIncomeItems.includes(incomeItem._id)}
                 onChange={() => handleSelect(incomeItem._id)}
               />
@@ -68,7 +68,7 @@ const IncomeItemRow: React.FC<IncomeItemRowProps> = ({
           <td>${Number(incomeItem.amount).toFixed(2)}</td>
           {editIncomeItemMode && (
             <td>
-              <div className={styles.actionItems}>
+              <div className={styles['table__action-items']}>
                 <Button
                   variant="secondary"
                   size="sm"

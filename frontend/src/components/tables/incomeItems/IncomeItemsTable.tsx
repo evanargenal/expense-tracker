@@ -101,7 +101,7 @@ function IncomeItemsTable({
           />
         )}
         <Table
-          className={styles.tableStyling}
+          className={styles['table__layout']}
           striped
           responsive
           variant="dark"
@@ -112,7 +112,7 @@ function IncomeItemsTable({
                 <th style={{ width: '5%' }}>
                   <Form.Check
                     aria-label="select all"
-                    className={styles.customCheck}
+                    className={styles['table__custom-check']}
                     checked={
                       selectedIncomeItems.length === userIncomeItems.length
                     }
@@ -124,7 +124,7 @@ function IncomeItemsTable({
                 style={{ width: '20%', cursor: 'pointer' }}
                 onClick={toggleSortOrder}
               >
-                <div className={styles.itemsWithIcons}>
+                <div className={styles['table__items-with-icons']}>
                   <span>Date</span>
                   {sortDirection === 'desc' ? (
                     <CaretDownFill />

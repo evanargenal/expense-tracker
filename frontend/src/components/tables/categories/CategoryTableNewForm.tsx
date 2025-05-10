@@ -20,7 +20,7 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
 }) => {
   return (
     <Table
-      className={`${styles.tableStyling} ${styles.tableMarginBottom}`}
+      className={`${styles['table__layout']} ${styles['table--margin-bottom']}`}
       responsive
       striped
       variant="dark"

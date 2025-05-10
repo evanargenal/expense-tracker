@@ -77,8 +77,8 @@ function PageControls({
   };
 
   return (
-    <div className={styles.paginationContainer}>
-      <div className={styles.flexRowContainer}>
+    <div className={styles['page-controls__container']}>
+      <div className={styles['page-controls__summary-row']}>
         <span>
           Showing{' '}
           <b>
@@ -86,7 +86,7 @@ function PageControls({
           </b>{' '}
           of <b>{itemTotal}</b>
         </span>
-        <div className={styles.noGapFlexRowContainer}>
+        <div className={styles['page-controls__per-page-row']}>
           <Form.Select
             name="itemsPerPage"
             value={itemsPerPage}
@@ -98,28 +98,33 @@ function PageControls({
               </option>
             ))}
           </Form.Select>
-          <p>Per Page</p>
+          Per Page
         </div>
       </div>
-      <Pagination data-bs-theme="dark" style={{ marginBottom: 'unset' }}>
-        <Pagination.First
-          disabled={pageNumber === 1}
-          onClick={() => handlePageClick(1)}
-        />
-        <Pagination.Prev
-          disabled={pageNumber === 1}
-          onClick={() => handlePageClick(pageNumber - 1)}
-        />
-        {renderPaginationItems()}
-        <Pagination.Next
-          disabled={pageNumber === totalPages}
-          onClick={() => handlePageClick(pageNumber + 1)}
-        />
-        <Pagination.Last
-          disabled={pageNumber === totalPages}
-          onClick={() => handlePageClick(totalPages)}
-        />
-      </Pagination>
+      <div>
+        <Pagination
+          data-bs-theme="dark"
+          className={styles['page-controls__per-selector']}
+        >
+          <Pagination.First
+            disabled={pageNumber === 1}
+            onClick={() => handlePageClick(1)}
+          />
+          <Pagination.Prev
+            disabled={pageNumber === 1}
+            onClick={() => handlePageClick(pageNumber - 1)}
+          />
+          {renderPaginationItems()}
+          <Pagination.Next
+            disabled={pageNumber === totalPages}
+            onClick={() => handlePageClick(pageNumber + 1)}
+          />
+          <Pagination.Last
+            disabled={pageNumber === totalPages}
+            onClick={() => handlePageClick(totalPages)}
+          />
+        </Pagination>
+      </div>
     </div>
   );
 }

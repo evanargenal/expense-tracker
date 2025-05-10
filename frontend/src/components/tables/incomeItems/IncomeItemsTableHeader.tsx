@@ -50,7 +50,7 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
   };
 
   return (
-    <div className={styles.tableHeader}>
+    <div className={styles['table__header']}>
       <Button
         variant={newIncomeItemMode ? 'secondary' : 'success'}
         onClick={toggleNewIncomeItemMode}

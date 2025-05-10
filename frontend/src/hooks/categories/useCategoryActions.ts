@@ -39,7 +39,7 @@ export function useCategoryActions(
         category.categoryType
       );
       toggleNewCategoryMode();
-      fetchUserCategories();
+      await fetchUserCategories();
     } catch (error) {
       console.error('Error adding category:', error);
     }
@@ -51,7 +51,7 @@ export function useCategoryActions(
         ...category,
       });
       setEditingCategory(emptyCategoryForm);
-      fetchUserCategories();
+      await fetchUserCategories();
     } catch (error) {
       console.error('Error updating category:', error);
     }
@@ -60,14 +60,14 @@ export function useCategoryActions(
   const handleRestoreDefaultCategories = async (categoryType: string) => {
     if (
       !window.confirm(
-        'Are you sure you want to restore the default categories?'
+        `Are you sure you want to restore the default ${categoryType} categories?`
       )
     )
       return;
     try {
       const data = await restoreDefaultCategories(categoryType);
       if (data !== null) {
-        fetchUserCategories();
+        await fetchUserCategories();
       }
     } catch (error) {
       console.error('Error updating category:', error);

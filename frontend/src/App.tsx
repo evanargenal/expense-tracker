@@ -16,9 +16,9 @@ function App() {
 
   if (loading)
     return (
-      <div className="loadingSpinner">
+      <div className="loading-spinner">
         <Spinner animation="border" />
-        <p>Loading</p>
+        <h3>Loading</h3>
       </div>
     ); // Prevents UI flickering
 

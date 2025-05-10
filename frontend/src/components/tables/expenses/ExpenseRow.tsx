@@ -47,7 +47,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
             <td>
               <Form.Check
                 aria-label="select"
-                className={styles.customCheck}
+                className={styles['table__custom-check']}
                 checked={selectedExpenses.includes(expense._id)}
                 onChange={() => handleSelect(expense._id)}
               />
@@ -68,7 +68,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
           <td>${Number(expense.cost).toFixed(2)}</td>
           {editExpenseMode && (
             <td>
-              <div className={styles.actionItems}>
+              <div className={styles['table__action-items']}>
                 <Button
                   variant="secondary"
                   size="sm"

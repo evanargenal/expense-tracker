@@ -1,20 +1,17 @@
-.modalHeader {
+.login-modal__header {
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
 
-.modalXButton {
+.login-modal__close-button {
   position: absolute;
   right: 30px;
 }
 
-.footerText {
+.login-modal__footer-text {
   display: flex;
   flex-direction: row;
   justify-content: center;
-}
-
-p {
-  margin: 0;
+  gap: 0.25rem;
 }

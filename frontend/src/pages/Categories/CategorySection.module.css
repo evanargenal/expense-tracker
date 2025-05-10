@@ -1,4 +1,4 @@
-.expenseCategoriesParentContainer {
+.category-section__expense-container {
   width: 97%;
   height: 50%;
   background-color: #3b4357;
@@ -8,12 +8,13 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.tableExpenseCategoriesContainer {
-  height: calc(100% - 55px - 55px);
+.category-section__expense-table {
+  height: calc(100% - 54px - 54px);
   overflow-y: auto;
+  border-radius: 0.5rem;
 }
 
-.incomeCategoriesParentContainer {
+.category-section__income-container {
   width: 97%;
   height: 50%;
   background-color: #3b4357;
@@ -23,11 +24,8 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.tableIncomeCategoriesContainer {
-  height: calc(100% - 55px - 55px);
+.category-section__income-table {
+  height: calc(100% - 54px - 54px);
   overflow-y: auto;
-}
-
-.paginationContainer {
-  font-size: calc(10px + 1vmin);
+  border-radius: 0.5rem;
 }

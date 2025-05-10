@@ -22,7 +22,7 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
 }) => {
   return (
     <Table
-      className={`${styles.tableStyling} ${styles.tableMarginBottom}`}
+      className={`${styles['table__layout']} ${styles['table--margin-bottom']}`}
       responsive
       striped
       variant="dark"

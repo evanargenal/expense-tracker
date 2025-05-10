@@ -1,13 +1,13 @@
-.paginationContainer {
+.page-controls__container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem;
-  height: 55px;
+  height: 54px;
 }
 
-.flexRowContainer {
+.page-controls__summary-row {
   display: flex;
   flex-direction: row;
   gap: 20px;
@@ -15,10 +15,14 @@
   white-space: nowrap;
 }
 
-.noGapFlexRowContainer {
+.page-controls__per-page-row {
   display: flex;
   flex-direction: row;
   gap: 5px;
   align-items: center;
   white-space: nowrap;
+}
+
+.page-controls__per-selector {
+  margin-bottom: unset;
 }

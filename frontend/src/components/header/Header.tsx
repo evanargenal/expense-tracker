@@ -28,17 +28,15 @@ function Header() {
 
   return (
     <>
-      <div className={styles.headerContainer}>
+      <div className={styles['header__container']}>
         {user && (
-          <>
-            <div className={styles.tabContainer}>
-              <TabNavigation />
-            </div>
-          </>
+          <div className={styles['header__tabs']}>
+            <TabNavigation />
+          </div>
         )}
       </div>
       {user ? (
-        <div className={styles.ProfileButtonContainer}>
+        <div className={styles['header__profile-button']}>
           <Dropdown
             data-bs-theme="dark"
             align="end"
@@ -58,7 +56,7 @@ function Header() {
           </Dropdown>
         </div>
       ) : (
-        <div className={styles.logInButtonContainer}>
+        <div className={styles['header__login-button']}>
           <Button onClick={handleShow}>Log In</Button>
           <LoginModal show={showLoginModal} handleClose={handleClose} />
         </div>

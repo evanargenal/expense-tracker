@@ -1,4 +1,4 @@
-.incomeParentContainer {
+.income-list__container {
   width: 97%;
   height: 100%;
   background-color: #3b4357;
@@ -8,14 +8,14 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.tableIncomeItemsContainer {
-  height: calc(100% - 55px - 55px);
+.income-list__table {
+  height: calc(100% - 54px - 54px);
   overflow-y: auto;
+  border-radius: 0.5rem;
 }
 
-.paginationContainer {
+.income-list__pagination {
   width: 95%;
-  font-size: calc(10px + 1vmin);
   position: fixed;
   bottom: 0;
   left: 50%;

@@ -99,7 +99,7 @@ function ExpensesTable({
           />
         )}
         <Table
-          className={styles.tableStyling}
+          className={styles['table__layout']}
           striped
           responsive
           variant="dark"
@@ -110,7 +110,7 @@ function ExpensesTable({
                 <th style={{ width: '5%' }}>
                   <Form.Check
                     aria-label="select all"
-                    className={styles.customCheck}
+                    className={styles['table__custom-check']}
                     checked={selectedExpenses.length === userExpenses.length}
                     onChange={handleSelectAll}
                   />
@@ -120,7 +120,7 @@ function ExpensesTable({
                 style={{ width: '20%', cursor: 'pointer' }}
                 onClick={toggleSortOrder}
               >
-                <div className={styles.itemsWithIcons}>
+                <div className={styles['table__items-with-icons']}>
                   <span>Date</span>
                   {sortDirection === 'desc' ? (
                     <CaretDownFill />

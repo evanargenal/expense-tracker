@@ -36,12 +36,12 @@ function IncomeItemsList() {
 
   return (
     <>
-      <div className="App">
-        <div className="App-header">
+      <div className="app">
+        <div className="app-header">
           <Header />
         </div>
-        <div className="App-body">
-          <div className={styles.incomeParentContainer}>
+        <div className="app-body">
+          <div className={styles['income-list__container']}>
             {!isLoading && (
               <IncomeItemsTableHeader
                 itemTotal={userIncomeItems.length}
@@ -58,7 +58,7 @@ function IncomeItemsList() {
                 }
               />
             )}
-            <div className={styles.tableIncomeItemsContainer}>
+            <div className={styles['income-list__table']}>
               <IncomeItemsTable
                 userIncomeItems={userIncomeItems}
                 userIncomeCategories={userIncomeCategories}
@@ -79,7 +79,7 @@ function IncomeItemsList() {
               ></IncomeItemsTable>
             </div>
             {userIncomeItems.length !== 0 && (
-              <div className={styles.paginationContainer}>
+              <div className={styles['income-list__pagination']}>
                 <PageControls
                   itemTotal={userIncomeItemTotal}
                   pageNumber={pageNumber}

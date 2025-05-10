@@ -44,7 +44,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
             <td>
               <Form.Check
                 aria-label="select"
-                className={styles.customCheck}
+                className={styles['table__custom-check']}
                 checked={selectedCategories.includes(category._id)}
                 onChange={() => handleSelect(category._id)}
               />
@@ -63,7 +63,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
                 )}
               </td>
               <td>
-                <div className={styles.actionItems}>
+                <div className={styles['table__action-items']}>
                   <Button
                     variant="secondary"
                     size="sm"

@@ -6,10 +6,10 @@ import styles from './NoMatchPage.module.css';
 function NoMatchPage() {
   return (
     <>
-      <div className="App">
-        <div className={styles.noMatchPage}>
-          <img src={cryHard} className="App-logo mb-5" alt="logo" />
-          <p>Sorry boss, no page here!</p>
+      <div className="app">
+        <div className={styles['no-match-page__container']}>
+          <img src={cryHard} className="app-logo" alt="logo" />
+          Sorry boss, no page here!
         </div>
       </div>
     </>
