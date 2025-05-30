@@ -44,7 +44,7 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
       ) : (
         <tr>
           {editExpenseMode && (
-            <td>
+            <td style={{ width: '5%' }}>
               <Form.Check
                 aria-label="select"
                 className={styles['table__custom-check']}
@@ -53,21 +53,21 @@ const ExpenseRow: React.FC<ExpenseRowProps> = ({
               />
             </td>
           )}
-          <td>
+          <td style={{ width: '20%' }}>
             {new Date(expense.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
             })}
           </td>
-          <td>{expense.name}</td>
-          <td>{expense.description}</td>
-          <td>
+          <td style={{ width: '15%' }}>{expense.name}</td>
+          <td style={{ width: '15%' }}>{expense.description}</td>
+          <td style={{ width: '20%' }}>
             {expense.categoryName} {expense.icon}
           </td>
-          <td>${Number(expense.cost).toFixed(2)}</td>
+          <td style={{ width: '10%' }}>${Number(expense.cost).toFixed(2)}</td>
           {editExpenseMode && (
-            <td>
+            <td style={{ width: '10%' }}>
               <div className={styles['table__action-items']}>
                 <Button
                   variant="secondary"

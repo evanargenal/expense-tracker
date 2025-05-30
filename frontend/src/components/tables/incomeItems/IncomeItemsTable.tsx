@@ -91,85 +91,106 @@ function IncomeItemsTable({
     return (
       <>
         {newIncomeItemMode && ( // Add new income item form
-          <IncomeItemTableNewForm
-            newIncomeItem={newIncomeItem}
-            userIncomeCategories={userIncomeCategories}
-            selectedIncomeItems={selectedIncomeItems}
-            handleAddIncomeItem={handleAddIncomeItem}
-            toggleNewIncomeItemMode={toggleNewIncomeItemMode}
-            handleSelect={handleSelect}
-          />
+          <div className={styles['table--margin-bottom']}>
+            <IncomeItemTableNewForm
+              newIncomeItem={newIncomeItem}
+              userIncomeCategories={userIncomeCategories}
+              selectedIncomeItems={selectedIncomeItems}
+              handleAddIncomeItem={handleAddIncomeItem}
+              toggleNewIncomeItemMode={toggleNewIncomeItemMode}
+              handleSelect={handleSelect}
+            />
+          </div>
         )}
-        <Table
-          className={styles['table__layout']}
-          striped
-          responsive
-          variant="dark"
-        >
-          <thead>
-            <tr>
-              {editIncomeItemMode && (
-                <th style={{ width: '5%' }}>
-                  <Form.Check
-                    aria-label="select all"
-                    className={styles['table__custom-check']}
-                    checked={
-                      selectedIncomeItems.length === userIncomeItems.length
-                    }
-                    onChange={handleSelectAll}
-                  />
+        <div className={styles['table__scroll-container']}>
+          <Table
+            className={styles['table__layout']}
+            striped
+            responsive
+            variant="dark"
+          >
+            <thead>
+              <tr>
+                {editIncomeItemMode && (
+                  <th style={{ width: '5%' }}>
+                    <Form.Check
+                      aria-label="select all"
+                      className={styles['table__custom-check']}
+                      checked={
+                        selectedIncomeItems.length === userIncomeItems.length
+                      }
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                )}
+                <th
+                  style={{ width: '20%', cursor: 'pointer' }}
+                  onClick={toggleSortOrder}
+                >
+                  <div className={styles['table__items-with-icons']}>
+                    <span>Date</span>
+                    {sortDirection === 'desc' ? (
+                      <CaretDownFill />
+                    ) : (
+                      <CaretUpFill />
+                    )}
+                  </div>
                 </th>
-              )}
-              <th
-                style={{ width: '20%', cursor: 'pointer' }}
-                onClick={toggleSortOrder}
-              >
-                <div className={styles['table__items-with-icons']}>
-                  <span>Date</span>
-                  {sortDirection === 'desc' ? (
-                    <CaretDownFill />
-                  ) : (
-                    <CaretUpFill />
-                  )}
-                </div>
-              </th>
-              <th style={{ width: '15%' }}>Name</th>
-              <th style={{ width: '15%' }}>Description</th>
-              <th style={{ width: '20%' }}>Category</th>
-              <th style={{ width: '10%' }}>Amount</th>
-              {editIncomeItemMode && (
-                <th className="text-center" style={{ width: '10%' }}>
-                  Action
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {userIncomeItems?.map((incomeItem) => (
-              <IncomeItemRow
-                key={incomeItem._id}
-                incomeItem={incomeItem}
-                isEditing={editingIncomeItem._id === incomeItem._id}
-                editIncomeItemMode={editIncomeItemMode}
-                selectedIncomeItems={selectedIncomeItems}
-                userIncomeCategories={userIncomeCategories}
-                setEditingIncomeItem={setEditingIncomeItem}
-                handleDelete={handleDelete}
-                handleSelect={handleSelect}
-                handleEditIncomeItem={handleEditIncomeItem} // Pass handleAddIncomeItem for IncomeItemForm
-              />
-            ))}
-            <tr>
-              <th colSpan={editIncomeItemMode ? 5 : 4}>Total</th>
-              <th colSpan={editIncomeItemMode ? 2 : 1}>
-                $
-                {userIncomeItems
-                  .reduce((total, item) => total + Number(item.amount), 0)
-                  .toFixed(2)}
-              </th>
-            </tr>
-          </tbody>
-        </Table>
+                <th style={{ width: '15%' }}>Name</th>
+                <th style={{ width: '15%' }}>Description</th>
+                <th style={{ width: '20%' }}>Category</th>
+                <th style={{ width: '10%' }}>Amount</th>
+                {editIncomeItemMode && (
+                  <th style={{ width: '10%' }} className="text-center">
+                    Action
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody className={styles['table__body-scroll']}>
+              {userIncomeItems?.map((incomeItem) => (
+                <IncomeItemRow
+                  key={incomeItem._id}
+                  incomeItem={incomeItem}
+                  isEditing={editingIncomeItem._id === incomeItem._id}
+                  editIncomeItemMode={editIncomeItemMode}
+                  selectedIncomeItems={selectedIncomeItems}
+                  userIncomeCategories={userIncomeCategories}
+                  setEditingIncomeItem={setEditingIncomeItem}
+                  handleDelete={handleDelete}
+                  handleSelect={handleSelect}
+                  handleEditIncomeItem={handleEditIncomeItem}
+                />
+              ))}
+              <tfoot className={styles['table__footer']}>
+                <tr>
+                  <th
+                    style={{
+                      whiteSpace: 'nowrap',
+                      textAlign: 'left',
+                      paddingLeft: '0.5rem',
+                    }}
+                  >
+                    {' '}
+                    Total
+                  </th>
+                  <th
+                    style={{
+                      whiteSpace: 'nowrap',
+                      textAlign: 'right',
+                      paddingRight: '1rem',
+                    }}
+                  >
+                    $
+                    {userIncomeItems
+                      .reduce((total, item) => total + Number(item.amount), 0)
+                      .toFixed(2)}
+                  </th>
+                </tr>
+              </tfoot>
+            </tbody>
+          </Table>
+        </div>
       </>
     );
   };

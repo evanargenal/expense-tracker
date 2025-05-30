@@ -46,7 +46,7 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
     categoryTypeLabelMap[categoryType] ?? 'Restore Default Categories';
 
   return (
-    <div className={styles['table__header']}>
+    <div className={styles['table__control-buttons']}>
       <Button
         variant={newCategoryMode ? 'secondary' : 'success'}
         onClick={toggleNewCategoryMode}

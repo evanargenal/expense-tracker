@@ -79,16 +79,14 @@ function IncomeItemsList() {
               ></IncomeItemsTable>
             </div>
             {userIncomeItems.length !== 0 && (
-              <div className={styles['income-list__pagination']}>
-                <PageControls
-                  itemTotal={userIncomeItemTotal}
-                  pageNumber={pageNumber}
-                  itemsPerPage={itemsPerPage}
-                  itemsPerPageArray={[25, 50, 100]}
-                  setPageNumber={setPageNumber}
-                  setItemsPerPage={setItemsPerPage}
-                ></PageControls>
-              </div>
+              <PageControls
+                itemTotal={userIncomeItemTotal}
+                pageNumber={pageNumber}
+                itemsPerPage={itemsPerPage}
+                itemsPerPageArray={[25, 50, 100]}
+                setPageNumber={setPageNumber}
+                setItemsPerPage={setItemsPerPage}
+              ></PageControls>
             )}
           </div>
         </div>

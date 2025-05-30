@@ -88,84 +88,105 @@ function ExpensesTable({
   const renderSortedExpenseRows = () => {
     return (
       <>
-        {newExpenseMode && ( // Add new expense form
-          <ExpenseTableNewForm
-            newExpense={newExpense}
-            userExpenseCategories={userExpenseCategories}
-            selectedExpenses={selectedExpenses}
-            handleAddExpense={handleAddExpense}
-            toggleNewExpenseMode={toggleNewExpenseMode}
-            handleSelect={handleSelect}
-          />
+        {newExpenseMode && (
+          <div className={styles['table--margin-bottom']}>
+            <ExpenseTableNewForm
+              newExpense={newExpense}
+              userExpenseCategories={userExpenseCategories}
+              selectedExpenses={selectedExpenses}
+              handleAddExpense={handleAddExpense}
+              toggleNewExpenseMode={toggleNewExpenseMode}
+              handleSelect={handleSelect}
+            />
+          </div>
         )}
-        <Table
-          className={styles['table__layout']}
-          striped
-          responsive
-          variant="dark"
-        >
-          <thead>
-            <tr>
-              {editExpenseMode && (
-                <th style={{ width: '5%' }}>
-                  <Form.Check
-                    aria-label="select all"
-                    className={styles['table__custom-check']}
-                    checked={selectedExpenses.length === userExpenses.length}
-                    onChange={handleSelectAll}
-                  />
+        <div className={styles['table__scroll-container']}>
+          <Table
+            className={styles['table__layout']}
+            striped
+            responsive
+            variant="dark"
+          >
+            <thead>
+              <tr>
+                {editExpenseMode && ( // Add new expense form
+                  <th style={{ width: '5%' }}>
+                    <Form.Check
+                      aria-label="select all"
+                      className={styles['table__custom-check']}
+                      checked={selectedExpenses.length === userExpenses.length}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                )}
+                <th
+                  style={{ width: '20%', cursor: 'pointer' }}
+                  onClick={toggleSortOrder}
+                >
+                  <div className={styles['table__items-with-icons']}>
+                    <span>Date</span>
+                    {sortDirection === 'desc' ? (
+                      <CaretDownFill />
+                    ) : (
+                      <CaretUpFill />
+                    )}
+                  </div>
                 </th>
-              )}
-              <th
-                style={{ width: '20%', cursor: 'pointer' }}
-                onClick={toggleSortOrder}
-              >
-                <div className={styles['table__items-with-icons']}>
-                  <span>Date</span>
-                  {sortDirection === 'desc' ? (
-                    <CaretDownFill />
-                  ) : (
-                    <CaretUpFill />
-                  )}
-                </div>
-              </th>
-              <th style={{ width: '15%' }}>Name</th>
-              <th style={{ width: '15%' }}>Description</th>
-              <th style={{ width: '20%' }}>Category</th>
-              <th style={{ width: '10%' }}>Cost</th>
-              {editExpenseMode && (
-                <th className="text-center" style={{ width: '10%' }}>
-                  Action
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {userExpenses?.map((expense) => (
-              <ExpenseRow
-                key={expense._id}
-                expense={expense}
-                isEditing={editingExpense._id === expense._id}
-                editExpenseMode={editExpenseMode}
-                selectedExpenses={selectedExpenses}
-                userExpenseCategories={userExpenseCategories}
-                setEditingExpense={setEditingExpense}
-                handleDelete={handleDelete}
-                handleSelect={handleSelect}
-                handleEditExpense={handleEditExpense} // Pass handleAddExpense for ExpenseForm
-              />
-            ))}
-            <tr>
-              <th colSpan={editExpenseMode ? 5 : 4}>Total</th>
-              <th colSpan={editExpenseMode ? 2 : 1}>
-                $
-                {userExpenses
-                  .reduce((total, item) => total + Number(item.cost), 0)
-                  .toFixed(2)}
-              </th>
-            </tr>
-          </tbody>
-        </Table>
+                <th style={{ width: '15%' }}>Name</th>
+                <th style={{ width: '15%' }}>Description</th>
+                <th style={{ width: '20%' }}>Category</th>
+                <th style={{ width: '10%' }}>Cost</th>
+                {editExpenseMode && (
+                  <th style={{ width: '10%' }} className="text-center">
+                    Action
+                  </th>
+                )}
+              </tr>
+            </thead>
+            <tbody className={styles['table__body-scroll']}>
+              {userExpenses?.map((expense) => (
+                <ExpenseRow
+                  key={expense._id}
+                  expense={expense}
+                  isEditing={editingExpense._id === expense._id}
+                  editExpenseMode={editExpenseMode}
+                  selectedExpenses={selectedExpenses}
+                  userExpenseCategories={userExpenseCategories}
+                  setEditingExpense={setEditingExpense}
+                  handleDelete={handleDelete}
+                  handleSelect={handleSelect}
+                  handleEditExpense={handleEditExpense}
+                />
+              ))}
+              <tfoot className={styles['table__footer']}>
+                <tr>
+                  <th
+                    style={{
+                      whiteSpace: 'nowrap',
+                      textAlign: 'left',
+                      paddingLeft: '0.5rem',
+                    }}
+                  >
+                    {' '}
+                    Total
+                  </th>
+                  <th
+                    style={{
+                      whiteSpace: 'nowrap',
+                      textAlign: 'right',
+                      paddingRight: '1rem',
+                    }}
+                  >
+                    $
+                    {userExpenses
+                      .reduce((total, item) => total + Number(item.cost), 0)
+                      .toFixed(2)}
+                  </th>
+                </tr>
+              </tfoot>
+            </tbody>
+          </Table>
+        </div>
       </>
     );
   };

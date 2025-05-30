@@ -105,77 +105,81 @@ function CategoriesTable({
     return (
       <>
         {newCategoryMode && ( // Add new category form
-          <NewCategoryTableForm
-            newCategory={newCategory}
-            selectedCategories={selectedCategories}
-            handleAddCategory={handleAddCategory}
-            toggleNewCategoryMode={toggleNewCategoryMode}
-            handleSelect={handleSelect}
-          />
+          <div className={styles['table--margin-bottom']}>
+            <NewCategoryTableForm
+              newCategory={newCategory}
+              selectedCategories={selectedCategories}
+              handleAddCategory={handleAddCategory}
+              toggleNewCategoryMode={toggleNewCategoryMode}
+              handleSelect={handleSelect}
+            />
+          </div>
         )}
-        <Table
-          className={styles['table__layout']}
-          striped
-          responsive
-          variant="dark"
-        >
-          <thead>
-            <tr>
-              {editCategoryMode && (
-                <th style={{ width: '5%' }}>
-                  <Form.Check
-                    aria-label="select all"
-                    className={styles['table__custom-check']}
-                    checked={
-                      selectedCategories.length === userCategories.length
-                    }
-                    onChange={handleSelectAll}
-                  />
-                </th>
-              )}
-              <th
-                style={{ width: '45%', cursor: 'pointer' }}
-                onClick={toggleSortOrder}
-              >
-                <div className={styles['table__items-with-icons']}>
-                  <span>Name</span>
-                  {sortDirection === 'asc' ? (
-                    <CaretDownFill />
-                  ) : (
-                    <CaretUpFill />
-                  )}
-                </div>
-              </th>
-              <th style={{ width: '10%' }}>Icon</th>
-              <th style={{ width: '15%' }}>
-                {categoryTypeTableLabelMap[categoryType]}
-              </th>
-              {editCategoryMode && (
-                <>
-                  <th style={{ width: '10%' }}>Custom</th>
-                  <th className="text-center" style={{ width: '10%' }}>
-                    Action
+        <div className={styles['table__scroll-container']}>
+          <Table
+            className={styles['table__layout']}
+            striped
+            responsive
+            variant="dark"
+          >
+            <thead>
+              <tr>
+                {editCategoryMode && (
+                  <th style={{ width: '5%' }}>
+                    <Form.Check
+                      aria-label="select all"
+                      className={styles['table__custom-check']}
+                      checked={
+                        selectedCategories.length === userCategories.length
+                      }
+                      onChange={handleSelectAll}
+                    />
                   </th>
-                </>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {userCategories?.map((category) => (
-              <CategoryRow
-                key={category._id}
-                category={category}
-                isEditing={editingCategory._id === category._id}
-                editCategoryMode={editCategoryMode}
-                selectedCategories={selectedCategories}
-                setEditingCategory={setEditingCategory}
-                handleDelete={handleDelete}
-                handleSelect={handleSelect}
-                handleEditCategory={handleEditCategory} // Pass handleAddCategory for CategoryForm
-              />
-            ))}
-          </tbody>
-        </Table>
+                )}
+                <th
+                  style={{ width: '40%', cursor: 'pointer' }}
+                  onClick={toggleSortOrder}
+                >
+                  <div className={styles['table__items-with-icons']}>
+                    <span>Name</span>
+                    {sortDirection === 'asc' ? (
+                      <CaretDownFill />
+                    ) : (
+                      <CaretUpFill />
+                    )}
+                  </div>
+                </th>
+                <th style={{ width: '10%' }}>Icon</th>
+                <th style={{ width: '15%' }}>
+                  {categoryTypeTableLabelMap[categoryType]}
+                </th>
+                {editCategoryMode && (
+                  <>
+                    <th style={{ width: '15%' }}>Custom</th>
+                    <th style={{ width: '10%' }} className="text-center">
+                      Action
+                    </th>
+                  </>
+                )}
+              </tr>
+            </thead>
+            <tbody className={styles['table__body-scroll']}>
+              {userCategories?.map((category) => (
+                <CategoryRow
+                  key={category._id}
+                  category={category}
+                  isEditing={editingCategory._id === category._id}
+                  editCategoryMode={editCategoryMode}
+                  selectedCategories={selectedCategories}
+                  setEditingCategory={setEditingCategory}
+                  handleDelete={handleDelete}
+                  handleSelect={handleSelect}
+                  handleEditCategory={handleEditCategory}
+                />
+              ))}
+            </tbody>
+          </Table>
+        </div>
       </>
     );
   };

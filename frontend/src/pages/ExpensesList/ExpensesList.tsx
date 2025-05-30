@@ -79,16 +79,14 @@ function ExpensesList() {
               ></ExpensesTable>
             </div>
             {userExpenses.length !== 0 && (
-              <div className={styles['expenses-list__pagination']}>
-                <PageControls
-                  itemTotal={userExpenseTotal}
-                  pageNumber={pageNumber}
-                  itemsPerPage={itemsPerPage}
-                  itemsPerPageArray={[25, 50, 100]}
-                  setPageNumber={setPageNumber}
-                  setItemsPerPage={setItemsPerPage}
-                ></PageControls>
-              </div>
+              <PageControls
+                itemTotal={userExpenseTotal}
+                pageNumber={pageNumber}
+                itemsPerPage={itemsPerPage}
+                itemsPerPageArray={[25, 50, 100]}
+                setPageNumber={setPageNumber}
+                setItemsPerPage={setItemsPerPage}
+              ></PageControls>
             )}
           </div>
         </div>

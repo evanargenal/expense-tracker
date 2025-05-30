@@ -19,30 +19,25 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
   handleSelect,
 }) => {
   return (
-    <Table
-      className={`${styles['table__layout']} ${styles['table--margin-bottom']}`}
-      responsive
-      striped
-      variant="dark"
-    >
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Icon</th>
-          <th className="text-center">Confirm?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <CategoryForm
-          category={newCategory}
-          isEditing={false}
-          selectedCategories={selectedCategories}
-          onSave={handleAddCategory}
-          onCancel={toggleNewCategoryMode}
-          onSelect={handleSelect}
-        />
-      </tbody>
-    </Table>
+    <div>
+      <Table
+        className={`${styles['table__layout']}`}
+        responsive
+        striped
+        variant="dark"
+      >
+        <thead>
+          <CategoryForm
+            category={newCategory}
+            isEditing={false}
+            selectedCategories={selectedCategories}
+            onSave={handleAddCategory}
+            onCancel={toggleNewCategoryMode}
+            onSelect={handleSelect}
+          />
+        </thead>
+      </Table>
+    </div>
   );
 };
 

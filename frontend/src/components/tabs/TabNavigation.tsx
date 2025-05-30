@@ -10,12 +10,12 @@ function TabNavigation() {
 
   useEffect(() => {
     // Map URL path to corresponding tab key
-    if (location.pathname === '/income-list') {
+    if (location.pathname === '/expenses-list') {
+      setTabKey('expenses-list');
+    } else if (location.pathname === '/income-list') {
       setTabKey('income-list');
     } else if (location.pathname === '/categories-list') {
       setTabKey('categories-list');
-    } else if (location.pathname === '/expenses-list') {
-      setTabKey('expenses-list');
     }
   }, [location.pathname]);
 
@@ -34,8 +34,8 @@ function TabNavigation() {
       onSelect={handleSelect}
       variant="underline"
     >
-      <Tab eventKey="income-list" title="Income"></Tab>
       <Tab eventKey="expenses-list" title="Expenses"></Tab>
+      <Tab eventKey="income-list" title="Income"></Tab>
       <Tab eventKey="categories-list" title="Categories"></Tab>
     </Tabs>
   );

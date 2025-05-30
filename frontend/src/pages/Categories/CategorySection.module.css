@@ -1,31 +1,17 @@
-.category-section__expense-container {
+.category-section__container {
+  display: flex;
+  flex-direction: column;
   width: 97%;
   height: 50%;
   background-color: #3b4357;
   padding-left: 1rem;
   padding-right: 1rem;
-  border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.category-section__expense-table {
-  height: calc(100% - 54px - 54px);
-  overflow-y: auto;
-  border-radius: 0.5rem;
-}
-
-.category-section__income-container {
-  width: 97%;
-  height: 50%;
-  background-color: #3b4357;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.category-section__income-table {
-  height: calc(100% - 54px - 54px);
-  overflow-y: auto;
-  border-radius: 0.5rem;
+.category-section__table {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
 }

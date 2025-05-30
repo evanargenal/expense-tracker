@@ -45,13 +45,7 @@ function CategorySection({ categoryType }: CategorySectionProps) {
 
   return (
     <>
-      <div
-        className={
-          categoryType === 'expense'
-            ? styles['category-section__expense-container']
-            : styles['category-section__income-container']
-        }
-      >
+      <div className={styles['category-section__container']}>
         <CategoryTypeContext.Provider value={categoryType}>
           {!isLoading && (
             <CategoriesTableHeader
@@ -66,13 +60,7 @@ function CategorySection({ categoryType }: CategorySectionProps) {
               handleRestoreDefaultCategories={handleRestoreDefaultCategories}
             />
           )}
-          <div
-            className={
-              categoryType === 'expense'
-                ? styles['category-section__expense-table']
-                : styles['category-section__income-table']
-            }
-          >
+          <div className={styles['category-section__table']}>
             <CategoriesTable
               userCategories={userCategories}
               isLoading={isLoading}

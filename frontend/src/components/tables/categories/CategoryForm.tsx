@@ -62,7 +62,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   return (
     <tr onKeyDown={handleKeyDown}>
       {isEditing && (
-        <td>
+        <td style={{ width: '5%' }}>
           <Form.Check
             aria-label="select"
             className={styles['table__custom-check']}
@@ -71,7 +71,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         </td>
       )}
-      <td>
+      <td style={{ width: '40%' }}>
         <Form.Control
           type="text"
           name="categoryName"
@@ -81,7 +81,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           autoFocus
         />
       </td>
-      <td>
+      <td style={{ width: '10%' }}>
         <Form.Control
           type="text"
           name="icon"
@@ -92,8 +92,8 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       </td>
       {isEditing && (
         <>
-          <td>{category.numMatchedItems}</td>
-          <td>
+          <td style={{ width: '15%' }}>{category.numMatchedItems}</td>
+          <td style={{ width: '15%' }}>
             {category.userId === '000000000000000000000000' ? (
               <XLg />
             ) : (
@@ -102,7 +102,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           </td>
         </>
       )}
-      <td>
+      <td style={{ width: '10%' }}>
         <div className={styles['table__action-items']}>
           <Button variant="success" size="sm" onClick={handleSubmit}>
             <CheckLg />

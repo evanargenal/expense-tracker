@@ -1,23 +1,17 @@
 .expenses-list__container {
+  display: flex;
+  flex-direction: column;
   width: 97%;
   height: 100%;
   background-color: #3b4357;
   padding-left: 1rem;
   padding-right: 1rem;
-  border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .expenses-list__table {
-  height: calc(100% - 54px - 54px);
-  overflow-y: auto;
-  border-radius: 0.5rem;
-}
-
-.expenses-list__pagination {
-  width: 95%;
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
 }

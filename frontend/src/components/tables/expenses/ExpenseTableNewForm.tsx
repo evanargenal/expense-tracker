@@ -21,34 +21,26 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
   handleSelect,
 }) => {
   return (
-    <Table
-      className={`${styles['table__layout']} ${styles['table--margin-bottom']}`}
-      responsive
-      striped
-      variant="dark"
-    >
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Category</th>
-          <th>Cost</th>
-          <th className="text-center">Confirm?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ExpenseForm
-          expense={newExpense}
-          userExpenseCategories={userExpenseCategories}
-          isEditing={false}
-          selectedExpenses={selectedExpenses}
-          onSave={handleAddExpense}
-          onCancel={toggleNewExpenseMode}
-          onSelect={handleSelect}
-        />
-      </tbody>
-    </Table>
+    <div>
+      <Table
+        className={`${styles['table__layout']}`}
+        responsive
+        striped
+        variant="dark"
+      >
+        <thead>
+          <ExpenseForm
+            expense={newExpense}
+            userExpenseCategories={userExpenseCategories}
+            isEditing={false}
+            selectedExpenses={selectedExpenses}
+            onSave={handleAddExpense}
+            onCancel={toggleNewExpenseMode}
+            onSelect={handleSelect}
+          />
+        </thead>
+      </Table>
+    </div>
   );
 };
 

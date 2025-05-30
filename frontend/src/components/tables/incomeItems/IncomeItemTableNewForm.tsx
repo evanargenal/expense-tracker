@@ -21,34 +21,26 @@ const IncomeItemTableNewForm: React.FC<IncomeItemTableNewFormProps> = ({
   handleSelect,
 }) => {
   return (
-    <Table
-      className={`${styles['table__layout']} ${styles['table--margin-bottom']}`}
-      responsive
-      striped
-      variant="dark"
-    >
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Category</th>
-          <th>Amount</th>
-          <th className="text-center">Confirm?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <IncomeItemForm
-          incomeItem={newIncomeItem}
-          userIncomeCategories={userIncomeCategories}
-          isEditing={false}
-          selectedIncomeItems={selectedIncomeItems}
-          onSave={handleAddIncomeItem}
-          onCancel={toggleNewIncomeItemMode}
-          onSelect={handleSelect}
-        />
-      </tbody>
-    </Table>
+    <div>
+      <Table
+        className={`${styles['table__layout']}`}
+        responsive
+        striped
+        variant="dark"
+      >
+        <thead>
+          <IncomeItemForm
+            incomeItem={newIncomeItem}
+            userIncomeCategories={userIncomeCategories}
+            isEditing={false}
+            selectedIncomeItems={selectedIncomeItems}
+            onSave={handleAddIncomeItem}
+            onCancel={toggleNewIncomeItemMode}
+            onSelect={handleSelect}
+          />
+        </thead>
+      </Table>
+    </div>
   );
 };
 

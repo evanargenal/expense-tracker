@@ -6,10 +6,10 @@ import './index.css';
 import Spinner from 'react-bootstrap/Spinner';
 
 import LandingPage from './pages/LandingPage/LandingPage';
-import IncomeItemsList from './pages/IncomeItemsList/IncomeItemsList';
 import ExpensesList from './pages/ExpensesList/ExpensesList';
-import NoMatchPage from './pages/NoMatchPage/NoMatchPage';
+import IncomeItemsList from './pages/IncomeItemsList/IncomeItemsList';
 import CategoriesList from './pages/Categories/CategoriesList';
+import NoMatchPage from './pages/NoMatchPage/NoMatchPage';
 
 function App() {
   const { user, loading } = useAuth();
@@ -29,12 +29,12 @@ function App() {
         element={!user ? <LandingPage /> : <Navigate to="/expenses-list" />}
       />
       <Route
-        path="/income-list"
-        element={user ? <IncomeItemsList /> : <Navigate to="/" />}
-      />
-      <Route
         path="/expenses-list"
         element={user ? <ExpensesList /> : <Navigate to="/" />}
+      />
+      <Route
+        path="/income-list"
+        element={user ? <IncomeItemsList /> : <Navigate to="/" />}
       />
       <Route
         path="/categories-list"
