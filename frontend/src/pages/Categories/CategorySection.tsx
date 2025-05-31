@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CategoriesTableHeader from '../../components/tables/categories/CategoriesTableHeader';
 import CategoriesTable from '../../components/tables/categories/CategoriesTable';
 import PageControls from '../../components/pagination/PageControls';
@@ -42,6 +42,10 @@ function CategorySection({ categoryType }: CategorySectionProps) {
     sortDirection,
     categoryType
   );
+
+  useEffect(() => {
+    setSelectedCategories([]);
+  }, [pageNumber, itemsPerPage, sortDirection, setSelectedCategories]);
 
   return (
     <>

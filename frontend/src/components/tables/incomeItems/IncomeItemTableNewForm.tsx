@@ -23,7 +23,7 @@ const IncomeItemTableNewForm: React.FC<IncomeItemTableNewFormProps> = ({
   return (
     <div>
       <Table
-        className={`${styles['table__layout']}`}
+        className={styles['table__layout']}
         responsive
         striped
         variant="dark"

@@ -8,7 +8,8 @@
 }
 
 thead,
-tbody tr {
+tbody,
+tfoot tr {
   display: table;
   width: 100%;
   table-layout: fixed;
@@ -44,7 +45,7 @@ tbody tr {
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.15);
 }
 
-.table__footer tr {
+.table__footer th {
   border: unset !important;
 }
 

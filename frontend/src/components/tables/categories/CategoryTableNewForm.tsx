@@ -21,7 +21,7 @@ const NewCategoryTableForm: React.FC<NewCategoryTableFormProps> = ({
   return (
     <div>
       <Table
-        className={`${styles['table__layout']}`}
+        className={styles['table__layout']}
         responsive
         striped
         variant="dark"

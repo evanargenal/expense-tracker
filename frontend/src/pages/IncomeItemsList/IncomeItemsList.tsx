@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../components/header/Header';
 import IncomeItemsTableHeader from '../../components/tables/incomeItems/IncomeItemsTableHeader';
 import IncomeItemsTable from '../../components/tables/incomeItems/IncomeItemsTable';
@@ -33,6 +33,10 @@ function IncomeItemsList() {
     handleUpdateMultipleIncomeItemCategories,
     handleDelete,
   } = useIncomeItemsWithActions(pageNumber, itemsPerPage, sortDirection);
+
+  useEffect(() => {
+    setSelectedIncomeItems([]);
+  }, [pageNumber, itemsPerPage, sortDirection, setSelectedIncomeItems]);
 
   return (
     <>

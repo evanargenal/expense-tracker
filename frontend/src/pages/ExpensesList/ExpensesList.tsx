@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../components/header/Header';
 import ExpensesTableHeader from '../../components/tables/expenses/ExpensesTableHeader';
 import ExpensesTable from '../../components/tables/expenses/ExpensesTable';
@@ -33,6 +33,10 @@ function ExpensesList() {
     handleUpdateMultipleExpenseCategories,
     handleDelete,
   } = useExpensesWithActions(pageNumber, itemsPerPage, sortDirection);
+
+  useEffect(() => {
+    setSelectedExpenses([]);
+  }, [pageNumber, itemsPerPage, sortDirection, setSelectedExpenses]);
 
   return (
     <>

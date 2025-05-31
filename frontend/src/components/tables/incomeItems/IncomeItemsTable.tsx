@@ -162,33 +162,33 @@ function IncomeItemsTable({
                   handleEditIncomeItem={handleEditIncomeItem}
                 />
               ))}
-              <tfoot className={styles['table__footer']}>
-                <tr>
-                  <th
-                    style={{
-                      whiteSpace: 'nowrap',
-                      textAlign: 'left',
-                      paddingLeft: '0.5rem',
-                    }}
-                  >
-                    {' '}
-                    Total
-                  </th>
-                  <th
-                    style={{
-                      whiteSpace: 'nowrap',
-                      textAlign: 'right',
-                      paddingRight: '1rem',
-                    }}
-                  >
-                    $
-                    {userIncomeItems
-                      .reduce((total, item) => total + Number(item.amount), 0)
-                      .toFixed(2)}
-                  </th>
-                </tr>
-              </tfoot>
             </tbody>
+            <tfoot className={styles['table__footer']}>
+              <tr>
+                <th
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textAlign: 'left',
+                    paddingLeft: '0.5rem',
+                  }}
+                >
+                  {' '}
+                  Total
+                </th>
+                <th
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textAlign: 'right',
+                    paddingRight: '1rem',
+                  }}
+                >
+                  $
+                  {userIncomeItems
+                    .reduce((total, item) => total + Number(item.amount), 0)
+                    .toFixed(2)}
+                </th>
+              </tr>
+            </tfoot>
           </Table>
         </div>
       </>
