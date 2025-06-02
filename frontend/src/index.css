@@ -29,12 +29,6 @@ code {
   transform: translate(-50%, -50%);
 }
 
-/* Globally make active nav links white */
-.nav-underline .nav-link.active,
-.nav-underline .show > .nav-link {
-  color: white !important;
-}
-
 /* Globally change sizes of forms */
 .form-control {
   padding: 0.1rem 0.4rem !important;

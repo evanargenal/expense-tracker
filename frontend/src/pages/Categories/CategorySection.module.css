@@ -9,6 +9,13 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+/* 767px instead of 768 to match Bootstrap Navbar expand="md" */
+@media (max-width: 767px) {
+  .category-section__container {
+    width: 100%;
+  }
+}
+
 .category-section__table {
   display: flex;
   flex-direction: column;

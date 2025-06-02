@@ -1,12 +1,20 @@
 .header__container {
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
 }
 
 .header__tabs {
   font-size: 1.25rem;
+  align-self: end;
+}
+
+/* 767px instead of 768 to match Bootstrap Navbar expand="md" */
+@media (max-width: 767px) {
+  .header__tabs {
+    align-self: center;
+  }
 }
 
 .header__profile-button {
@@ -14,8 +22,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: right;
-  width: auto;
-  min-height: inherit;
 }
 
 .header__login-button {
@@ -23,6 +29,5 @@
   flex-direction: row;
   align-items: center;
   justify-content: right;
-  width: 80px;
-  min-height: inherit;
+  width: 100%;
 }
