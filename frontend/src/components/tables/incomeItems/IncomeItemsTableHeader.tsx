@@ -50,7 +50,7 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
   };
 
   return (
-    <div className={styles['table__control-buttons']}>
+    <div className={styles['table__control-buttons']} data-bs-theme="dark">
       <Button
         variant={newIncomeItemMode ? 'secondary' : 'success'}
         onClick={toggleNewIncomeItemMode}
@@ -75,7 +75,6 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
       </Button>
       {editIncomeItemMode && (
         <Dropdown
-          data-bs-theme="dark"
           align="end"
           onToggle={(isOpen) => {
             if (!isOpen) setShowCategories(false); // Reset showing categories when dropdown closes

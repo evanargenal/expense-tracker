@@ -1,19 +1,13 @@
 .expenses-list__container {
   display: flex;
   flex-direction: column;
-  width: 97%;
+  max-width: 85rem;
+  width: 100%;
   height: 100%;
   background-color: #3b4357;
   padding-left: 1rem;
   padding-right: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* 767px instead of 768 to match Bootstrap Navbar expand="md" */
-@media (max-width: 767px) {
-  .expenses-list__container {
-    width: 100%;
-  }
 }
 
 .expenses-list__table {

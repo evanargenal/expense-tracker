@@ -1,7 +1,7 @@
 import Pagination from 'react-bootstrap/Pagination';
 import Form from 'react-bootstrap/Form';
 
-import styles from './PageControlsStyle.module.css';
+import styles from './PageControls.module.css';
 
 function PageControls({
   itemTotal,
@@ -77,35 +77,32 @@ function PageControls({
   };
 
   return (
-    <div className={styles['page-controls__container']}>
+    <div className={styles['page-controls__container']} data-bs-theme="dark">
       <div className={styles['page-controls__summary-row']}>
-        <span>
-          Showing{' '}
+        <span style={{ display: 'flex', gap: '0.25rem' }}>
+          <span className={styles['page-controls__pagination-showing-text']}>
+            Showing
+          </span>{' '}
           <b>
             {start} - {end}
           </b>{' '}
           of <b>{itemTotal}</b>
         </span>
-        <div className={styles['page-controls__per-page-row']}>
-          <Form.Select
-            name="itemsPerPage"
-            value={itemsPerPage}
-            onChange={handleDropdownChange}
-          >
-            {itemsPerPageArray.map((itemPerPageOption) => (
-              <option key={itemPerPageOption} value={itemPerPageOption}>
-                {itemPerPageOption}
-              </option>
-            ))}
-          </Form.Select>
-          Per Page
-        </div>
+        <Form.Select
+          name="itemsPerPage"
+          value={itemsPerPage}
+          onChange={handleDropdownChange}
+          aria-label="Items per page"
+        >
+          {itemsPerPageArray.map((itemPerPageOption) => (
+            <option key={itemPerPageOption} value={itemPerPageOption}>
+              {itemPerPageOption} Per Page
+            </option>
+          ))}
+        </Form.Select>
       </div>
       <div>
-        <Pagination
-          data-bs-theme="dark"
-          className={styles['page-controls__per-selector']}
-        >
+        <Pagination className={styles['page-controls__per-selector']}>
           <Pagination.First
             disabled={pageNumber === 1}
             onClick={() => handlePageClick(1)}
@@ -114,7 +111,9 @@ function PageControls({
             disabled={pageNumber === 1}
             onClick={() => handlePageClick(pageNumber - 1)}
           />
-          {renderPaginationItems()}
+          <span className={styles['page-controls__pagination-items']}>
+            {renderPaginationItems()}
+          </span>
           <Pagination.Next
             disabled={pageNumber === totalPages}
             onClick={() => handlePageClick(pageNumber + 1)}

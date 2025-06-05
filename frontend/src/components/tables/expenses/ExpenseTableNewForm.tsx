@@ -26,7 +26,7 @@ const ExpenseTableNewForm: React.FC<ExpenseTableNewFormProps> = ({
         className={styles['table__layout']}
         responsive
         striped
-        variant="dark"
+        data-bs-theme="dark"
       >
         <thead>
           <ExpenseForm

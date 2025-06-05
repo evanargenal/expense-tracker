@@ -29,16 +29,12 @@ function Header() {
   return (
     <>
       {user ? (
-        <div className={styles['header__container']}>
+        <div className={styles['header__container']} data-bs-theme="dark">
           <div className={styles['header__tabs']}>
             <NavigationBar />
           </div>
           <div className={styles['header__profile-button']}>
-            <Dropdown
-              data-bs-theme="dark"
-              align="end"
-              onToggle={toggleShowDropdownMenu}
-            >
+            <Dropdown align="end" onToggle={toggleShowDropdownMenu}>
               <Dropdown.Toggle id="profileDropdown">
                 {user.isAdmin && <ShieldCheck className="mb-1" />}{' '}
                 {user.fullName}{' '}

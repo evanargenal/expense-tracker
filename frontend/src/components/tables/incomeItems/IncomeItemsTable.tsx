@@ -107,7 +107,7 @@ function IncomeItemsTable({
             className={styles['table__layout']}
             striped
             responsive
-            variant="dark"
+            data-bs-theme="dark"
           >
             <thead>
               <tr>

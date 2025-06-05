@@ -50,7 +50,7 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
   };
 
   return (
-    <div className={styles['table__control-buttons']}>
+    <div className={styles['table__control-buttons']} data-bs-theme="dark">
       <Button
         variant={newExpenseMode ? 'secondary' : 'success'}
         onClick={toggleNewExpenseMode}
@@ -75,7 +75,6 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
       </Button>
       {editExpenseMode && (
         <Dropdown
-          data-bs-theme="dark"
           align="end"
           onToggle={(isOpen) => {
             if (!isOpen) setShowCategories(false); // Reset showing categories when dropdown closes

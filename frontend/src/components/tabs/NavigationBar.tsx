@@ -32,11 +32,7 @@ function TabNavigation() {
   };
 
   return (
-    <Navbar
-      expand="md"
-      data-bs-theme="dark"
-      className={styles['navbar-no-padding']}
-    >
+    <Navbar expand="sm" className={styles['navbar-no-padding']}>
       <Navbar.Toggle />
       <Navbar.Offcanvas data-bs-theme="dark">
         <Offcanvas.Header closeButton>

@@ -26,7 +26,7 @@ const IncomeItemTableNewForm: React.FC<IncomeItemTableNewFormProps> = ({
         className={styles['table__layout']}
         responsive
         striped
-        variant="dark"
+        data-bs-theme="dark"
       >
         <thead>
           <IncomeItemForm

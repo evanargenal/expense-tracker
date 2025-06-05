@@ -35,8 +35,9 @@ code {
   font-size: 1rem !important;
 }
 .form-select {
-  padding: 0.1rem 2.25rem 0.1rem 0.4rem !important;
+  padding: 0.1rem 1.375rem 0.1rem 0.4rem !important;
   font-size: 1rem !important;
+  background-position: right 0.25rem center !important;
 }
 
 /* Globally remove bottom margin for tables (to be added manually instead of automatically) */

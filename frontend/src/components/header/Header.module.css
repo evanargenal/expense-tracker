@@ -7,13 +7,13 @@
 
 .header__tabs {
   font-size: 1.25rem;
-  align-self: end;
+  align-self: center;
 }
 
-/* 767px instead of 768 to match Bootstrap Navbar expand="md" */
-@media (max-width: 767px) {
+/* Matches Bootstrap Navbar expand="sm" */
+@media (min-width: 576px) {
   .header__tabs {
-    align-self: center;
+    align-self: end;
   }
 }
 
