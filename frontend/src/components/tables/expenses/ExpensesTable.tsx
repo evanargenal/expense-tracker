@@ -88,7 +88,7 @@ function ExpensesTable({
   const renderSortedExpenseRows = () => {
     return (
       <>
-        {newExpenseMode && (
+        {newExpenseMode && ( // Add new expense form
           <div className={styles['table--margin-bottom']}>
             <ExpenseTableNewForm
               newExpense={newExpense}
@@ -109,8 +109,8 @@ function ExpensesTable({
           >
             <thead>
               <tr>
-                {editExpenseMode && ( // Add new expense form
-                  <th style={{ width: '5%' }}>
+                {editExpenseMode && (
+                  <th className={styles['table__custom-check-container']}>
                     <Form.Check
                       aria-label="select all"
                       className={styles['table__custom-check']}
@@ -119,10 +119,7 @@ function ExpensesTable({
                     />
                   </th>
                 )}
-                <th
-                  style={{ width: '20%', cursor: 'pointer' }}
-                  onClick={toggleSortOrder}
-                >
+                <th style={{ cursor: 'pointer' }} onClick={toggleSortOrder}>
                   <div className={styles['table__items-with-icons']}>
                     <span>Date</span>
                     {sortDirection === 'desc' ? (
@@ -132,12 +129,12 @@ function ExpensesTable({
                     )}
                   </div>
                 </th>
-                <th style={{ width: '15%' }}>Name</th>
-                <th style={{ width: '15%' }}>Description</th>
-                <th style={{ width: '20%' }}>Category</th>
-                <th style={{ width: '10%' }}>Cost</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Cost</th>
                 {editExpenseMode && (
-                  <th style={{ width: '10%' }} className="text-center">
+                  <th className={styles['table__action-items-container']}>
                     Action
                   </th>
                 )}
@@ -162,8 +159,8 @@ function ExpensesTable({
             <tfoot className={styles['table__footer']}>
               <tr>
                 <th
+                  colSpan={4}
                   style={{
-                    whiteSpace: 'nowrap',
                     textAlign: 'left',
                     paddingLeft: '0.5rem',
                   }}
@@ -171,11 +168,12 @@ function ExpensesTable({
                   {' '}
                   Total
                 </th>
+                {editExpenseMode && (
+                  <th className={styles['table__custom-check-container']}></th>
+                )}
                 <th
                   style={{
-                    whiteSpace: 'nowrap',
-                    textAlign: 'right',
-                    paddingRight: '1rem',
+                    textAlign: 'left',
                   }}
                 >
                   $
@@ -183,6 +181,9 @@ function ExpensesTable({
                     .reduce((total, item) => total + Number(item.cost), 0)
                     .toFixed(2)}
                 </th>
+                {editExpenseMode && (
+                  <th className={styles['table__action-items-container']}></th>
+                )}
               </tr>
             </tfoot>
           </Table>

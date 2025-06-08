@@ -62,7 +62,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   return (
     <tr onKeyDown={handleKeyDown}>
       {isEditing && (
-        <td style={{ width: '5%' }}>
+        <td className={styles['table__custom-check-container']}>
           <Form.Check
             aria-label="select"
             className={styles['table__custom-check']}
@@ -71,7 +71,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         </td>
       )}
-      <td style={{ width: '40%' }}>
+      <td>
         <Form.Control
           type="text"
           name="categoryName"
@@ -81,7 +81,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           autoFocus
         />
       </td>
-      <td style={{ width: '10%' }}>
+      <td style={{ width: '60px' }} className="text-center">
         <Form.Control
           type="text"
           name="icon"
@@ -92,8 +92,10 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       </td>
       {isEditing && (
         <>
-          <td style={{ width: '15%' }}>{category.numMatchedItems}</td>
-          <td style={{ width: '15%' }}>
+          <td style={{ width: '115px' }} className="text-center">
+            {category.numMatchedItems}
+          </td>
+          <td style={{ width: '100px' }} className="text-center">
             {category.userId === '000000000000000000000000' ? (
               <XLg />
             ) : (
@@ -102,7 +104,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           </td>
         </>
       )}
-      <td style={{ width: '10%' }}>
+      <td className={styles['table__action-items-container']}>
         <div className={styles['table__action-items']}>
           <Button variant="success" size="sm" onClick={handleSubmit}>
             <CheckLg />

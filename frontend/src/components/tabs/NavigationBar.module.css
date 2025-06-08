@@ -7,12 +7,7 @@
 }
 
 .nav-link:hover {
-  color: #0a58ca; /* darker blue on hover */
-}
-
-.nav-link-active {
-  color: #eaecef !important;
-  font-weight: bold !important;
+  color: #0a58ca;
 }
 
 .navbar-no-padding {

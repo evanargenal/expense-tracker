@@ -41,7 +41,7 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
       ) : (
         <tr>
           {editCategoryMode && (
-            <td style={{ width: '5%' }}>
+            <td className={styles['table__custom-check-container']}>
               <Form.Check
                 aria-label="select"
                 className={styles['table__custom-check']}
@@ -50,19 +50,23 @@ const CategoryRow: React.FC<CategoryRowProps> = ({
               />
             </td>
           )}
-          <td style={{ width: '40%' }}>{category.categoryName}</td>
-          <td style={{ width: '10%' }}>{category.icon}</td>
-          <td style={{ width: '15%' }}>{category.numMatchedItems}</td>
+          <td>{category.categoryName}</td>
+          <td style={{ width: '60px' }} className="text-center">
+            {category.icon}
+          </td>
+          <td style={{ width: '115px' }} className="text-center">
+            {category.numMatchedItems}
+          </td>
           {editCategoryMode && (
             <>
-              <td style={{ width: '15%' }}>
+              <td style={{ width: '100px' }} className="text-center">
                 {category.userId === '000000000000000000000000' ? (
                   <XLg />
                 ) : (
                   <CheckLg />
                 )}
               </td>
-              <td style={{ width: '10%' }}>
+              <td className={styles['table__action-items-container']}>
                 <div className={styles['table__action-items']}>
                   <Button
                     variant="secondary"

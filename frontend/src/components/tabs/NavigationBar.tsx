@@ -49,27 +49,21 @@ function TabNavigation() {
             <Nav.Link
               eventKey="expenses-list"
               href="/expenses-list"
-              className={`${styles['nav-link']} ${
-                tabKey === 'expenses-list' ? styles['nav-link-active'] : ''
-              }`}
+              className={styles['nav-link']}
             >
               Expenses
             </Nav.Link>
             <Nav.Link
               eventKey="income-list"
               href="/income-list"
-              className={`${styles['nav-link']} ${
-                tabKey === 'income-list' ? styles['nav-link-active'] : ''
-              }`}
+              className={styles['nav-link']}
             >
               Income
             </Nav.Link>
             <Nav.Link
               eventKey="categories-list"
               href="/categories-list"
-              className={`${styles['nav-link']} ${
-                tabKey === 'categories-list' ? styles['nav-link-active'] : ''
-              }`}
+              className={styles['nav-link']}
             >
               Categories
             </Nav.Link>

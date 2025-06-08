@@ -73,7 +73,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
   return (
     <tr onKeyDown={handleKeyDown}>
       {isEditing && (
-        <td style={{ width: '5%' }}>
+        <td className={styles['table__custom-check-container']}>
           <Form.Check
             aria-label="select"
             className={styles['table__custom-check']}
@@ -82,7 +82,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           />
         </td>
       )}
-      <td style={{ width: '20%' }}>
+      <td>
         <Form.Control
           type="date"
           name="date"
@@ -94,7 +94,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           onChange={handleInputChange}
         />
       </td>
-      <td style={{ width: '15%' }}>
+      <td>
         <Form.Control
           type="text"
           name="name"
@@ -104,7 +104,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           autoFocus
         />
       </td>
-      <td style={{ width: '15%' }}>
+      <td>
         <Form.Control
           type="text"
           name="description"
@@ -113,7 +113,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           onChange={handleInputChange}
         />
       </td>
-      <td style={{ width: '20%' }}>
+      <td>
         <Form.Select
           name="categoryId"
           value={formData.categoryId}
@@ -127,7 +127,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           ))}
         </Form.Select>
       </td>
-      <td style={{ width: '10%' }}>
+      <td>
         <Form.Control
           type="number"
           name="amount"
@@ -136,7 +136,7 @@ const IncomeItemForm: React.FC<IncomeItemFormProps> = ({
           onChange={handleInputChange}
         />
       </td>
-      <td style={{ width: '10%' }}>
+      <td className={styles['table__action-items-container']}>
         <div className={styles['table__action-items']}>
           <Button variant="success" size="sm" onClick={handleSubmit}>
             <CheckLg />

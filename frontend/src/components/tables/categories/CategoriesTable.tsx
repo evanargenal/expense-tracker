@@ -125,7 +125,7 @@ function CategoriesTable({
             <thead>
               <tr>
                 {editCategoryMode && (
-                  <th style={{ width: '5%' }}>
+                  <th className={styles['table__custom-check-container']}>
                     <Form.Check
                       aria-label="select all"
                       className={styles['table__custom-check']}
@@ -136,10 +136,7 @@ function CategoriesTable({
                     />
                   </th>
                 )}
-                <th
-                  style={{ width: '40%', cursor: 'pointer' }}
-                  onClick={toggleSortOrder}
-                >
+                <th style={{ cursor: 'pointer' }} onClick={toggleSortOrder}>
                   <div className={styles['table__items-with-icons']}>
                     <span>Name</span>
                     {sortDirection === 'asc' ? (
@@ -149,14 +146,18 @@ function CategoriesTable({
                     )}
                   </div>
                 </th>
-                <th style={{ width: '10%' }}>Icon</th>
-                <th style={{ width: '15%' }}>
+                <th style={{ width: '60px' }} className="text-center">
+                  Icon
+                </th>
+                <th style={{ width: '115px' }} className="text-center">
                   {categoryTypeTableLabelMap[categoryType]}
                 </th>
                 {editCategoryMode && (
                   <>
-                    <th style={{ width: '15%' }}>Custom</th>
-                    <th style={{ width: '10%' }} className="text-center">
+                    <th style={{ width: '100px' }} className="text-center">
+                      Custom
+                    </th>
+                    <th className={styles['table__action-items-container']}>
                       Action
                     </th>
                   </>

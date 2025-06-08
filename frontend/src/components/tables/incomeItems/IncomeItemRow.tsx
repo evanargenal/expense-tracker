@@ -44,7 +44,7 @@ const IncomeItemRow: React.FC<IncomeItemRowProps> = ({
       ) : (
         <tr>
           {editIncomeItemMode && (
-            <td style={{ width: '5%' }}>
+            <td className={styles['table__custom-check-container']}>
               <Form.Check
                 aria-label="select"
                 className={styles['table__custom-check']}
@@ -53,23 +53,21 @@ const IncomeItemRow: React.FC<IncomeItemRowProps> = ({
               />
             </td>
           )}
-          <td style={{ width: '20%' }}>
+          <td>
             {new Date(incomeItem.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
             })}
           </td>
-          <td style={{ width: '15%' }}>{incomeItem.name}</td>
-          <td style={{ width: '15%' }}>{incomeItem.description}</td>
-          <td style={{ width: '20%' }}>
+          <td>{incomeItem.name}</td>
+          <td>{incomeItem.description}</td>
+          <td>
             {incomeItem.categoryName} {incomeItem.icon}
           </td>
-          <td style={{ width: '10%' }}>
-            ${Number(incomeItem.amount).toFixed(2)}
-          </td>
+          <td>${Number(incomeItem.amount).toFixed(2)}</td>
           {editIncomeItemMode && (
-            <td style={{ width: '10%' }}>
+            <td className={styles['table__action-items-container']}>
               <div className={styles['table__action-items']}>
                 <Button
                   variant="secondary"
