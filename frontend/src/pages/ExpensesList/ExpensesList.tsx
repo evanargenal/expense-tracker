@@ -18,7 +18,6 @@ function ExpensesList() {
     userExpenseTotal,
     userExpenseCategories,
     isLoading,
-    fetchUserExpenses,
     newExpenseMode,
     newExpense,
     editExpenseMode,
@@ -50,7 +49,6 @@ function ExpensesList() {
               <ExpensesTableHeader
                 itemTotal={userExpenses.length}
                 userExpenseCategories={userExpenseCategories}
-                fetchUserExpenses={fetchUserExpenses}
                 newExpenseMode={newExpenseMode}
                 editExpenseMode={editExpenseMode}
                 selectedExpenses={selectedExpenses}

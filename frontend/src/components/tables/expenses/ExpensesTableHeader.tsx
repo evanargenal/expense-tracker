@@ -5,7 +5,6 @@ import {
   DashLg,
   PlusLg,
   PencilFill,
-  ArrowClockwise,
   ListCheck,
   CaretDownFill,
   CaretUpFill,
@@ -18,7 +17,6 @@ import styles from '../TableStyle.module.css';
 interface ExpensesTableHeaderProps {
   itemTotal: number;
   userExpenseCategories: Category[];
-  fetchUserExpenses: () => Promise<void>;
   newExpenseMode: boolean;
   editExpenseMode: boolean;
   selectedExpenses: string[];
@@ -34,7 +32,6 @@ interface ExpensesTableHeaderProps {
 const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
   itemTotal,
   userExpenseCategories,
-  fetchUserExpenses,
   newExpenseMode,
   editExpenseMode,
   selectedExpenses,
@@ -69,10 +66,6 @@ const ExpensesTableHeader: React.FC<ExpensesTableHeaderProps> = ({
           <PencilFill className="mb-1" />
         </Button>
       )}
-      {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
-      <Button variant="outline-primary" onClick={fetchUserExpenses}>
-        <ArrowClockwise className="mb-1" />
-      </Button>
       {editExpenseMode && (
         <Dropdown
           align="end"

@@ -22,7 +22,6 @@ function CategorySection({ categoryType }: CategorySectionProps) {
     userCategories,
     userCategoryTotal,
     isLoading,
-    fetchUserCategories,
     newCategoryMode,
     newCategory,
     editCategoryMode,
@@ -54,7 +53,6 @@ function CategorySection({ categoryType }: CategorySectionProps) {
           {!isLoading && (
             <CategoriesTableHeader
               itemTotal={userCategories.length}
-              fetchUserCategories={fetchUserCategories}
               newCategoryMode={newCategoryMode}
               editCategoryMode={editCategoryMode}
               selectedCategories={selectedCategories}

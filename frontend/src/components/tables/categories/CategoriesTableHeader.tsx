@@ -7,14 +7,12 @@ import {
   Trash,
 } from 'react-bootstrap-icons';
 
-// import { useCategoryActions } from '../../../hooks/categories/useCategoryActions';
 import { useCategoryType } from '../../../context/CategoryTypeContext';
 
 import styles from '../TableStyle.module.css';
 
 interface CategoriesTableHeaderProps {
   itemTotal: number;
-  fetchUserCategories: () => Promise<void>;
   newCategoryMode: boolean;
   editCategoryMode: boolean;
   selectedCategories: string[];
@@ -26,7 +24,6 @@ interface CategoriesTableHeaderProps {
 
 const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
   itemTotal,
-  fetchUserCategories,
   newCategoryMode,
   editCategoryMode,
   selectedCategories,
@@ -39,7 +36,6 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
   const categoryTypeLabelMap: Record<string, string> = {
     expense: 'Restore Default Expense Categories',
     income: 'Restore Default Income Categories',
-    all: 'Restore All Categories',
   };
 
   const defaultCategoryButtonLabel =
@@ -65,18 +61,19 @@ const CategoriesTableHeader: React.FC<CategoriesTableHeaderProps> = ({
           <PencilFill className="mb-1" />
         </Button>
       )}
-
-      {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
-      <Button variant="outline-primary" onClick={fetchUserCategories}>
-        <ArrowClockwise className="mb-1" />
-      </Button>
       {(editCategoryMode || itemTotal === 0) && (
         <>
           <Button
             variant="secondary"
             onClick={() => handleRestoreDefaultCategories(categoryType)}
           >
-            {defaultCategoryButtonLabel}
+            {itemTotal === 0 ? (
+              <>
+                {defaultCategoryButtonLabel} <ArrowClockwise className="mb-1" />
+              </>
+            ) : (
+              <ArrowClockwise className="mb-1" />
+            )}
           </Button>
           {itemTotal !== 0 && (
             <Button

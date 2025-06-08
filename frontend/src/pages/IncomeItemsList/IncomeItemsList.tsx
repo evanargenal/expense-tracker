@@ -18,7 +18,6 @@ function IncomeItemsList() {
     userIncomeItemTotal,
     userIncomeCategories,
     isLoading,
-    fetchUserIncomeItems,
     newIncomeItemMode,
     newIncomeItem,
     editIncomeItemMode,
@@ -50,7 +49,6 @@ function IncomeItemsList() {
               <IncomeItemsTableHeader
                 itemTotal={userIncomeItems.length}
                 userIncomeCategories={userIncomeCategories}
-                fetchUserIncomeItems={fetchUserIncomeItems}
                 newIncomeItemMode={newIncomeItemMode}
                 editIncomeItemMode={editIncomeItemMode}
                 selectedIncomeItems={selectedIncomeItems}

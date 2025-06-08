@@ -5,7 +5,6 @@ import {
   DashLg,
   PlusLg,
   PencilFill,
-  ArrowClockwise,
   ListCheck,
   CaretDownFill,
   CaretUpFill,
@@ -18,7 +17,6 @@ import styles from '../TableStyle.module.css';
 interface IncomeItemsTableHeaderProps {
   itemTotal: number;
   userIncomeCategories: Category[];
-  fetchUserIncomeItems: () => Promise<void>;
   newIncomeItemMode: boolean;
   editIncomeItemMode: boolean;
   selectedIncomeItems: string[];
@@ -34,7 +32,6 @@ interface IncomeItemsTableHeaderProps {
 const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
   itemTotal,
   userIncomeCategories,
-  fetchUserIncomeItems,
   newIncomeItemMode,
   editIncomeItemMode,
   selectedIncomeItems,
@@ -69,10 +66,6 @@ const IncomeItemsTableHeader: React.FC<IncomeItemsTableHeaderProps> = ({
           <PencilFill className="mb-1" />
         </Button>
       )}
-      {/* ENABLE THIS BUTTON FOR DEBUGGING ONLY */}
-      <Button variant="outline-primary" onClick={fetchUserIncomeItems}>
-        <ArrowClockwise className="mb-1" />
-      </Button>
       {editIncomeItemMode && (
         <Dropdown
           align="end"

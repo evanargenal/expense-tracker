@@ -7,25 +7,25 @@
   gap: 0.75rem;
 }
 
-/* Hide individual page numbers by default (mobile-first) */
-.page-controls__pagination-items {
-  display: none;
-}
-
-@media (min-width: 700px) {
-  .page-controls__pagination-items {
-    display: flex;
-  }
-}
-
 /* Hide "Showing" text by default (mobile-first) */
 .page-controls__pagination-showing-text {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 576px) {
   .page-controls__pagination-showing-text {
-    display: flex;
+    display: inline;
+  }
+}
+
+/* Hide "Page" text by default (mobile-first) */
+.page-controls__pagination-page-text {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .page-controls__pagination-page-text {
+    display: inline;
   }
 }
 
@@ -38,5 +38,16 @@
 }
 
 .page-controls__per-selector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+  gap: 0.5rem;
   margin-bottom: unset;
 }
+
+/* @media (max-width: 700px) {
+  select[name='itemsPerPage'] {
+    display: none;
+  }
+} */
