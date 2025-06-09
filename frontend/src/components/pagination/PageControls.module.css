@@ -29,6 +29,17 @@
   }
 }
 
+/* Hide page numbers text by default (mobile-first) */
+.page-controls__pagination-page-numbers {
+  display: none;
+}
+
+@media (min-width: 380px) {
+  .page-controls__pagination-page-numbers {
+    display: inline;
+  }
+}
+
 .page-controls__summary-row {
   display: flex;
   flex-direction: row;
@@ -42,12 +53,11 @@
   flex-direction: row;
   align-items: center;
   white-space: nowrap;
-  gap: 0.5rem;
   margin-bottom: unset;
 }
 
-/* @media (max-width: 700px) {
-  select[name='itemsPerPage'] {
-    display: none;
+@media (min-width: 380px) {
+  .page-controls__per-selector {
+    gap: 0.5rem;
   }
-} */
+}

@@ -56,9 +56,9 @@ function PageControls({
           ))}
         </Form.Select>
       </div>
-      <div>
-        <Pagination size="sm" className={styles['page-controls__per-selector']}>
-          {totalPages !== 1 && (
+      {totalPages !== 1 && (
+        <div>
+          <Pagination className={styles['page-controls__per-selector']}>
             <span style={{ display: 'flex' }}>
               <Pagination.First
                 disabled={pageNumber === 1}
@@ -69,14 +69,18 @@ function PageControls({
                 onClick={() => handlePageClick(pageNumber - 1)}
               />
             </span>
-          )}
-          <span>
-            <span className={styles['page-controls__pagination-page-text']}>
-              Page
-            </span>{' '}
-            <b>{pageNumber}</b> of <b>{totalPages}</b>
-          </span>
-          {totalPages !== 1 && (
+
+            <span>
+              <span className={styles['page-controls__pagination-page-text']}>
+                Page
+              </span>
+              <span
+                className={styles['page-controls__pagination-page-numbers']}
+              >
+                {' '}
+                <b>{pageNumber}</b> of <b>{totalPages}</b>
+              </span>
+            </span>
             <span style={{ display: 'flex' }}>
               <Pagination.Next
                 disabled={pageNumber === totalPages}
@@ -87,9 +91,9 @@ function PageControls({
                 onClick={() => handlePageClick(totalPages)}
               />
             </span>
-          )}
-        </Pagination>
-      </div>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 }
